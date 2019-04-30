@@ -1,0 +1,392 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/ScrollView1"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+
+        <!-- 天线唯一性 -->
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="30dp" >
+
+            <View
+                android:id="@+id/View02"
+                android:layout_width="wrap_content"
+                android:layout_height="30dp"
+                android:background="#BFEFFF" />
+
+            <TextView
+                android:id="@+id/TextView02"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/ant_unique"
+                android:textColor="#ff1493"
+                android:textSize="18sp" />
+        </FrameLayout>
+
+        <!-- 唯一 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+
+            <CheckBox
+                android:id="@+id/checkBox_oantuq"
+                android:layout_width="89dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/unique"
+                android:textSize="13sp" />
+
+            <Button
+                android:id="@+id/button_oantuqget"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/get" />
+
+            <Button
+                android:id="@+id/button_oantuqset"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/setting" />
+        </LinearLayout>
+
+        <!-- 附加数据唯一性 -->
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="30dp" >
+
+            <View
+                android:id="@+id/View03"
+                android:layout_width="wrap_content"
+                android:layout_height="30dp"
+                android:background="#BFEFFF" />
+
+            <TextView
+                android:id="@+id/TextView03"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/addition_data_unique"
+                android:textColor="#ff1493"
+                android:textSize="18sp" />
+        </FrameLayout>
+
+        <!-- 唯一 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+
+            <CheckBox
+                android:id="@+id/checkBox_odatauq"
+                android:layout_width="89dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/unique"
+                android:textSize="13sp" />
+
+            <Button
+                android:id="@+id/button_odatauqget"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/get" />
+
+            <Button
+                android:id="@+id/button_odatauqset"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/setting" />
+        </LinearLayout>
+
+        <!-- 记录最高RSSI -->
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="30dp" >
+
+            <View
+                android:id="@+id/View06"
+                android:layout_width="wrap_content"
+                android:layout_height="30dp"
+                android:background="#BFEFFF" />
+
+            <TextView
+                android:id="@+id/TextView06"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/max_rssi"
+                android:textColor="#ff1493"
+                android:textSize="18sp" />
+        </FrameLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+
+            <CheckBox
+                android:id="@+id/checkBox_hrssi"
+                android:layout_width="89dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/unique"
+                android:textSize="13sp" />
+
+            <Button
+                android:id="@+id/button_hrssiget"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/get" />
+
+            <Button
+                android:id="@+id/button_hrssiset"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/setting" />
+        </LinearLayout>
+
+        <!-- 盘存模式 (只有m6e系列读写器支持此参数)-->
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="30dp" 
+            android:visibility="gone">
+
+            <View
+                android:id="@+id/View01"
+                android:layout_width="wrap_content"
+                android:layout_height="30dp"
+                android:background="#BFEFFF" />
+
+            <TextView
+                android:id="@+id/TextView01"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/inventory_mode"
+                android:textColor="#ff1493"
+                android:textSize="18sp" />
+        </FrameLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" 
+            android:visibility="gone">
+
+            <Spinner
+                android:id="@+id/spinner_invmode"
+                android:layout_width="89dp"
+                android:layout_height="44dp"
+                android:layout_weight="1" />
+
+            <Button
+                android:id="@+id/button_invmodeget"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/get" />
+
+            <Button
+                android:id="@+id/button_invmodeset"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/setting" />
+        </LinearLayout>
+
+        <!-- Iso180006b调整深度 (只有m6e系列读写器支持此参数)-->
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="30dp" 
+            android:visibility="gone">
+
+            <View
+                android:id="@+id/View05"
+                android:layout_width="wrap_content"
+                android:layout_height="30dp"
+                android:background="#BFEFFF" />
+
+            <TextView
+                android:id="@+id/TextView05"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/iso_6b_depth"
+                android:textColor="#ff1493"
+                android:textSize="18sp" />
+        </FrameLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone" >
+
+            <Spinner
+                android:id="@+id/spinner_6bdp"
+                android:layout_width="89dp"
+                android:layout_height="44dp"
+                android:layout_weight="1" />
+
+            <Button
+                android:id="@+id/button_6bdpget"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/get" />
+
+            <Button
+                android:id="@+id/button_6bdpset"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/setting" />
+        </LinearLayout>
+
+        <!-- Iso180006b_Delimiter(只有m6e系列读写器支持此参数) -->
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="30dp" 
+            android:visibility="gone">
+
+            <View
+                android:id="@+id/View04"
+                android:layout_width="wrap_content"
+                android:layout_height="30dp"
+                android:background="#BFEFFF" />
+
+            <TextView
+                android:id="@+id/textView_sort"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Iso180006b_Delimiter"
+                android:textColor="#ff1493"
+                android:textSize="18sp" />
+        </FrameLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone" >
+
+            <Spinner
+                android:id="@+id/spinner_6bdlt"
+                android:layout_width="89dp"
+                android:layout_height="44dp"
+                android:layout_weight="1" />
+
+            <Button
+                android:id="@+id/button_6bdltget"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/get" />
+
+            <Button
+                android:id="@+id/button_6bdltset"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/setting" />
+        </LinearLayout>
+
+        <!-- Iso180006b_blf  -->
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:layout_weight="1" >
+
+            <View
+                android:id="@+id/View07"
+                android:layout_width="wrap_content"
+                android:layout_height="30dp"
+                android:background="#BFEFFF" />
+
+            <TextView
+                android:id="@+id/TextView07"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Iso180006b_blf"
+                android:textColor="#ff1493"
+                android:textSize="18sp" />
+        </FrameLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" >
+
+            <EditText
+                android:id="@+id/editText_6bblf"
+                android:layout_width="89dp"
+                android:layout_height="44dp"
+                android:layout_weight="1"
+                android:text="" />
+
+            <Button
+                android:id="@+id/button_6bblfget"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/get" />
+
+            <Button
+                android:id="@+id/button_6bblfset"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/setting" />
+        </LinearLayout>
+
+        <!-- 温度 -->
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:layout_weight="1" >
+
+            <View
+                android:id="@+id/View08"
+                android:layout_width="wrap_content"
+                android:layout_height="30dp"
+                android:background="#BFEFFF" />
+
+            <TextView
+                android:id="@+id/TextView04"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/tempture"
+                android:textColor="#ff1493"
+                android:textSize="18sp" />
+        </FrameLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" >
+
+            <EditText
+                android:id="@+id/editText_tempure"
+                android:layout_width="89dp"
+                android:layout_height="44dp"
+                android:layout_weight="1" />
+
+            <Button
+                android:id="@+id/button_tempure"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/get" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</ScrollView>

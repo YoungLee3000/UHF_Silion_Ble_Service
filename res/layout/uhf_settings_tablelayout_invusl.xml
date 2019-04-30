@@ -1,0 +1,322 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/ScrollView1"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+
+        <!-- 盘点协议 -->
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="30dp" >
+
+            <View
+                android:id="@+id/View02"
+                android:layout_width="wrap_content"
+                android:layout_height="30dp"
+                android:background="#BFEFFF" />
+
+            <TextView
+                android:id="@+id/TextView02"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/inventory_protocol"
+                android:textColor="#ff1493"
+                android:textSize="18sp" />
+        </FrameLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+
+            <CheckBox
+                android:id="@+id/checkBox_invgen2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:checked="true"
+                android:text="Gen2"
+                android:textSize="12sp" />
+
+            <CheckBox
+                android:id="@+id/checkBox_inv6b"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="6B"
+                android:textSize="12sp" 
+                android:visibility="invisible"/>
+
+            <CheckBox
+                android:id="@+id/checkBox_invipx64"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="ipx64"
+                android:textSize="12sp"
+                android:visibility="invisible" />
+
+            <CheckBox
+                android:id="@+id/checkBox_invipx256"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="ipx256"
+                android:textSize="12sp" 
+                android:visibility="invisible"/>
+        </LinearLayout>
+
+        <!-- 设置 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+
+            <Button
+                android:id="@+id/button_invproset"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/setting" />
+
+        </LinearLayout>
+
+        <!-- 操作协议 -->
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+
+            <View
+                android:id="@+id/View04"
+                android:layout_width="wrap_content"
+                android:layout_height="30dp"
+                android:background="#BFEFFF" />
+
+            <TextView
+                android:id="@+id/TextView01"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="@string/operate_protocol"
+                android:textColor="#ff1493"
+                android:textColorLink="#ff1493"
+                android:textSize="18sp" />
+        </FrameLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+
+            <RadioGroup
+                android:id="@+id/radioGroup_pror"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal" >
+
+                <RadioButton
+                    android:id="@+id/radio0"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:checked="true"
+                    android:text="Gen2"
+                    android:textSize="12sp" />
+
+                <RadioButton
+                    android:id="@+id/radio1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="6B"
+                    android:textSize="12sp" 
+                    android:visibility="invisible"/>
+
+                <RadioButton
+                    android:id="@+id/radio2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="ipx64"
+                    android:textSize="12sp" 
+                    android:visibility="invisible"/>
+
+                <RadioButton
+                    android:id="@+id/radio3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="ipx256"
+                    android:textSize="12sp"
+                    android:visibility="invisible" />
+            </RadioGroup>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+
+            <Button
+                android:id="@+id/button_opproget"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/get" />
+
+            <Button
+                android:id="@+id/button_opproset"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/setting" />
+
+        </LinearLayout>
+
+        <!-- 天线 -->
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="30dp" >
+
+            <View
+                android:id="@+id/View01"
+                android:layout_width="wrap_content"
+                android:layout_height="30dp"
+                android:background="#BFEFFF" />
+
+            <TextView
+                android:id="@+id/tv_indicator"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/ant"
+                android:textColor="#ff1493"
+                android:textSize="18sp" />
+        </FrameLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+
+            <!-- 天线1 -->
+            <CheckBox
+                android:id="@+id/checkBox_ant1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:checked="true"
+                android:text="@string/ant_1" />
+
+            <!-- 天线2 -->
+            <CheckBox
+                android:id="@+id/checkBox_ant2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/ant_2" />
+
+            <!-- 天线3 -->
+            <CheckBox
+                android:id="@+id/checkBox_ant3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/ant_3" />
+
+            <!-- 天线4 -->
+            <CheckBox
+                android:id="@+id/checkBox_ant4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/ant_4" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+
+            <Button
+                android:id="@+id/button_invantsset"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/setting" />
+
+        </LinearLayout>
+
+        <!-- 时长 -->
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="30dp" >
+
+            <View
+                android:id="@+id/View03"
+                android:layout_width="wrap_content"
+                android:layout_height="30dp"
+                android:background="#BFEFFF" />
+
+            <TextView
+                android:id="@+id/TextView03"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/span_time"
+                android:textColor="#ff1493"
+                android:textSize="18sp" />
+        </FrameLayout>
+
+        <!-- 盘点时间 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+
+            <TextView
+                android:id="@+id/textView2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/inventory_time" />
+
+            <EditText
+                android:id="@+id/editText_invtime"
+                android:layout_width="64dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:ems="10"
+                android:text="50" />
+
+            <!-- 间隔 -->
+            <TextView
+                android:id="@+id/textView3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/interval_time" />
+
+            <EditText
+                android:id="@+id/editText_invsleep"
+                android:layout_width="56dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:ems="10"
+                android:text="0" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+
+            <Button
+                android:id="@+id/button_invuslget"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/get" />
+
+            <Button
+                android:id="@+id/button_invuslset"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/setting" />
+        </LinearLayout>
+    </LinearLayout>
+
+</ScrollView>

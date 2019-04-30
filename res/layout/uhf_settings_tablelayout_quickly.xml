@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/ScrollView1"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+
+        <!-- 停顿时间比 -->
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone" >
+
+            <View
+                android:id="@+id/View01"
+                android:layout_width="wrap_content"
+                android:layout_height="30dp"
+                android:background="#BFEFFF" />
+
+            <TextView
+                android:id="@+id/TextView01"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/time_stop_per"
+                android:textColor="#ff1493"
+                android:textSize="18sp" />
+        </FrameLayout>
+
+        <Spinner
+            android:id="@+id/spinner_per"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" 
+            android:visibility="gone"/>
+        
+	<!-- 返回标签数据项 -->
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" 
+            android:visibility="gone">
+
+            <View
+                android:id="@+id/View04"
+                android:layout_width="wrap_content"
+                android:layout_height="30dp"
+                android:background="#BFEFFF" />
+
+            <TextView
+                android:id="@+id/TextView04"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/tag_data_item"
+                android:textColor="#ff1493"
+                android:textSize="18sp" />
+        </FrameLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" 
+            android:visibility="gone">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" >
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" >
+
+                    <!-- 次数 -->
+                    <CheckBox
+                        android:id="@+id/checkBox_readcount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/time_count" />
+
+                    <!--  RSSI -->
+                    <CheckBox
+                        android:id="@+id/checkBox_rssi"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="RSSI" />
+
+                    <!-- 天线 -->
+                    <CheckBox
+                        android:id="@+id/checkBox_ant"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/ant" />
+
+                    <!-- 频率 -->
+                    <CheckBox
+                        android:id="@+id/checkBox_frequency"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/frequent" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" >
+
+                    <!-- 时间 -->
+                    <CheckBox
+                        android:id="@+id/checkBox_time"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/time" />
+
+                    <CheckBox
+                        android:id="@+id/checkBox_rfu"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="RFU" />
+
+                    <!-- 协议 -->
+                    <CheckBox
+                        android:id="@+id/checkBox_pro"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="协议" />
+
+                    <CheckBox
+                        android:id="@+id/checkBox_tagdatalen"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Data" />
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="30dp" 
+            android:visibility="gone">
+
+            <View
+                android:id="@+id/View09"
+                android:layout_width="wrap_content"
+                android:layout_height="30dp"
+                android:background="#BFEFFF" />
+
+            <!-- 1200模块启用快速模式 -->
+            <TextView
+                android:id="@+id/TextView08"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/start_quick_mode"
+                android:textColor="#ff1493"
+                android:textSize="18sp" />
+        </FrameLayout>
+
+         <!-- 1200模块启用快速模式 (隐藏掉)-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" 
+            android:visibility="gone">
+
+            <CheckBox
+                android:id="@+id/checkBox_nostop"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/real_inventory" />
+
+            <Button
+                android:id="@+id/button_nostop"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/setting" />
+        </LinearLayout>
+
+        <!-- 一键开启1200高速模式 -->
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="30dp" >
+
+            <View
+                android:id="@+id/View02"
+                android:layout_width="wrap_content"
+                android:layout_height="30dp"
+                android:background="#BFEFFF" />
+
+            <TextView
+                android:id="@+id/TextView02"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/trig_quick_mode"
+                android:textColor="#ff1493"
+                android:textSize="18sp" />
+        </FrameLayout>
+
+        <!-- 开启(最大功率,S1,间隔0) -->
+        <CheckBox 
+            android:id="@+id/checkbox_q1enable1200"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/start_quick_mode_s1" />
+        
+        <!-- 开启(最大功率,S0,间隔0) -->
+        <CheckBox 
+            android:id="@+id/checkbox_q2enable1200"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/start_quick_mode_s0" />
+        
+       <!--  <Button
+            android:id="@+id/button_q1enable1200"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/start_quick_mode_s1" />
+
+        <Button
+            android:id="@+id/button_q2enable1200"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/start_quick_mode_s0" /> -->
+    </LinearLayout>
+
+</ScrollView>

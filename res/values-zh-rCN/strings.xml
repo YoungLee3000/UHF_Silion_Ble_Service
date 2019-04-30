@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">UHF_SIlion_Service</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    
+   <!-- Common -->
+   <string name="success">成功</string>
+    <string name="failed">失败</string>
+    
+    <!-- 盘点测试 -->
+    <string name="tab2_layout_textView1">本次读到标签个数：</string>
+   <string name="tab2_layout_textView2">共读到标签个数：</string>
+   <string name="press_again_to_exit"> 再按一次退出程序</string>
+    <string-array name="inventory_table_header">
+        <item>序号</item>
+        <item>EPC ID</item>
+        <item>次数</item>
+        <item>天线</item>
+        <item>协议</item>
+        <item>RSSI</item>
+        <item>频率</item>
+        <item>附加数据</item>
+    </string-array>
+    <string name= "invetory_count">次数</string>
+    
+  
+    <!-- 读写锁 -->
+    <string name="read_write_lock">读写锁</string>
+    <string name="read_tag">读标签</string>
+    <string name="write_tag">写标签</string>
+    <string name="lock_destroy">锁与销毁</string>
+    <string name="reserve_bank">保留区</string>
+    <string name="epc_bank">EPC区</string>
+    <string name="tid_bank">TID区</string>
+    <string name="user_bank">用户区</string>
+    <string name="access_pwd">访问密码</string>
+    <string name="destroy_pwd">销毁密码</string>
+    <string name="release_lock">解锁定</string>
+    <string name="temp_lock">暂时锁定</string>
+    <string name="fix_lock">永久锁定</string>
+    <string name="lock_oper_item">锁操作选项</string>
+    <string name="lock_area">锁区域</string>
+    <string name="lock_type">锁类型</string>
+    <string name="lock">锁</string>
+    <string name="destroy">销毁</string>
+    <string name="select_reader_area">选择读写器区域</string>
+    <string name="area">区域</string>
+    <string name="start_addr">起始地址</string>
+    <string name="block_count">块数</string>
+    <string name="read">读</string>
+    <string name="write">写</string>
+    <string name="write_epc">写epc</string>
+    <string name="data_type">数据类型</string>
+    <string name="hex_format">十六进制</string>
+    <string name="filter">过滤</string>
+    <string name="filter_data">过滤数据(16)</string>
+    <string name="start_addr_bit">起始地址(bit)</string>
+    <string name="filter_bank">过滤bank</string>
+    <string name="match">匹配</string>
+    <string name="non_match">不匹配</string>
+    <string name="not_enabled">不启用</string>
+    <string name="enabled">启用</string>
+    <string name="oper_ant">操作天线</string>
+    <string name="passwd">密码</string>
+    
+  <!-- ================ＵＨＦ设置部份================================= -->
+  <string name="uhf_settings">UHF参数设置</string>
+  <string name="setting_success">设置成功</string>
+  <string name="setting_fail">设置失败</string>
+  <string name="no_data">无数据</string>
+  <string name="indicatorlayout_tv_indicator">天线参数</string>
+  <string name="unsupport_region">不支持的区域</string>
+  <string name="select_protocol">请选择协议</string>
+  <string name="select_inv_ants">请选择盘点天线</string>
+  <string name="unsupport">不支持该参数</string>
+  <string name="setting_rf_power">设置功率:</string>
+  
+  <string name="ant_check">天线检测</string>
+  <string name="check">检测</string>
+  <string name="non_check">不检测</string>
+  
+  <string name="get">获取</string>
+  <string name="setting">设置</string>
+  
+  <string name="powe">功率</string>
+  <string name="ant_1_read_powe">天线1 读功率</string>
+  <string name="ant_2_read_powe">天线2 读功率</string>
+  <string name="ant_3_read_powe">天线3 读功率</string>
+  <string name="ant_4_read_powe">天线4 读功率</string>
+  <string name="write_power">写功率</string>
+  
+  <string name="q_value">Q值</string>
+  <string name="write_mode">写模式</string>
+  <string name="max_length">最大长度</string>
+  <string name="gen_2_code">gen2编码</string>
+  
+  <string name="addition_data">附加数据</string>
+  <string name="byte_count">字节数</string>
+  
+  <string name="frequency">频率</string>
+  <string name="select_all">全选</string>
+  <string name="look_freq">查看频点</string>
+  <string name="set_freq">设置频点</string>
+  
+  <string name="inventory_protocol">盘点协议</string>
+  <string name= "operate_protocol">操作协议</string>
+  
+  <string name= "ant">天线</string>
+  <string name= "ant_1">天线1</string>
+  <string name= "ant_2">天线2</string>
+  <string name= "ant_3">天线3</string>
+  <string name= "ant_4">天线4</string>
+  <string name= "span_time">时长</string>
+  <string name= "inventory_time">盘点时间</string>
+  <string name= "interval_time">间隔</string>
+  
+  <!-- other -->
+   <string name= "other_params">其他参数</string>
+  <string name= "ant_unique">天线唯一性</string>
+  <string name= "unique">唯一</string>
+  <string name= "addition_data_unique">附加数据唯一性</string>
+  <string name= "max_rssi">记录最高RSSI</string>
+  <string name= "inventory_mode">盘存模式</string>
+  <string name= "iso_6b_depth">Iso180006b调整深度</string>
+  <string name= "tempture">温度</string>
+  
+  <!-- 快速模式  -->
+  <string name= "time_stop_per">停顿时间比</string>
+  <string name= "tag_data_item">返回标签数据项</string>
+  <string name= "time_count">次数</string>
+  <string name= "frequent">频率</string>
+  <string name= "time">时间</string>
+  <string name= "protocol">协议</string>
+  <string name= "start_quick_mode">1200模块启用快速模式</string>
+  <string name= "real_inventory">实时盘存</string>
+  <string name= "trig_quick_mode">高速模式</string>
+  <string name= "start_quick_mode_s1">开启(最大功率,S1,间隔0)</string>
+  <string name= "start_quick_mode_s0">开启(最大功率,S0,间隔0)</string>
+  
+  <!-- 设置菜单 -->
+   <string name= "inventory_params">盘点参数</string>
+   <string name= "ants_power">天线功率</string>
+   <string name= "region_freq">区域频率</string>
+   <string name= "gen2_item">Gen2项</string>
+   <string name= "inventory_filter">盘点过滤</string>
+   <string name= "quick_mode">快速模式</string>
+   
+   <!-- 支持的频段 -->
+   <string-array name="region_items">
+       <item>中国</item>
+       <item>中国2</item>
+       <item>北美</item>
+       <item>欧洲3</item>
+       <item>全频段</item>
+       
+   </string-array>
+   
+   <!-- 标签分区项 -->
+    <string-array name="bank_items_all">
+        <item>保留区</item>
+       <item>EPC区</item>
+       <item>TID区</item>
+       <item>用户区</item>
+    </string-array>
+    
+    <!-- 标签分区项2 -->
+    <string-array name="bank_items_small">
+       <item>EPC区</item>
+       <item>TID区</item>
+       <item>用户区</item>
+    </string-array>
+    
+  <!-- 盘点模式 -->
+    <string-array name="inventory_mode">
+       <item>普通模式</item>
+       <item>高速模式</item>
+    </string-array>
+    
+     <!-- Gen2Tari -->
+    <string-array name="gen2_tari">
+       <item>25微秒</item>
+       <item>12.5微秒</item>
+       <item>6.25微秒</item>
+    </string-array>
+    
+    <!-- new -->
+    <string-array name="write_mode">
+       <item>字写</item>
+       <item>块写</item>
+    </string-array>
+    
+    <string name ="low_power_title">低电量时的功率</string>
+    <string name ="low_power">电量小于(%):</string>
+    <string name="power_oning">上电中...</string>
+    
+</resources>

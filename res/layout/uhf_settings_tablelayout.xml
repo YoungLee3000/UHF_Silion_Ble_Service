@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TabHost xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/tabhost4"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_weight="1"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:orientation="horizontal" >
+
+        <ScrollView
+            android:id="@+id/scrollView1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" >
+
+            <TabWidget
+                android:id="@android:id/tabs"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:baselineAligned="true"
+                android:gravity="center_vertical|fill_horizontal" >
+            </TabWidget>
+
+        </ScrollView>
+
+        <FrameLayout
+            android:id="@android:id/tabcontent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" >
+
+            <LinearLayout
+                android:id="@+id/uhf_settings_sub1_invusl"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:padding="5dp" >
+
+                <include
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    layout="@layout/uhf_settings_tablelayout_invusl" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/uhf_settings_sub2_antpow"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical" >
+
+                <include
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    layout="@layout/uhf_settings_tablelayout_antpow" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/uhf_settings_sub3_invfre"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical" >
+
+                <include
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    layout="@layout/uhf_settings_tablelayout_invfre" />
+
+            </LinearLayout>
+              <LinearLayout
+                android:id="@+id/uhf_settings_sub4_gen2"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical" >
+
+                  <include
+                      android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      layout="@layout/uhf_settings_tablelayout_gen2" />
+
+            </LinearLayout>
+             
+              <LinearLayout
+                android:id="@+id/uhf_settings_sub5_invfil"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical" >
+
+                  <include
+                      android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      layout="@layout/uhf_settings_tablelayout_invfil" />
+                
+            </LinearLayout>
+           
+              <LinearLayout
+                android:id="@+id/uhf_settings_sub6_emd"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical" >
+
+                  <include
+                      android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      layout="@layout/uhf_settings_tablelayout_invemd" />
+
+            </LinearLayout> 
+
+               <LinearLayout
+                android:id="@+id/uhf_settings_sub7_gpio"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical" 
+                android:visibility="gone">
+
+                   <include
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       layout="@layout/uhf_settings_tablelayout_gpio" />
+
+            </LinearLayout> 
+            
+                <LinearLayout
+                android:id="@+id/uhf_settings_sub8_others"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical" >
+
+                    <include
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        layout="@layout/uhf_settings_tablelayout_others" />
+
+            </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/uhf_settings_sub9_quickly"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical" >
+                    
+                     <include
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        layout="@layout/uhf_settings_tablelayout_quickly" />
+                </LinearLayout>
+            
+        </FrameLayout>
+
+    </LinearLayout>
+
+</TabHost>

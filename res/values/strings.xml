@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">UHF_SIlion_Service</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    
+   <!-- Common -->
+   <string name="success">Sucess</string>
+    <string name="failed">Fail</string>
+    
+    <!-- 盘点测试 -->
+    <string name="tab2_layout_textView1">Tag Count in Current Round:</string>
+   <string name="tab2_layout_textView2">Tag Count in All Rounds:</string>
+   <string name="press_again_to_exit"> Press it again to exit</string>
+    <string-array name="inventory_table_header">
+        <item>No.</item>
+        <item>EPC ID</item>
+        <item>Read Count</item>
+        <item>Antenna</item>
+        <item>Protocol</item>
+        <item>RSSI</item>
+        <item>Frequency</item>
+        <item>Custom Data</item>
+    </string-array>
+    <string name= "invetory_count">Count</string>
+    
+  
+    <!-- 读写锁 -->
+    <string name="read_write_lock">Access Control</string>
+    <string name="read_tag">Read</string>
+    <string name="write_tag">Write</string>
+    <string name="lock_destroy">Lock&#038;Kill</string>
+    <string name="reserve_bank">RESERVED</string>
+    <string name="epc_bank">EPC</string>
+    <string name="tid_bank">TID</string>
+    <string name="user_bank">USER</string>
+    <string name="access_pwd">Access Password</string>
+    <string name="destroy_pwd">Kill Password</string>
+    <string name="release_lock">Unlock</string>
+    <string name="temp_lock">Temporary Lock</string>
+    <string name="fix_lock">Permanent Lock</string>
+    <string name="lock_oper_item">Lock Operation</string>
+    <string name="lock_area">Memory Bank</string>
+    <string name="lock_type">Lock Options</string>
+    <string name="lock">Lock</string>
+    <string name="destroy">Kill</string>
+    <string name="select_reader_area">Select data field to read/write</string>
+    <string name="area">Region</string>
+    <string name="start_addr">From</string>
+    <string name="block_count">Number of Blocks</string>
+    <string name="read">Read</string>
+    <string name="write">Write</string>
+    <string name="write_epc">Write to EPC</string>
+    <string name="data_type">Tag Data Type</string>
+    <string name="hex_format">Hex</string>
+    <string name="filter">Filter</string>
+    <string name="filter_data">Data (Hex)</string>
+    <string name="start_addr_bit">From (Bit)</string>
+    <string name="filter_bank">Memory Bank</string>
+    <string name="match">Match</string>
+    <string name="non_match">Unmatch</string>
+    <string name="not_enabled">Disable</string>
+    <string name="enabled">Enable</string>
+    <string name="oper_ant">Antenna</string>
+    <string name="passwd">Password</string>
+    
+  <!-- ================ＵＨＦ设置部份================================= -->
+  <string name="uhf_settings">UHF Settings</string>
+  <string name="setting_success">Programming succeeded</string>
+  <string name="setting_fail">Programming failed</string>
+  <string name="no_data">No data</string>
+  <string name="indicatorlayout_tv_indicator">Antenna parameter</string>
+  <string name="unsupport_region">Unsupported region</string>
+  <string name="select_protocol">Please select protocol</string>
+  <string name="select_inv_ants">Please select antenna</string>
+  <string name="unsupport">Unsupported parameter</string>
+  <string name="setting_rf_power">Set RF Power Level:</string>
+  
+  <string name="ant_check">Antenna Detection</string>
+  <string name="check">Enable</string>
+  <string name="non_check">Disable</string>
+  
+  <string name="get">QUERY</string>
+  <string name="setting">SET</string>
+  
+  <string name="powe">Power</string>
+  <string name="ant_1_read_powe">Antenna1 Read</string>
+  <string name="ant_2_read_powe">Antenna2 Read</string>
+  <string name="ant_3_read_powe">Antenna3 Read</string>
+  <string name="ant_4_read_powe">Antenna4 Read</string>
+  <string name="write_power">Write</string>
+  
+  <string name="q_value">Q Value</string>
+  <string name="write_mode">Write Mode</string>
+  <string name="max_length">Max Length</string>
+  <string name="gen_2_code">Gen2 Tag Encoding</string>
+  
+  <string name="addition_data">CustomData</string>
+  <string name="byte_count">Number of Bytes</string>
+  
+  <string name="frequency">Frequency</string>
+  <string name="select_all">Select All</string>
+  <string name="look_freq">QUERY</string>
+  <string name="set_freq">SET</string>
+  
+  <string name="inventory_protocol">Inventory Protocol</string>
+  <string name= "operate_protocol">Operation Protocol</string>
+  
+  <string name= "ant">Antenna</string>
+  <string name= "ant_1">Antenna1</string>
+  <string name= "ant_2">Antenna2</string>
+  <string name= "ant_3">Antenna3</string>
+  <string name= "ant_4">Antenna4</string>
+  <string name= "span_time">Inventory Duration</string>
+  <string name= "inventory_time">Duration</string>
+  <string name= "interval_time">Interval</string>
+  
+  <!-- other -->
+   <string name= "other_params">Others</string>
+  <string name= "ant_unique">Antenna Singulation</string>
+  <string name= "unique">Enable</string>
+  <string name= "addition_data_unique">Custom Data Singulation</string>
+  <string name= "max_rssi">Record RSSI Max Value Only</string>
+  <string name= "inventory_mode">Inventory mode</string>
+  <string name= "iso_6b_depth">Iso180006b Depth</string>
+  <string name= "tempture">Temperature</string>
+  
+  <!-- 快速模式  -->
+  <string name= "time_stop_per">Stop time percents</string>
+  <string name= "tag_data_item">Tag Datas</string>
+  <string name= "time_count">Count</string>
+  <string name= "frequent">Frequency</string>
+  <string name= "time">Time</string>
+  <string name= "protocol">Protocol</string>
+  <string name= "start_quick_mode">Rapid Mode</string>
+  <string name= "real_inventory">Real inventory</string>
+  <string name= "trig_quick_mode">Rapid Mode Options</string>
+  <string name= "start_quick_mode_s1">Enable (Max power,S1,interval 0)</string>
+  <string name= "start_quick_mode_s0">Enable (Max power,S0,interval 0)</string>
+  
+  <!-- 设置菜单 -->
+   <string name= "inventory_params">Inventory</string>
+   <string name= "ants_power">Antenna</string>
+   <string name= "region_freq">Region</string>
+   <string name= "gen2_item">Gen2</string>
+   <string name= "inventory_filter">Filter</string>
+   <string name= "quick_mode">Rapid Mode</string>
+   
+   <!-- 支持的频段 -->
+   <string-array name="region_items">
+		<item>China</item>
+		<item>China2</item>
+       <item>North America</item>
+       <item>Europe3</item>
+       <item>All</item>
+       
+   </string-array>
+   
+   <!-- 标签分区项 -->
+    <string-array name="bank_items_all">
+        <item>Reserved Memory</item>
+       <item>EPC Memory</item>
+       <item>TID Memory</item>
+       <item>User Memory</item>
+    </string-array>
+    
+    <!-- 标签分区项2 -->
+    <string-array name="bank_items_small">
+       <item>EPC Memory</item>
+       <item>TID Memory</item>
+       <item>User Memory</item>
+    </string-array>
+    
+  <!-- 盘点模式 -->
+    <string-array name="inventory_mode">
+       <item>Normal Mode</item>
+       <item>Rapid Mode</item>
+    </string-array>
+    
+     <!-- Gen2Tari -->
+    <string-array name="gen2_tari">
+       <item>25ms</item>
+       <item>12.5ms</item>
+       <item>6.25ms</item>
+    </string-array>
+    
+    <!-- new -->
+    <string-array name="write_mode">
+       <item>Word write</item>
+       <item>Block write</item>
+    </string-array>
+    
+    <string name ="low_power_title">Antenna Power under Low Battery</string>
+    <string name ="low_power">Battery less than  (%):</string>
+    <string name="power_oning">Powering on the module...</string>
+    
+</resources>
