@@ -1246,6 +1246,9 @@ public class UHFSilionService extends Service {
 					Log.d(TAG, "Get Module_Type : "+val.module.toString());
 				}
 				
+				if (mReader != null)
+					mReader.CloseReader();
+				
 				//驱动下电
 				powerDriver(false);
 			}

@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.nlscan.uhf.silion"
-    android:versionCode="32"
-    android:versionName="3.2" 
+    android:versionCode="33"
+    android:versionName="3.3" 
     android:sharedUserId="android.uid.system">
 
     <uses-sdk
         android:minSdkVersion="15"
-        android:targetSdkVersion="27" />
+        android:targetSdkVersion="28" />
 	
 	<uses-permission android:name="android.permission.VIBRATE"/>
 	<uses-permission android:name="android.permission.BATTERY_STATS" />
