@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.nlscan.uhf.silion"
-    android:versionCode="33"
-    android:versionName="3.3" 
+    android:versionCode="35"
+    android:versionName="3.5" 
     android:sharedUserId="android.uid.system">
 
     <uses-sdk
@@ -20,7 +20,7 @@
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/MyAppTheme" 
-        android:persistent="true">
+        android:persistent="false">
         <activity
             android:name="com.nlscan.uhf.silion.MainActivity"
             android:label="@string/app_name" >
