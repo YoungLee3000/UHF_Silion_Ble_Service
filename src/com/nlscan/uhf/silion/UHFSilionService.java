@@ -1,6 +1,7 @@
 package com.nlscan.uhf.silion;
 
 import java.io.FileWriter;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -450,7 +451,15 @@ public class UHFSilionService extends Service {
 				}//end if(tagcnt[0] > 0) 
 				
 			}else{
+				
 				Log.w(TAG, "Reading error : er = "+er.toString());
+				if (er == READER_ERR.MT_HARDWARE_ALERT_ERR_BY_TOO_MANY_RESET) 
+				{
+					doPowerOff();
+					Thread.sleep(500);
+					doPowerOn(null);
+				}
+				
 			}//end if
 			
 		} catch (Exception e) {
@@ -535,30 +544,34 @@ public class UHFSilionService extends Service {
 		if(tags == null || tags.length == 0)
 			return ;
 		
-		TagInfo[] nls_TagInfos = new TagInfo[tags.length];
-		for(int i = 0 ;i< tags.length;i++)
+		TAGINFO[]  newTags = Arrays.copyOf(tags, tags.length);
+		TagInfo[] nls_TagInfos = new TagInfo[newTags.length];
+		for(int i = 0 ;i< newTags.length;i++)
 		{
-			TAGINFO tag = tags[i];
-			
-			tag.protocol = tag.protocol == null? Reader.SL_TagProtocol.SL_TAG_PROTOCOL_NONE:tag.protocol;
-			TagInfo.SL_TagProtocol nls_TagProtocol = TagInfo.SL_TagProtocol.valueOf(tag.protocol.value());
-			
-			TagInfo nls_Tag = new TagInfo(
-																		tag.AntennaID,
-																		tag.Frequency,
-																		tag.TimeStamp,
-																		tag.EmbededDatalen,
-																		tag.EmbededData,
-																		tag.Res,
-																		tag.Epclen,
-																		tag.PC,
-																		tag.CRC,
-																		tag.EpcId,
-																		tag.Phase,
-																		nls_TagProtocol,
-																		tag.ReadCnt,
-																		tag.RSSI);
-			nls_TagInfos[i] = nls_Tag;
+			TAGINFO tag = newTags[i];
+			try {
+				tag.protocol = tag.protocol == null? Reader.SL_TagProtocol.SL_TAG_PROTOCOL_NONE:tag.protocol;
+				TagInfo.SL_TagProtocol nls_TagProtocol = TagInfo.SL_TagProtocol.valueOf(tag.protocol.value());
+				
+				TagInfo nls_Tag = new TagInfo(
+																			tag.AntennaID,
+																			tag.Frequency,
+																			tag.TimeStamp,
+																			tag.EmbededDatalen,
+																			tag.EmbededData,
+																			tag.Res,
+																			tag.Epclen,
+																			tag.PC,
+																			tag.CRC,
+																			tag.EpcId,
+																			tag.Phase,
+																			nls_TagProtocol,
+																			tag.ReadCnt,
+																			tag.RSSI);
+				nls_TagInfos[i] = nls_Tag;
+			} catch (Exception e) {
+				Log.w(TAG, "Parse taginfo failed.",e);
+			}
 			
 		}//end for
 		
