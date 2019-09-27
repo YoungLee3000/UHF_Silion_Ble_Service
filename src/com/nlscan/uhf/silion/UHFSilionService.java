@@ -1197,26 +1197,32 @@ public class UHFSilionService extends Service {
 				return mUHFDeviceModel;
 			
 			boolean oldPowerOn = mPowerOn;
+			 UHFReader.READER_STATE state = UHFReader.READER_STATE.CMD_FAILED_ERR;
 			if(!mPowerOn) //未上电,上先电获取
 			{
 				//驱动上电
 				powerDriver(true);
 		        boolean blen=mRfidPower.PowerUp();
-		        UHFReader.READER_STATE state =  blen ? UHFReader.READER_STATE.OK_ERR : UHFReader.READER_STATE.CMD_FAILED_ERR;
+		        state =  blen ? UHFReader.READER_STATE.OK_ERR : UHFReader.READER_STATE.CMD_FAILED_ERR;
 		        
 		        if(state == UHFReader.READER_STATE.OK_ERR)
 					state = initReader();//连接读写器(初始创建读写器)
 			}
 			
-			HardwareDetails val = mReader.new HardwareDetails();
-			Reader.READER_ERR er = mReader.GetHardwareDetails(val);//获取硬件信息
-			
-			if(er == READER_ERR.MT_OK_ERR)
-			{
-				//UHF模块型号
-				mUHFDeviceModel = val.module.toString();
-				Log.d(TAG, "Get Module_Type : "+val.module.toString());
-			}
+			boolean available = state == UHFReader.READER_STATE.OK_ERR;
+			Log.d(TAG, "Get UHFDeviceModel available: "+available);	
+			 if(available)
+	        {
+				HardwareDetails val = mReader.new HardwareDetails();
+				Reader.READER_ERR er = mReader.GetHardwareDetails(val);//获取硬件信息
+				
+				if(er == READER_ERR.MT_OK_ERR)
+				{
+					//UHF模块型号
+					mUHFDeviceModel = val.module.toString();
+					Log.d(TAG, "Get Module_Type : "+val.module.toString());
+				}
+	        }
 			
 			if(!oldPowerOn)
 			{
@@ -1248,19 +1254,22 @@ public class UHFSilionService extends Service {
 					state = initReader();//连接读写器(初始创建读写器)
 		        
 		        available = state == UHFReader.READER_STATE.OK_ERR;
-		        
-		        HardwareDetails val = mReader.new HardwareDetails();
-				Reader.READER_ERR er = mReader.GetHardwareDetails(val);//获取硬件信息
-				
-				if(er == READER_ERR.MT_OK_ERR)
-				{
-					//UHF模块型号
-					mUHFDeviceModel = val.module.toString();
-					Log.d(TAG, "Get Module_Type : "+val.module.toString());
-				}
-				
-				if (mReader != null)
-					mReader.CloseReader();
+		        Log.d(TAG, "isDeviceAvailable available: "+available);	
+		        if(available)
+		        {
+		        	HardwareDetails val = mReader.new HardwareDetails();
+		        	Reader.READER_ERR  er = mReader.GetHardwareDetails(val);//获取硬件信息
+					
+					if(er == READER_ERR.MT_OK_ERR)
+					{
+						//UHF模块型号
+						mUHFDeviceModel = val.module.toString();
+						Log.d(TAG, "Get Module_Type : "+val.module.toString());
+					}
+					
+					if (mReader != null)
+						mReader.CloseReader();
+		        }
 				
 				//驱动下电
 				powerDriver(false);
