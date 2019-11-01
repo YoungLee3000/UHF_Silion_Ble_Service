@@ -460,7 +460,7 @@ public class UHFSilionSettingService {
 		int[] htb =(int[])mSettingsMap.get(UHFSilionParams.FREQUENCY_HOPTABLE.KEY);//先把保存的区域频率获取出来,不能等到区域设置完成再取
 		Object oRegionId =  mSettingsMap.get(UHFSilionParams.FREQUENCY_REGION.KEY);
 		if(oRegionId != null){
-			int iRegionId = (int)oRegionId;
+			int iRegionId = (Integer)oRegionId;
 			setParam(UHFSilionParams.FREQUENCY_REGION.KEY, UHFSilionParams.FREQUENCY_REGION.PARAM_FREQUENCY_REGION, String.valueOf(iRegionId));
 		}
 		
@@ -833,7 +833,7 @@ public class UHFSilionSettingService {
 		if(obj == null)
 			return defaultValue;
 		try {
-			return (long)obj;
+			return (Long)obj;
 		} catch (Exception e) {
 		}
 		return defaultValue;

@@ -9,9 +9,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.app.AlertDialog;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.media.AudioManager;
@@ -27,6 +29,7 @@ import android.os.RemoteCallbackList;
 import android.os.RemoteException;
 import android.os.Vibrator;
 import android.util.Log;
+import android.view.WindowManager;
 
 import com.nlscan.android.uhf.IUHFTagInventoryListener;
 import com.nlscan.android.uhf.TagInfo;
@@ -34,6 +37,11 @@ import com.nlscan.android.uhf.UHFCommonParams;
 import com.nlscan.android.uhf.UHFManager;
 import com.nlscan.android.uhf.UHFModuleInfo;
 import com.nlscan.android.uhf.UHFReader;
+import com.nlscan.uhf.silion.Constants;
+import com.nlscan.uhf.silion.DLog;
+import com.nlscan.uhf.silion.R;
+import com.nlscan.uhf.silion.UHFSilionParams;
+import com.nlscan.uhf.silion.UHFSilionSettingService;
 import com.pow.api.cls.RfidPower;
 import com.pow.api.cls.RfidPower.PDATYPE;
 import com.uhf.api.cls.Reader;
@@ -44,7 +52,9 @@ import com.uhf.api.cls.Reader.TAGINFO;
 
 public class UHFSilionService extends Service {
 
+
 	private final static String TAG = Constants.TAG_PREFIX+"UHFSilionService";
+
 	
 	private Context mContext;
 	private IBinder mBinder;
@@ -89,7 +99,21 @@ public class UHFSilionService extends Service {
 	
 	/**开始读取的时间*/
 	private long mStartReadTime = 0;
-	
+
+
+	/**电量监控范围**/
+	private boolean mBatteryMonitorOn = true;//是否开启电量监控
+	private int mBatteryWarn1 = 20;//电量警戒线1
+	private int mBatteryWarn2 = 15;//电量警戒线2
+	private int mCurCharge = -1; //当前电量
+	private boolean mPowerAllow = true; //是否允许上电
+
+	private final static String BROAD_BATTERY_MONITOR = "com.nlscan.uhf.silion.action.BATTERY_MONITOR";//电量监控参数
+	private final static String EXTRA_STRING_MONITOR = "if monitor";
+	private final static String EXTRA_STRING_WARN_ONE = "warn value 1";
+	private final static String EXTRA_STRING_WARN_TWO = "warn value 2";
+
+
 	@Override
 	public void onCreate() {
 		super.onCreate();
@@ -120,7 +144,7 @@ public class UHFSilionService extends Service {
 				
 		if(mBinder == null)
 			mBinder = new MyBinder();
-		
+
 		registerReceiver();
 		
 		Log.d(TAG, "Silion UHF Service onCreated.");
@@ -190,6 +214,21 @@ public class UHFSilionService extends Service {
 	 */
 	private UHFReader.READER_STATE doPowerOn(UHFReader.READER_STATE lastState)
 	{
+
+		if (!mPowerAllow){
+			new Thread(){
+				@Override
+				public  void run(){
+					Looper.prepare();
+					showBatteryDialog3();
+					Looper.loop();
+				}
+			}.start();
+
+			Log.d("BatteryMonitor","not allow power on");
+			return UHFReader.READER_STATE.CMD_FAILED_ERR;
+		}
+
 		if(doPowerRetryCount == 0)
 			sendUHFState(UHFManager.UHF_STATE_POWER_ONING);
 		
@@ -197,6 +236,8 @@ public class UHFSilionService extends Service {
 		boolean powOn = powerDriver(true);
 		if(!powOn)
 			return  UHFReader.READER_STATE.HARDWARE_ALERT_ERR_BY_UNKNOWN_ERR;
+
+
 		
         boolean blen=mRfidPower.PowerUp();
         UHFReader.READER_STATE state =  blen ? UHFReader.READER_STATE.OK_ERR : UHFReader.READER_STATE.CMD_FAILED_ERR;
@@ -240,7 +281,7 @@ public class UHFSilionService extends Service {
 		
 		//初始化读写器
 		int ant = 1;
-		 READER_ERR er = Reader.READER_ERR.MT_CMD_FAILED_ERR; 
+		 READER_ERR er = READER_ERR.MT_CMD_FAILED_ERR;
 		try{
 			er=mReader.InitReader_Notype(mUHFModuleInfo.serial_path, ant);
 			Log.d(TAG, "Connect to device state : "+er+","+(er == READER_ERR.MT_OK_ERR));
@@ -263,7 +304,7 @@ public class UHFSilionService extends Service {
 			
 			//执行模块参数配置
         	mSettingsService.effectParams(mReader);
-        	Reader.READER_ERR er = Reader.READER_ERR.MT_CMD_FAILED_ERR;
+        	READER_ERR er = READER_ERR.MT_CMD_FAILED_ERR;
         	er = mReader.ParamSet(Mtr_Param.MTR_PARAM_TAG_SEARCH_MODE, new int[] { 0 });
         	
 			HardwareDetails val = mReader.new HardwareDetails();
@@ -517,7 +558,7 @@ public class UHFSilionService extends Service {
 	
 	private int getOperateAnt()
 	{
-		int ant = (int)mSettingsMap.get(UHFSilionParams.ANTS.PARAM_OPERATE_ANTS);
+		int ant = (Integer)mSettingsMap.get(UHFSilionParams.ANTS.PARAM_OPERATE_ANTS);
 		return ant;
 	}
 	
@@ -530,7 +571,7 @@ public class UHFSilionService extends Service {
 		Object obj = mSettingsMap.get(UHFSilionParams.INV_QUICK_MODE.KEY);
 		int iQuick = 0;
 		if(obj != null)
-			iQuick = (int)obj;
+			iQuick = (Integer)obj;
 		
 		return iQuick == 1;
 	}
@@ -661,6 +702,14 @@ public class UHFSilionService extends Service {
 			mContext.registerReceiver(mScreenReceiver, inFilter);
 		} catch (Exception e) {
 		}
+
+		//电量监控参数
+		IntentFilter batteryMonitorFilter = new IntentFilter();
+		batteryMonitorFilter.addAction(BROAD_BATTERY_MONITOR);
+		try {
+			mContext.registerReceiver(mBatteryMonitorReceiver, batteryMonitorFilter);
+		} catch (Exception e) {
+		}
 		
 		//电池电量
 		IntentFilter batteryIntentFilter=new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
@@ -671,6 +720,11 @@ public class UHFSilionService extends Service {
 	{
 		try {
 			mContext.unregisterReceiver(mScreenReceiver);
+		} catch (Exception e) {
+		}
+
+		try {
+			mContext.unregisterReceiver(mBatteryMonitorReceiver);
 		} catch (Exception e) {
 		}
 		
@@ -802,6 +856,23 @@ public class UHFSilionService extends Service {
 		}//end onReceiver
 		
 	};//end mReceiver
+
+
+	/**
+	 * 上电操作监控
+	 */
+	private BroadcastReceiver mBatteryMonitorReceiver = new BroadcastReceiver() {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			String action = intent.getAction();
+			if (BROAD_BATTERY_MONITOR.equals(action)){
+				mBatteryMonitorOn = intent.getBooleanExtra(EXTRA_STRING_MONITOR,mBatteryMonitorOn);
+				mBatteryWarn1 = intent.getIntExtra(EXTRA_STRING_WARN_ONE,mBatteryWarn1);
+				mBatteryWarn2 = intent.getIntExtra(EXTRA_STRING_WARN_TWO,mBatteryWarn2);
+			}
+		}
+	};
+
 	
 	/**
 	 * 电池电量监控
@@ -812,12 +883,19 @@ public class UHFSilionService extends Service {
 		public void onReceive(Context context, Intent intent) {
 			
 			String action=intent.getAction();
+			//未上电状态下也要更新当前电量
+			if (Intent.ACTION_BATTERY_CHANGED.equals(action) && !mPowerOn){
+				//当前电量比
+				int level=intent.getIntExtra(BatteryManager.EXTRA_LEVEL,0);
+				//总电量单位
+				int scale=intent.getIntExtra(BatteryManager.EXTRA_SCALE,100);
+				int mCurLevel=(int) (((float) level/scale)*100);
+				mPowerAllow = mCurLevel > mBatteryWarn2;
+				mCurCharge = mCurLevel;
+			}
+
 			if(Intent.ACTION_BATTERY_CHANGED.equals(action) && mPowerOn)
 			{
-				Map<String, Object> settingsMap = mUHFMgr.getAllParams();
-				int iLowerpowerEnable =settingsMap.containsKey(UHFSilionParams.LOWER_POWER.PARAM_LOWER_POWER_DM_ENABLE)? (int)settingsMap.get(UHFSilionParams.LOWER_POWER.PARAM_LOWER_POWER_DM_ENABLE) : 0;;
-				if(iLowerpowerEnable == 0)
-					return ;
 				
 				long id = Binder.clearCallingIdentity();
 				//状态
@@ -829,9 +907,36 @@ public class UHFSilionService extends Service {
 				//总电量单位
 				int scale=intent.getIntExtra(BatteryManager.EXTRA_SCALE,100);
 				int mCurLevel=(int) (((float) level/scale)*100);
-				
-				
-				final int LOW_LEVEL = (int) settingsMap.get(UHFSilionParams.LOWER_POWER.PARAM_LOWER_POWER_LEVEL);
+				mPowerAllow = mCurLevel > mBatteryWarn2;
+
+				if (  mBatteryMonitorOn &&
+						mCurLevel <= mBatteryWarn1
+						){
+					if ( (mCurCharge > 0 && mCurLevel - mCurCharge == -1) || mCurCharge == -1)
+						showBatteryDialog1();
+				}
+
+
+				if (    mBatteryMonitorOn &&
+						mCurLevel <= mBatteryWarn2
+				       ){
+
+					if ( (mCurCharge > 0 && mCurLevel - mCurCharge == -1) || mCurCharge == -1)
+						showBatteryDialog2();
+				}
+
+				mCurCharge = mCurLevel;
+
+				Log.d( "BatteryMonitor","current level: " + mCurCharge + " warn 1: " + mBatteryWarn1
+						+ " warn 2: " + mBatteryWarn2);
+
+
+				Map<String, Object> settingsMap = mUHFMgr.getAllParams();
+				int iLowerpowerEnable =settingsMap.containsKey(UHFSilionParams.LOWER_POWER.PARAM_LOWER_POWER_DM_ENABLE)? (Integer)settingsMap.get(UHFSilionParams.LOWER_POWER.PARAM_LOWER_POWER_DM_ENABLE) : 0;;
+				if(iLowerpowerEnable == 0)
+					return ;
+
+				final int LOW_LEVEL = (Integer) settingsMap.get(UHFSilionParams.LOWER_POWER.PARAM_LOWER_POWER_LEVEL);
 				//DLog.d(TAG, "Current Level : "+mCurLevel+", LOW_LEVEL: "+LOW_LEVEL);
 				
 				String sValue = (String) settingsMap.get(UHFSilionParams.RF_ANTPOWER.KEY);
@@ -907,6 +1012,75 @@ public class UHFSilionService extends Service {
 			
 		}//end onReceiver
 	};
+
+
+	/**
+	 * 当电量低于警戒线1时，弹出对话框提示充电
+	 */
+	private void showBatteryDialog1() {
+
+		AlertDialog dialog = new AlertDialog.Builder(getApplicationContext()).
+						setTitle(R.string.dialog_low_power_title)
+						.setMessage(R.string.dialog_notice_charge)
+						.setCancelable(false)
+						.setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
+							public void onClick(DialogInterface dialog, int id) {
+							}
+						})
+						.create();
+		dialog.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
+		dialog.show();
+
+	}
+
+
+	/**
+	 * 当电量低于警戒线2时，弹出对话框，提示下电
+	 */
+	private void showBatteryDialog2() {
+
+		AlertDialog dialog = new AlertDialog.Builder(getApplicationContext()).
+				setTitle(R.string.dialog_low_power_title)
+				.setMessage(R.string.dialog_notice_down)
+				.setCancelable(false)
+				.setPositiveButton(R.string.dialog_power_down, new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int id) {
+						mUHFMgr.powerOff();
+					}
+				})
+				.setNegativeButton(R.string.dialog_go_on, new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialogInterface, int i) {
+
+					}
+				})
+				.create();
+		dialog.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
+		dialog.show();
+	}
+
+
+	/**
+	 * 当电量低于警戒线2时，弹出对话框提示无法上电
+	 */
+	private void showBatteryDialog3() {
+
+		AlertDialog dialog = new AlertDialog.Builder(getApplicationContext()).
+				setTitle(R.string.dialog_low_power_title)
+				.setMessage(R.string.dialog_notice_allow)
+				.setCancelable(false)
+				.setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int id) {
+					}
+				})
+				.create();
+		dialog.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
+		dialog.show();
+
+	}
+
+
+
 	
 	//===================================================================
 
@@ -926,7 +1100,9 @@ public class UHFSilionService extends Service {
 				
 				if(mPowerOn)
 					return UHFReader.READER_STATE.OK_ERR.value();
-				
+
+
+
 				//UHF模块上电
 				doPowerRetryCount = 0;
 				UHFReader.READER_STATE state =  doPowerOn(null);
@@ -1214,7 +1390,7 @@ public class UHFSilionService extends Service {
 			 if(available)
 	        {
 				HardwareDetails val = mReader.new HardwareDetails();
-				Reader.READER_ERR er = mReader.GetHardwareDetails(val);//获取硬件信息
+				READER_ERR er = mReader.GetHardwareDetails(val);//获取硬件信息
 				
 				if(er == READER_ERR.MT_OK_ERR)
 				{
@@ -1258,7 +1434,7 @@ public class UHFSilionService extends Service {
 		        if(available)
 		        {
 		        	HardwareDetails val = mReader.new HardwareDetails();
-		        	Reader.READER_ERR  er = mReader.GetHardwareDetails(val);//获取硬件信息
+		        	READER_ERR  er = mReader.GetHardwareDetails(val);//获取硬件信息
 					
 					if(er == READER_ERR.MT_OK_ERR)
 					{

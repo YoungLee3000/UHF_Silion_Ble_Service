@@ -8,6 +8,7 @@
    <!-- Common -->
    <string name="success">Sucess</string>
     <string name="failed">Fail</string>
+    <string name="confirm">Confirm</string>
     
     <!-- 盘点测试 -->
     <string name="tab2_layout_textView1">Tag Count in Current Round:</string>
@@ -194,5 +195,23 @@
     <string name ="low_power_title">Antenna Power under Low Battery</string>
     <string name ="low_power">Battery less than  (%):</string>
     <string name="power_oning">Powering on the module...</string>
-    
+
+    <!--电量监听-->
+    <string name="power_monitor">Battery Power Monitor</string>
+    <string name="if_monitor">Enable Monitor</string>
+    <string name="power_warning_1">Power Warning Value 1</string>
+    <string name="power_warning_2">Power Warning Value 2</string>
+    <string name="tips_para_on">Battery monitor on</string>
+    <string name="tips_para_off">Battery monitor off</string>
+    <string name="tips_para_warn1">it will notice charging</string>
+    <string name="tips_para_warn2">it will notice powerring off</string>
+    <string name="dialog_low_power_title">Low Power Warning</string>
+    <string name="dialog_notice_charge">Insufficient power will affect the normal operation of UHF function,
+        please charge!</string>
+    <string name="dialog_notice_down">Low power, UHF function will not be available, please charge
+    if go on using, otherwise, please power off!</string>
+    <string name="dialog_notice_allow">The power is too low, UHF can not run normally,
+        powering on is not allowed until the machine is charged!</string>
+    <string name="dialog_go_on">Go on using</string>
+    <string name="dialog_power_down">Power down</string>
 </resources>

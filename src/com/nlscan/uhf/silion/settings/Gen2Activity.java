@@ -594,7 +594,7 @@ public class Gen2Activity extends BaseActivity {
 		Map<String,Object> settingsMap = mUHFMgr.getAllParams();
 		int result = defaultValue;
 		if(settingsMap != null && settingsMap.get(key) != null)
-			result = (int) settingsMap.get(key);
+			result = (Integer) settingsMap.get(key);
 		return result;
 	}
 	

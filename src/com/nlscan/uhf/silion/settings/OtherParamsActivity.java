@@ -3,14 +3,18 @@ package com.nlscan.uhf.silion.settings;
 import java.util.Map;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,6 +34,23 @@ public class OtherParamsActivity extends BaseActivity {
 	
 	private Button button_oantuqget,button_oantuqset,button_odatauqget,button_odatauqset,button_hrssiget,button_hrssiset,button_gettempture;
 	private CheckBox cb_oant,cb_odata,cb_hrssi;
+
+	//电量监控
+	private Button btn_battery_monitor;
+	private CheckBox cb_if_monitor;
+	private Spinner warn1_select, warn2_select;
+	private ArrayAdapter<String> warn1Adapter, warn2Adapter;
+	private TextView text_tips;
+	private boolean ifMonitor = true;
+	private int warnVal1 = 20;
+	private int warnVal2 = 15;
+	private String [] warn1Str =  {"50","45","40","35","30","25","20"};
+	private String [] warn2Str =  {"15","10","5"};
+	private final static String BROAD_BATTERY_MONITOR = "com.nlscan.uhf.silion.action.BATTERY_MONITOR";
+	private final static String EXTRA_STRING_MONITOR = "if monitor";
+	private final static String EXTRA_STRING_WARN_ONE = "warn value 1";
+	private final static String EXTRA_STRING_WARN_TWO = "warn value 2";
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -213,6 +234,101 @@ public class OtherParamsActivity extends BaseActivity {
 			}
 
 		});
+
+
+		//电量监控
+		btn_battery_monitor = (Button) findViewById(R.id.btn_battery_monitor_set);
+		cb_if_monitor = (CheckBox) findViewById(R.id.cb_if_monitor);
+		warn1_select = (Spinner) findViewById(R.id.spinner_power_warning1);
+		warn2_select = (Spinner) findViewById(R.id.spinner_power_warning2);
+		text_tips = (TextView) findViewById(R.id.text_power_monitor_tips);
+
+		warn1Adapter = new ArrayAdapter<String>(this,R.layout.spinner_item,
+				warn1Str);
+		warn2Adapter = new ArrayAdapter<String>(this,R.layout.spinner_item,
+				warn2Str);
+
+		warn1_select.setAdapter(warn1Adapter);
+		warn2_select.setAdapter(warn2Adapter);
+		warn1_select.setSelection(6);
+		warn2_select.setSelection(0);
+
+		final Intent batteryIntent = new Intent();
+		batteryIntent.setAction(BROAD_BATTERY_MONITOR);
+
+		warn1_select.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+			@Override
+			public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+				switch (i){
+					case 0:
+						warnVal1 = 50;
+						break;
+					case 1:
+						warnVal1 = 45;
+						break;
+					case 2:
+						warnVal1 = 40;
+						break;
+					case 3:
+						warnVal1 = 35;
+						break;
+					case 4:
+						warnVal1 = 30;
+						break;
+					case 5:
+						warnVal1 = 25;
+						break;
+					case 6:
+						warnVal1 = 20;
+						break;
+				}
+			}
+			@Override
+			public void onNothingSelected(AdapterView<?> adapterView) {}
+		});
+
+
+		warn2_select.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+			@Override
+			public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+				switch (i){
+					case 0:
+						warnVal2 = 15;
+						break;
+					case 1:
+						warnVal2 = 10;
+						break;
+					case 2:
+						warnVal2 = 5;
+						break;
+				}
+			}
+
+			@Override
+			public void onNothingSelected(AdapterView<?> adapterView) {}
+		});
+
+		btn_battery_monitor.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				ifMonitor = cb_if_monitor.isChecked();
+
+				batteryIntent.putExtra(EXTRA_STRING_MONITOR,ifMonitor);
+				batteryIntent.putExtra(EXTRA_STRING_WARN_ONE,warnVal1);
+				batteryIntent.putExtra(EXTRA_STRING_WARN_TWO,warnVal2);
+				sendBroadcast(batteryIntent);
+
+				String tipStr = "";
+				tipStr += ifMonitor ?getString(R.string.tips_para_on)  : getString(R.string.tips_para_off);
+				tipStr += "\n";
+				tipStr += getString(R.string.low_power)  + warnVal1 + " " + getString(R.string.tips_para_warn1) + "\n";
+				tipStr += getString(R.string.low_power)  + warnVal2 + " " + getString(R.string.tips_para_warn2) ;
+				text_tips.setText(tipStr);
+			}
+		});
+
+
+
 	}//end initView
 	
 	/**

@@ -123,7 +123,7 @@ public class RegionFreActivity extends BaseActivity {
 				Object obj = settingsMap.get(UHFSilionParams.FREQUENCY_REGION.KEY);
 				int region = -1;
 				if(obj != null){
-					region = (int)obj;
+					region = (Integer)obj;
 				}
 					
 				if(region !=  -1)

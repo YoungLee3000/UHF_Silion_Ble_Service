@@ -322,7 +322,7 @@ public class AntsPowerActivity extends BaseActivity {
 		
 		cb_lowpoer_enable = (CheckBox) findViewById(R.id.cb_lowpoer_enable);
 		Map<String,Object> settings = mUHFMgr.getAllParams();
-		int iLowerpowerEnable =settings.containsKey(UHFSilionParams.LOWER_POWER.PARAM_LOWER_POWER_DM_ENABLE)? (int)settings.get(UHFSilionParams.LOWER_POWER.PARAM_LOWER_POWER_DM_ENABLE) : 0;;
+		int iLowerpowerEnable =settings.containsKey(UHFSilionParams.LOWER_POWER.PARAM_LOWER_POWER_DM_ENABLE)? (Integer)settings.get(UHFSilionParams.LOWER_POWER.PARAM_LOWER_POWER_DM_ENABLE) : 0;;
 		cb_lowpoer_enable.setChecked(iLowerpowerEnable == 1);
 		spinner_low_battery_level.setEnabled(cb_lowpoer_enable.isChecked());
 		spinner_low_ant_power.setEnabled(cb_lowpoer_enable.isChecked());
@@ -346,7 +346,7 @@ public class AntsPowerActivity extends BaseActivity {
 				Object obj = settings.get(UHFSilionParams.LOWER_POWER.PARAM_LOWER_POWER_LEVEL);
 				int powerLevel = 15;
 				if(obj != null)
-					powerLevel = (int)obj;
+					powerLevel = (Integer)obj;
 				
 				for(int i = 0 ; i <  lowBattey.length; i++)
 				{
@@ -360,11 +360,11 @@ public class AntsPowerActivity extends BaseActivity {
 				obj = settings.get(UHFSilionParams.LOWER_POWER.PARAM_LOWER_POWER_READ_DBM);
 				int dbm = 2700;
 				if(obj != null)
-					dbm = (int)obj;
+					dbm = (Integer)obj;
 				
 				spinner_low_ant_power.setSelection((dbm-500)/100);
 				
-				int iLowerpowerEnable =settings.containsKey(UHFSilionParams.LOWER_POWER.PARAM_LOWER_POWER_DM_ENABLE)? (int)settings.get(UHFSilionParams.LOWER_POWER.PARAM_LOWER_POWER_DM_ENABLE) : 0;;
+				int iLowerpowerEnable =settings.containsKey(UHFSilionParams.LOWER_POWER.PARAM_LOWER_POWER_DM_ENABLE)? (Integer)settings.get(UHFSilionParams.LOWER_POWER.PARAM_LOWER_POWER_DM_ENABLE) : 0;;
 				cb_lowpoer_enable.setChecked(iLowerpowerEnable == 1);
 			}
 		});

@@ -80,7 +80,7 @@ public class UHFSilionSettingsMainActivity extends BaseActivity {
 	private void initView()
 	{
 		lv_main = (ListView) findViewById(R.id.lv_main);
-		mAdapter = new ArrayAdapter<>(mContext, R.layout.listitemview_main_settings, R.id.tv_title, mLabels);
+		mAdapter = new ArrayAdapter<String>(mContext, R.layout.listitemview_main_settings, R.id.tv_title, mLabels);
 		lv_main.setAdapter(mAdapter);
 		
 		lv_main.setOnItemClickListener(new AdapterView.OnItemClickListener() {

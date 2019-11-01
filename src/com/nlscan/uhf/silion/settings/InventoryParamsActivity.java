@@ -226,10 +226,10 @@ public class InventoryParamsActivity extends BaseActivity {
 				Object objInterval = settingsMap.get(UHFSilionParams.INV_INTERVAL.KEY);
 				
 				if(objTimeout != null )
-					invTimeout = (long)objTimeout;
+					invTimeout = (Long)objTimeout;
 				
 				if(objInterval != null)
-					invInterval = (long)objInterval;
+					invInterval = (Long)objInterval;
 				
 				ettime.setText(String.valueOf(invTimeout));
 				etsleep.setText(String.valueOf(invInterval));
@@ -318,7 +318,7 @@ public class InventoryParamsActivity extends BaseActivity {
 		settingsMap = mUHFMgr.getAllParams();
 		int result = defaultValue;
 		if(settingsMap != null && settingsMap.get(key) != null)
-			result = (int) settingsMap.get(key);
+			result = (Integer) settingsMap.get(key);
 		return result;
 	}
 	

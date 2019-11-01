@@ -650,7 +650,7 @@ public class TagReadLockActivity extends BaseActivity {
 		Object obj = settingsMap.get(settingKey);
 		
 		if(obj != null)
-			return (int)obj;
+			return (Integer)obj;
 		
 		return defValue;
 	}

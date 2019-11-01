@@ -8,7 +8,8 @@
    <!-- Common -->
    <string name="success">成功</string>
     <string name="failed">失败</string>
-    
+    <string name="confirm">确定</string>
+
     <!-- 盘点测试 -->
     <string name="tab2_layout_textView1">本次读到标签个数：</string>
    <string name="tab2_layout_textView2">共读到标签个数：</string>
@@ -194,5 +195,21 @@
     <string name ="low_power_title">低电量时的功率</string>
     <string name ="low_power">电量小于(%):</string>
     <string name="power_oning">上电中...</string>
+
+    <!--电量监听-->
+    <string name="power_monitor">电池电量监听</string>
+    <string name="if_monitor">启用监听</string>
+    <string name="power_warning_1">电量警戒值1</string>
+    <string name="power_warning_2">电量警戒值2</string>
+    <string name="tips_para_on">电量监控开启</string>
+    <string name="tips_para_off">电量监控关闭</string>
+    <string name="tips_para_warn1">将提醒充电</string>
+    <string name="tips_para_warn2">将提醒下电</string>
+    <string name="dialog_low_power_title">低电量警告</string>
+    <string name="dialog_notice_charge">电量不足，将影响UHF功能的正常工作，请充电！</string>
+    <string name="dialog_notice_down">电量低，UHF功能将不可用，若继续使用请及时充电，否则请下电！</string>
+    <string name="dialog_notice_allow">电量过低，UHF模块无法正常运行，请将电量充至可用范围否则上电不被允许！</string>
+    <string name="dialog_go_on">继续使用</string>
+    <string name="dialog_power_down">下电</string>
     
 </resources>

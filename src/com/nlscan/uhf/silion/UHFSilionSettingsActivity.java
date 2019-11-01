@@ -419,7 +419,7 @@ public class UHFSilionSettingsActivity extends BaseActivity {
 		Object obj = getUHFSetting(UHFSilionParams.ANTS.PARAM_MAX_ANTS_COUNT);
 		int maxAntCount = 1;
 		if(obj != null)
-			maxAntCount = (int) obj;
+			maxAntCount = (Integer) obj;
 		cb_ant1.setVisibility(maxAntCount >= 1 ? View.VISIBLE:View.GONE);
 		cb_ant2.setVisibility(maxAntCount >= 2 ? View.VISIBLE:View.GONE);
 		cb_ant3.setVisibility(maxAntCount >= 3? View.VISIBLE:View.GONE);
@@ -1406,7 +1406,7 @@ public class UHFSilionSettingsActivity extends BaseActivity {
 				Object obj = settingsMap.get(UHFSilionParams.FREQUENCY_REGION.KEY);
 				int region = -1;
 				if(obj != null){
-					region = (int)obj;
+					region = (Integer)obj;
 				}
 					
 				if(region !=  -1)
@@ -1552,10 +1552,10 @@ public class UHFSilionSettingsActivity extends BaseActivity {
 				Object objInterval = settingsMap.get(UHFSilionParams.INV_INTERVAL.KEY);
 				
 				if(objTimeout != null )
-					invTimeout = (long)objTimeout;
+					invTimeout = (Long)objTimeout;
 				
 				if(objInterval != null)
-					invInterval = (long)objInterval;
+					invInterval = (Long)objInterval;
 				
 				ettime.setText(String.valueOf(invTimeout));
 				etsleep.setText(String.valueOf(invInterval));
@@ -2283,7 +2283,7 @@ public class UHFSilionSettingsActivity extends BaseActivity {
 		Map<String,Object> settingsMap = mUHFMgr.getAllParams();
 		int result = defaultValue;
 		if(settingsMap != null && settingsMap.get(key) != null)
-			result = (int) settingsMap.get(key);
+			result = (Integer) settingsMap.get(key);
 		return result;
 	}
 	
