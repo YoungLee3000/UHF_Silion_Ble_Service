@@ -641,7 +641,7 @@ public class UHFSilionService extends Service {
 			soundPool.play(1, volumnRatio, volumnRatio, 0, 0, 1);
 		}
 		if(vibrateEnable)
-			mVibrator.vibrate(new long[] { 80, 80, 80 }, -1); // 震动
+			mVibrator.vibrate(80); // 震动
 	}
 	
 	private void sendResultByBroadcast(TagInfo[] tagInfos)
