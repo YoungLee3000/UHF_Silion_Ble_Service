@@ -175,6 +175,7 @@ public class UHFSilionService extends Service {
 	
 	private boolean powerDriver(boolean powerOn)
 	{
+		Log.d(TAG, "Enter Power driver, : "+powerOn);
 		try {
         	//上电
             FileWriter fw58 = new FileWriter(mUHFModuleInfo.power_driver);//写文件
@@ -183,7 +184,7 @@ public class UHFSilionService extends Service {
             Log.d(TAG, "Power driver, Power state: "+(powerOn?"POWER ON.":"POWER DOWN."));
             Thread.sleep(10);
            } catch (Exception e) {
-        	   Log.w(TAG, "Power driver, write device data error.",e);
+        	   Log.w(TAG, "Power driver, write power on data error.",e);
         	   return false;
            }
 		
@@ -199,7 +200,7 @@ public class UHFSilionService extends Service {
             
             Thread.sleep(50);
            } catch (Exception e) {
-        	   Log.w(TAG, "Power driver, write device data error.",e);
+        	   Log.w(TAG, "Power driver, write gpio to serial error.",e);
            }
 		
 		return true;
@@ -821,6 +822,9 @@ public class UHFSilionService extends Service {
 			if(msg.what == MSG_DO_SCREEN_OFF)
 			{
 				mPowerOnBeforeScreenOff = mPowerOn;
+				if(mUHFDeviceModel == null)
+					return ;
+				
 				doStopReading();
 				try {
 					Thread.sleep(500);
@@ -1377,9 +1381,11 @@ public class UHFSilionService extends Service {
 			if(!mPowerOn) //未上电,上先电获取
 			{
 				//驱动上电
-				powerDriver(true);
-		        boolean blen=mRfidPower.PowerUp();
-		        state =  blen ? UHFReader.READER_STATE.OK_ERR : UHFReader.READER_STATE.CMD_FAILED_ERR;
+				boolean power = powerDriver(true);
+				if(power){
+					boolean blen=mRfidPower.PowerUp();
+			        state =  blen ? UHFReader.READER_STATE.OK_ERR : UHFReader.READER_STATE.CMD_FAILED_ERR;
+				}
 		        
 		        if(state == UHFReader.READER_STATE.OK_ERR)
 					state = initReader();//连接读写器(初始创建读写器)
@@ -1421,10 +1427,14 @@ public class UHFSilionService extends Service {
 			else //未上电,上先电获取
 			{
 				//驱动上电
-				powerDriver(true);
+				boolean power = powerDriver(true);
 				
-		        boolean blen=mRfidPower.PowerUp();
-		        UHFReader.READER_STATE state =  blen ? UHFReader.READER_STATE.OK_ERR : UHFReader.READER_STATE.CMD_FAILED_ERR;
+				
+				UHFReader.READER_STATE state = UHFReader.READER_STATE.CMD_FAILED_ERR;
+				if(power){
+					boolean blen=mRfidPower.PowerUp();
+			        state =  blen ? UHFReader.READER_STATE.OK_ERR : UHFReader.READER_STATE.CMD_FAILED_ERR;
+				}
 		        
 		        if(state == UHFReader.READER_STATE.OK_ERR)
 					state = initReader();//连接读写器(初始创建读写器)
@@ -1445,9 +1455,11 @@ public class UHFSilionService extends Service {
 					
 					if (mReader != null)
 						mReader.CloseReader();
+					
+					
 		        }
 				
-				//驱动下电
+		      //驱动下电
 				powerDriver(false);
 			}
 			Binder.restoreCallingIdentity(id);
