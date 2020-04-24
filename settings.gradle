@@ -1,0 +1,2 @@
+rootProject.name='UHF_Silion_Service'
+include ':app'
