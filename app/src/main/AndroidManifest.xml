@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.nlscan.uhf.silion"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.nlscan.uhf.silionBle"
     android:versionCode="44"
     android:versionName="v4.4"
     android:sharedUserId="android.uid.system">
@@ -20,19 +21,20 @@
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/MyAppTheme" 
-        android:persistent="false">
+        android:persistent="false"
+        tools:ignore="GoogleAppIndexingWarning">
         <activity
-            android:name="com.nlscan.uhf.silion.MainActivity"
+            android:name="com.nlscan.uhf.silionBle.MainActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
-                <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
+                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         
         <activity
-            android:name=".TagReadLockActivity"
+            android:name="com.nlscan.uhf.silionBle.TagReadLockActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize"
             android:label="@string/read_write_lock">
@@ -43,7 +45,7 @@
          </activity>
          
         <activity
-            android:name=".UHFSilionSettingsMainActivity"
+            android:name="com.nlscan.uhf.silionBle.UHFSilionSettingsMainActivity"
             android:screenOrientation="portrait"
             android:label="@string/uhf_settings">
             <intent-filter>
@@ -54,62 +56,62 @@
         
         <!-- 盘点参数 -->
          <activity
-            android:name=".settings.InventoryParamsActivity"
+            android:name="com.nlscan.uhf.silionBle.settings.InventoryParamsActivity"
             android:screenOrientation="portrait"
             android:label="@string/inventory_params"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize"/>
          
         <!-- 天线功率 -->
          <activity
-            android:name=".settings.AntsPowerActivity"
+            android:name="com.nlscan.uhf.silionBle.settings.AntsPowerActivity"
             android:screenOrientation="portrait"
             android:label="@string/ants_power"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize"/>
          
           <!-- 区域频率 -->
          <activity
-            android:name=".settings.RegionFreActivity"
+            android:name="com.nlscan.uhf.silionBle.settings.RegionFreActivity"
             android:screenOrientation="portrait"
             android:label="@string/region_freq"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize"/>
          
          <!-- Gen2项 -->
          <activity
-            android:name=".settings.Gen2Activity"
+            android:name="com.nlscan.uhf.silionBle.settings.Gen2Activity"
             android:screenOrientation="portrait"
             android:label="@string/gen2_item"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize"/>
          
          <!-- 盘点过滤 -->
          <activity
-            android:name=".settings.InventoryFilterActivity"
+            android:name="com.nlscan.uhf.silionBle.settings.InventoryFilterActivity"
             android:screenOrientation="portrait"
             android:label="@string/inventory_filter"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize"/>
          
           <!-- 附加数据 -->
          <activity
-            android:name=".settings.EmbedDataActivity"
+            android:name="com.nlscan.uhf.silionBle.settings.EmbedDataActivity"
             android:screenOrientation="portrait"
             android:label="@string/addition_data"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize"/>
          
          <!-- 其他参数 -->
          <activity
-            android:name=".settings.OtherParamsActivity"
+            android:name="com.nlscan.uhf.silionBle.settings.OtherParamsActivity"
             android:screenOrientation="portrait"
             android:label="@string/other_params"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize"/>
          
          <!-- 快速模式 -->
          <activity
-            android:name=".settings.QuickModeActivity"
+            android:name="com.nlscan.uhf.silionBle.settings.QuickModeActivity"
             android:screenOrientation="portrait"
             android:label="@string/quick_mode"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize"/>
          
         <service
-            android:name=".UHFSilionService"
+            android:name="com.nlscan.uhf.silionBle.UHFSilionService"
             android:exported="true">
             <intent-filter>
                 <action android:name="nlscan.intent.action.uhf.UFH_SERVICE" />

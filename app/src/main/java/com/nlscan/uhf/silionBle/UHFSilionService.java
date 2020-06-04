@@ -1,4 +1,4 @@
-package com.nlscan.uhf.silion;
+package com.nlscan.uhf.silionBle;
 
 import java.io.FileWriter;
 import java.util.Arrays;
@@ -37,11 +37,7 @@ import com.nlscan.android.uhf.UHFCommonParams;
 import com.nlscan.android.uhf.UHFManager;
 import com.nlscan.android.uhf.UHFModuleInfo;
 import com.nlscan.android.uhf.UHFReader;
-import com.nlscan.uhf.silion.Constants;
-import com.nlscan.uhf.silion.DLog;
-import com.nlscan.uhf.silion.R;
-import com.nlscan.uhf.silion.UHFSilionParams;
-import com.nlscan.uhf.silion.UHFSilionSettingService;
+import com.nlscan.uhf.silionBle.R;
 import com.pow.api.cls.RfidPower;
 import com.pow.api.cls.RfidPower.PDATYPE;
 import com.uhf.api.cls.Reader;

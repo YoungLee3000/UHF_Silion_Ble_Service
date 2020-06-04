@@ -1,4 +1,4 @@
-package com.nlscan.uhf.silion.settings;
+package com.nlscan.uhf.silionBle.settings;
 
 import java.util.Map;
 
@@ -20,9 +20,9 @@ import android.widget.Toast;
 
 import com.nlscan.android.uhf.UHFManager;
 import com.nlscan.android.uhf.UHFReader;
-import com.nlscan.uhf.silion.BaseActivity;
-import com.nlscan.uhf.silion.R;
-import com.nlscan.uhf.silion.UHFSilionParams;
+import com.nlscan.uhf.silionBle.BaseActivity;
+import com.nlscan.uhf.silionBle.R;
+import com.nlscan.uhf.silionBle.UHFSilionParams;
 
 /**
  * 盘点过滤

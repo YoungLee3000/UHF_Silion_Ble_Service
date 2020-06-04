@@ -1,4 +1,4 @@
-package com.nlscan.uhf.silion;
+package com.nlscan.uhf.silionBle;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -10,10 +10,8 @@ import java.util.Map;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
-import android.opengl.Visibility;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.KeyEvent;

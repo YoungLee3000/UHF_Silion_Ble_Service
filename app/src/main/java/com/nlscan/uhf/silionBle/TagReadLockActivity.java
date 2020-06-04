@@ -1,4 +1,4 @@
-package com.nlscan.uhf.silion;
+package com.nlscan.uhf.silionBle;
 
 import java.util.Map;
 

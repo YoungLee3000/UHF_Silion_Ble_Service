@@ -1,4 +1,4 @@
-package com.nlscan.uhf.silion;
+package com.nlscan.uhf.silionBle;
 
 import android.content.Context;
 import android.content.Intent;
@@ -10,14 +10,14 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.nlscan.uhf.silion.settings.AntsPowerActivity;
-import com.nlscan.uhf.silion.settings.EmbedDataActivity;
-import com.nlscan.uhf.silion.settings.Gen2Activity;
-import com.nlscan.uhf.silion.settings.InventoryFilterActivity;
-import com.nlscan.uhf.silion.settings.InventoryParamsActivity;
-import com.nlscan.uhf.silion.settings.OtherParamsActivity;
-import com.nlscan.uhf.silion.settings.QuickModeActivity;
-import com.nlscan.uhf.silion.settings.RegionFreActivity;
+import com.nlscan.uhf.silionBle.settings.AntsPowerActivity;
+import com.nlscan.uhf.silionBle.settings.EmbedDataActivity;
+import com.nlscan.uhf.silionBle.settings.Gen2Activity;
+import com.nlscan.uhf.silionBle.settings.InventoryFilterActivity;
+import com.nlscan.uhf.silionBle.settings.InventoryParamsActivity;
+import com.nlscan.uhf.silionBle.settings.OtherParamsActivity;
+import com.nlscan.uhf.silionBle.settings.QuickModeActivity;
+import com.nlscan.uhf.silionBle.settings.RegionFreActivity;
 
 public class UHFSilionSettingsMainActivity extends BaseActivity {
 

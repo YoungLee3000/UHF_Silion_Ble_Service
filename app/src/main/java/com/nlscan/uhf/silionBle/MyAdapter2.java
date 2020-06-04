@@ -1,4 +1,4 @@
-package com.nlscan.uhf.silion;
+package com.nlscan.uhf.silionBle;
 
 import android.annotation.SuppressLint;
 import android.content.Context;

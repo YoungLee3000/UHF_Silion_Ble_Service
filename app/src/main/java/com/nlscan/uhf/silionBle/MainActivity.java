@@ -1,4 +1,4 @@
-package com.nlscan.uhf.silion;
+package com.nlscan.uhf.silionBle;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,7 +29,6 @@ import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.nlscan.android.uhf.IUHFTagInventoryListener;
 import com.nlscan.android.uhf.TagInfo;
 import com.nlscan.android.uhf.UHFReader;
 
