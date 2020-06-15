@@ -20,6 +20,7 @@ import android.os.IBinder;
 import android.os.Message;
 import android.os.Parcelable;
 import android.os.RemoteException;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,6 +32,7 @@ import android.widget.Toast;
 
 import com.nlscan.android.uhf.TagInfo;
 import com.nlscan.android.uhf.UHFReader;
+import com.nlscan.uhf.silion.ISilionUHFService;
 
 public class MainActivity extends Activity {
 
@@ -63,6 +65,8 @@ public class MainActivity extends Activity {
 	private Map<String, String> listHeader = new HashMap<String, String>(); 
 	
 	private long exittime;
+
+	private CrcModel crcModel = new CrcModel();
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -70,6 +74,10 @@ public class MainActivity extends Activity {
 		mContext = getApplicationContext();
 		initView();
 		bindUHFService();
+
+		Log.d("bletest","the crc " +
+				crcModel.getCrcStr(HexUtil.toByteArray("FF0003")));
+
 	}
 	
 	@Override
@@ -142,7 +150,7 @@ public class MainActivity extends Activity {
 	private void bindUHFService()
 	{
 		Intent intent = new Intent("nlscan.intent.action.uhf.UFH_SERVICE");
-		intent.setPackage("com.nlscan.uhf.silion");
+		intent.setPackage("com.nlscan.uhf.silionBle");
 		mContext.bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE);
 	}
 	
@@ -354,6 +362,7 @@ public class MainActivity extends Activity {
 				for(int i =0 ;i < tagInfos.length; i++)
 				{
 					TagInfo tag = (TagInfo) tagInfos[i];
+					if (tag == null) continue;
 					String epcId = HexUtil.bytesToHexString(tag.EpcId);
 					
 					if (!TagsMap.containsKey(epcId)) {

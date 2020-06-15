@@ -14,7 +14,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.nlscan.uhf.silion"
+        applicationId "com.nlscan.uhf.silionBle"
         minSdkVersion 15
         targetSdkVersion 28
         versionCode 44
@@ -34,9 +34,20 @@ android {
         }
     }
 
+    compileOptions {
+        sourceCompatibility = 1.8
+        targetCompatibility = 1.8
+    }
+
     sourceSets {
         main {
             jniLibs.srcDirs = ['src/main/libs/']
+        }
+    }
+
+    externalNativeBuild {
+        ndkBuild {
+            path file('src/main/jni/Android.mk')
         }
     }
 

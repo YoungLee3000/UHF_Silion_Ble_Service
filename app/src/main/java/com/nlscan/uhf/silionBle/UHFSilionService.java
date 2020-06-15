@@ -12,10 +12,12 @@ import org.json.JSONObject;
 import android.app.AlertDialog;
 import android.app.Service;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.media.AudioManager;
 import android.media.SoundPool;
 import android.os.BatteryManager;
@@ -37,8 +39,8 @@ import com.nlscan.android.uhf.UHFCommonParams;
 import com.nlscan.android.uhf.UHFManager;
 import com.nlscan.android.uhf.UHFModuleInfo;
 import com.nlscan.android.uhf.UHFReader;
-import com.nlscan.uhf.silionBle.R;
-import com.pow.api.cls.RfidPower;
+import com.nlscan.blecommservice.IBleInterface;
+import com.nlscan.uhf.silion.ISilionUHFService;
 import com.pow.api.cls.RfidPower.PDATYPE;
 import com.uhf.api.cls.Reader;
 import com.uhf.api.cls.Reader.HardwareDetails;
@@ -49,13 +51,13 @@ import com.uhf.api.cls.Reader.TAGINFO;
 public class UHFSilionService extends Service {
 
 
-	private final static String TAG = Constants.TAG_PREFIX+"UHFSilionService";
+	private final static String TAG = "UHFSilionBleService";
 
 	
 	private Context mContext;
 	private IBinder mBinder;
-	private RfidPower mRfidPower;
-	private Reader mReader;
+//	private RfidPower mRfidPower;
+	private BleReader mReader;
 	private boolean mPowerOn = false;
 	/**
 	 * 屏幕灭屏前,是否处在上电状态
@@ -110,18 +112,24 @@ public class UHFSilionService extends Service {
 	private final static String EXTRA_STRING_WARN_TWO = "warn value 2";
 
 
+	//设备信息
+	private final static String DEFAULT_MODULE = "MODULE_SLRB1200";
+	//蓝牙相关
+	private IBleInterface mBleInterface;
+
+
 	@Override
 	public void onCreate() {
 		super.onCreate();
 		
 		mContext = getApplicationContext();
 		mUHFMgr = UHFManager.getInstance();
+
+		bindBleService();
+
+//		mRfidPower = new RfidPower(PT);
 		
-		mReader = new Reader();
-		mRfidPower = new RfidPower(PT);
-		
-		mSettingsService = new UHFSilionSettingService(mContext, mReader);
-		mSettingsMap = mSettingsService.getAllSettings();
+
 		
 		mReadingHandlerThread = new HandlerThread("ReadingHandlerThread",android.os.Process.THREAD_PRIORITY_FOREGROUND);
 		mReadingHandlerThread.start();
@@ -145,6 +153,44 @@ public class UHFSilionService extends Service {
 		
 		Log.d(TAG, "Silion UHF Service onCreated.");
 	}
+
+
+	/**
+	 * 绑定BLE蓝牙服务
+	 */
+	private void bindBleService(){
+		Log.d(TAG,"begin bind ble service");
+		Intent service = new Intent("android.nlscan.intent.action.START_BLE_SERVICE");
+		service.setPackage("com.nlscan.blecommservice");
+		mContext.bindService(service,new BleServiceConnection(), Context.BIND_AUTO_CREATE);
+	}
+
+
+	/**
+	 * 绑定服务状态
+	 */
+	private class  BleServiceConnection implements ServiceConnection {
+		@Override
+		public void onServiceConnected(ComponentName name, IBinder service) {
+			mBleInterface = IBleInterface.Stub.asInterface(service);
+			mReader = new BleReader(mBleInterface);
+			mSettingsService = new UHFSilionSettingService(mContext, mReader);
+			mSettingsMap = mSettingsService.getAllSettings();
+			Log.d(TAG, "onServiceConnected");
+			try {
+				Log.d(TAG,"blue is access " + mBleInterface.isBleAccess());
+			} catch (RemoteException e) {
+				e.printStackTrace();
+			}
+		}
+		@Override
+		public void onServiceDisconnected(ComponentName name) {
+			mBleInterface = null;
+		}
+	}
+
+
+
 
 	@Override
 	public void onDestroy() {
@@ -206,7 +252,7 @@ public class UHFSilionService extends Service {
 	
 	/**
 	 * UHF模块上电
-	 * @param reTryState 上一次的上电状态
+	 * @param lastState 上一次的上电状态
 	 * @return
 	 */
 	private UHFReader.READER_STATE doPowerOn(UHFReader.READER_STATE lastState)
@@ -230,40 +276,20 @@ public class UHFSilionService extends Service {
 			sendUHFState(UHFManager.UHF_STATE_POWER_ONING);
 		
 		//驱动上电
-		boolean powOn = powerDriver(true);
-		if(!powOn)
-			return  UHFReader.READER_STATE.HARDWARE_ALERT_ERR_BY_UNKNOWN_ERR;
+//		boolean powOn = powerDriver(true);
+//		if(!powOn)
+//			return  UHFReader.READER_STATE.HARDWARE_ALERT_ERR_BY_UNKNOWN_ERR;
 
 
-		
-        boolean blen=mRfidPower.PowerUp();
-        UHFReader.READER_STATE state =  blen ? UHFReader.READER_STATE.OK_ERR : UHFReader.READER_STATE.CMD_FAILED_ERR;
-        
-        if(state == UHFReader.READER_STATE.OK_ERR)
-			state = initReader();//连接读写器(初始创建读写器)
+        UHFReader.READER_STATE state =   initReader();
+
 		if(state == UHFReader.READER_STATE.OK_ERR)
 			state = doInitReaderParams();//初始化读写器参数
 		mPowerOn = (state == UHFReader.READER_STATE.OK_ERR);
-		if(state != UHFReader.READER_STATE.OK_ERR){ //初始化读写器失败,下电以备下一次的重新上电
-			powerDriver(false);//驱动下电
-		}
-		
-		//失败重试
-//		if(state != UHFReader.READER_STATE.OK_ERR && doPowerRetryCount < 1)
-//		{
-//			try {
-//				Log.d(TAG, "Do power failed,state: "+state.toString()+", Retry doPowerOn.");
-//				Thread.sleep(200);
-//				doPowerRetryCount ++ ;
-//				state = doPowerOn(state);
-//			} catch (Exception e) {
-//			}
+//		if(state != UHFReader.READER_STATE.OK_ERR){ //初始化读写器失败,下电以备下一次的重新上电
+//			powerDriver(false);//驱动下电
 //		}
-//		
-//		if(doPowerRetryCount == 0)
-//			sendUHFState(mPowerOn?UHFManager.UHF_STATE_POWER_ON : UHFManager.UHF_STATE_POWER_OFF);
-//		else
-//			doPowerRetryCount --;
+
 		sendUHFState(mPowerOn?UHFManager.UHF_STATE_POWER_ON : UHFManager.UHF_STATE_POWER_OFF);
         return state;
 	}
@@ -304,17 +330,17 @@ public class UHFSilionService extends Service {
         	READER_ERR er = READER_ERR.MT_CMD_FAILED_ERR;
         	er = mReader.ParamSet(Mtr_Param.MTR_PARAM_TAG_SEARCH_MODE, new int[] { 0 });
         	
-			HardwareDetails val = mReader.new HardwareDetails();
-			er = mReader.GetHardwareDetails(val);//获取硬件信息
-			
+//			HardwareDetails val = mReader.new HardwareDetails();
+//			er = mReader.GetHardwareDetails(val);//获取硬件信息
+			er = mBleInterface.isBleAccess() ?  READER_ERR.MT_OK_ERR : READER_ERR.MT_CMD_FAILED_ERR;
 			if(er == READER_ERR.MT_OK_ERR)
 			{
 				//UHF模块型号
-				mUHFDeviceModel = val.module.toString();
+				mUHFDeviceModel = DEFAULT_MODULE;
 				
-				Log.d(TAG, "Module_Type : "+val.module.toString());
-				Log.d(TAG, "MaindBoard_Type : "+val.board.toString());
-				Log.d(TAG, "Reader_Type : "+val.logictype.toString());
+//				Log.d(TAG, "Module_Type : "+val.module.toString());
+//				Log.d(TAG, "MaindBoard_Type : "+val.board.toString());
+//				Log.d(TAG, "Reader_Type : "+val.logictype.toString());
 			}
 			
 			return UHFReader.READER_STATE.valueOf(er.value()); 
@@ -345,15 +371,14 @@ public class UHFSilionService extends Service {
 				mReader.CloseReader();
 
 			boolean oldPowerOn = mPowerOn;
-			boolean blen = mRfidPower.PowerDown();
+			boolean blen = true;
 			try {
 				//驱动下电
-				powerDriver(false);
-				Log.d(TAG, "UHF disconnect complete,state : "+blen);
-				UHFReader.READER_STATE state =  blen ? UHFReader.READER_STATE.OK_ERR : UHFReader.READER_STATE.CMD_FAILED_ERR;
-				if(state == UHFReader.READER_STATE.OK_ERR ){
-					mPowerOn = false;
-				}
+//				powerDriver(false);
+//				Log.d(TAG, "UHF disconnect complete,state : "+blen);
+				UHFReader.READER_STATE state =   UHFReader.READER_STATE.OK_ERR ;
+				mPowerOn = false;
+
 				Log.d(TAG, "UHF pown off , state : "+state.toString());
 				return state;
 			} catch (Exception e) {
@@ -400,22 +425,23 @@ public class UHFSilionService extends Service {
 				mStartReadTime = System.currentTimeMillis();
 			
 			READER_ERR er;
-			TAGINFO[] tagInfos = null;
+			TAGINFO[] tagInfos = new TAGINFO[255];
 			String[] epcIds = null;
 			int[] tagcnt = new int[1]; //本
 			tagcnt[0] = 0;
 			
 			
 			boolean quickMode = isQuickMode();
+			Log.d(TAG,"if quick mode " + quickMode);
 			int[] uants = getAnts();
 			long readTimeout = mSettingsService.getLongParamValue(UHFSilionParams.INV_TIME_OUT.KEY, UHFSilionParams.INV_TIME_OUT.PARAM_INV_TIME_OUT,UHFSilionParams.INV_TIME_OUT.DEFAULT_INV_TIMEOUT);
 			
 			if (quickMode) {
-				er =mReader.AsyncGetTagCount(tagcnt);
+				er =mReader.AsyncGetTagCount(tagcnt,tagInfos);
 			} else {
 				//Log.d(TAG, "Start TagInventory_Raw...");
 				//long begin = System.currentTimeMillis();
-				er = mReader.TagInventory_Raw(uants,uants.length, (short) readTimeout, tagcnt);
+				er = mReader.TagInventory_Raw(uants,uants.length, (short) readTimeout, tagcnt,tagInfos);
 				//long end = System.currentTimeMillis();
 				//Log.d(TAG, "End TagInventory_Raw.., span time : "+(end - begin));
 			}
@@ -426,57 +452,52 @@ public class UHFSilionService extends Service {
 				
 				if (tagcnt[0] > 0) 
 				{
-					int tagCount = tagcnt[0];
-					epcIds = new String[tagCount];
-					tagInfos = new TAGINFO[tagCount];
+//					int tagCount = tagcnt[0];
+//					epcIds = new String[tagCount];
+//					tagInfos = new TAGINFO[tagCount];
+
 					
 					//Log.d(TAG, "============================================================");
-					for (int i = 0; i < tagCount; i++) 
-					{
-						TAGINFO tfs = mReader.new TAGINFO();
-						if (mRfidPower.GetType() == PDATYPE.SCAN_ALPS_ANDROID_CUIUS2) 
-						{
-							try {
-								Thread.sleep(10);
-							} catch (InterruptedException e) {
-								e.printStackTrace();
-							}
-						}
-						
-						if (quickMode)
-							er = mReader.AsyncGetNextTag(tfs);
-						else
-							er = mReader.GetNextTag(tfs);
+//					for (int i = 0; i < tagCount; i++)
+//					{
+//						TAGINFO tfs = mReader.new TAGINFO();
+//
+//
+//						if (quickMode)
+//							er = mReader.AsyncGetNextTag(tfs);
+//						else
+//							er = mReader.GetNextTag(tfs);
+//
+//						// Log.d("MYINFO","get tag index:" +
+//						// String.valueOf(i)+ " er:" + er.toString());
+//						if (er == READER_ERR.MT_HARDWARE_ALERT_ERR_BY_TOO_MANY_RESET)
+//						{
+//							doStopReading();
+//							doPowerOff();
+//							break;
+//						}
+//
+//						// Log.d("MYINFO","debug gettag:"+er.toString());
+//						// Log.d("MYINFO","debug tag:"+Reader.bytes_Hexstr(tfs.EpcId));
+//						String epcstr = tfs.EpcId == null ? null :  Reader.bytes_Hexstr(tfs.EpcId);
+//						if(epcstr == null)
+//							continue;
+//
+//						if (epcstr.length() < 24)
+//							epcstr = String.format("%-24s", epcstr);
+//						if (er == READER_ERR.MT_OK_ERR)
+//						{
+//							epcIds[i] = epcstr;
+//							tagInfos[i] = tfs;
+//						}
+//
+//						//Log.d(TAG, "EpcId : "+epcstr);
+//
+//					}//end for
 
-						// Log.d("MYINFO","get tag index:" +
-						// String.valueOf(i)+ " er:" + er.toString());
-						if (er == READER_ERR.MT_HARDWARE_ALERT_ERR_BY_TOO_MANY_RESET) 
-						{
-							doStopReading();
-							doPowerOff();
-							break;
-						}
-
-						// Log.d("MYINFO","debug gettag:"+er.toString());
-						// Log.d("MYINFO","debug tag:"+Reader.bytes_Hexstr(tfs.EpcId));
-						String epcstr = tfs.EpcId == null ? null :  Reader.bytes_Hexstr(tfs.EpcId);
-						if(epcstr == null)
-							continue;
-						
-						if (epcstr.length() < 24)
-							epcstr = String.format("%-24s", epcstr);
-						if (er == READER_ERR.MT_OK_ERR) 
-						{
-							epcIds[i] = epcstr;
-							tagInfos[i] = tfs;
-						} 
-						
-						//Log.d(TAG, "EpcId : "+epcstr);
-						
-					}//end for
-					
 					//Log.d(TAG, "============================================================");
-					
+
+					Log.d(TAG,"tag info size " + tagInfos.length);
 					if(tagInfos != null && tagInfos.length > 0)
 					{
 						//成功提示
@@ -484,20 +505,20 @@ public class UHFSilionService extends Service {
 						//发送给客户
 						sendResult(tagInfos);
 					}
-					
-					
-				}//end if(tagcnt[0] > 0) 
+
+
+				}//end if(tagcnt[0] > 0)
 				
 			}else{
-				
+
 				Log.w(TAG, "Reading error : er = "+er.toString());
-				if (er == READER_ERR.MT_HARDWARE_ALERT_ERR_BY_TOO_MANY_RESET) 
-				{
-					doPowerOff();
-					Thread.sleep(500);
-					doPowerOn(null);
-				}
-				
+//				if (er == READER_ERR.MT_HARDWARE_ALERT_ERR_BY_TOO_MANY_RESET)
+//				{
+//					doPowerOff();
+//					Thread.sleep(500);
+//					doPowerOn(null);
+//				}
+
 			}//end if
 			
 		} catch (Exception e) {
@@ -581,12 +602,13 @@ public class UHFSilionService extends Service {
 	{
 		if(tags == null || tags.length == 0)
 			return ;
-		
+		Log.d(TAG,"the len of tag " + tags.length);
 		TAGINFO[]  newTags = Arrays.copyOf(tags, tags.length);
 		TagInfo[] nls_TagInfos = new TagInfo[newTags.length];
 		for(int i = 0 ;i< newTags.length;i++)
 		{
 			TAGINFO tag = newTags[i];
+			if (tag == null) continue;
 			try {
 				tag.protocol = tag.protocol == null? Reader.SL_TagProtocol.SL_TAG_PROTOCOL_NONE:tag.protocol;
 				TagInfo.SL_TagProtocol nls_TagProtocol = TagInfo.SL_TagProtocol.valueOf(tag.protocol.value());
@@ -1094,9 +1116,9 @@ public class UHFSilionService extends Service {
 				
 				long id = Binder.clearCallingIdentity();
 				
-				//灭屏状态
-				//if( !mScreenOn )
-					//return UHFReader.READER_STATE.INVALID_READER_HANDLE.value();
+//				灭屏状态
+				if( !mScreenOn )
+					return UHFReader.READER_STATE.INVALID_READER_HANDLE.value();
 				
 				if(mPowerOn)
 					return UHFReader.READER_STATE.OK_ERR.value();
@@ -1108,6 +1130,7 @@ public class UHFSilionService extends Service {
 				UHFReader.READER_STATE state =  doPowerOn(null);
 				
 				Binder.restoreCallingIdentity(id);
+
 				return state.value();
 			}
 			
@@ -1120,6 +1143,7 @@ public class UHFSilionService extends Service {
 			
 			long id = Binder.clearCallingIdentity();
 			UHFReader.READER_STATE state = doPowerOff();
+//			mPowerOn = false;
 			Binder.restoreCallingIdentity(id);
 			return state.value();
 		}
@@ -1144,6 +1168,7 @@ public class UHFSilionService extends Service {
 				
 				//触发扫描
 				mForceStoped = false;
+				mBleInterface.clearUhfTagData();
 				boolean isQuickMode = isQuickMode();
 				if(isQuickMode)
 					nonStopStartReading();
@@ -1377,36 +1402,27 @@ public class UHFSilionService extends Service {
 			if(!mPowerOn) //未上电,上先电获取
 			{
 				//驱动上电
-				boolean power = powerDriver(true);
-				if(power){
-					boolean blen=mRfidPower.PowerUp();
-			        state =  blen ? UHFReader.READER_STATE.OK_ERR : UHFReader.READER_STATE.CMD_FAILED_ERR;
-				}
-		        
-		        if(state == UHFReader.READER_STATE.OK_ERR)
-					state = initReader();//连接读写器(初始创建读写器)
+//				boolean power = powerDriver(true);
+//				if(power)
+					state =  initReader();
 			}
 			
 			boolean available = state == UHFReader.READER_STATE.OK_ERR;
 			Log.d(TAG, "Get UHFDeviceModel available: "+available);	
 			 if(available)
 	        {
-				HardwareDetails val = mReader.new HardwareDetails();
-				READER_ERR er = mReader.GetHardwareDetails(val);//获取硬件信息
-				
-				if(er == READER_ERR.MT_OK_ERR)
-				{
-					//UHF模块型号
-					mUHFDeviceModel = val.module.toString();
-					Log.d(TAG, "Get Module_Type : "+val.module.toString());
-				}
+				mUHFDeviceModel = DEFAULT_MODULE;
+				Log.d(TAG, "Get Module_Type : "+mUHFDeviceModel);
+
+				if (mReader != null)
+					mReader.CloseReader();
 	        }
 			
-			if(!oldPowerOn)
-			{
-				//驱动下电
-				powerDriver(false);
-			}
+//			if(!oldPowerOn)
+//			{
+//				//驱动下电
+//				powerDriver(false);
+//			}
 			
 			return mUHFDeviceModel;
 			
@@ -1423,31 +1439,25 @@ public class UHFSilionService extends Service {
 			else //未上电,上先电获取
 			{
 				//驱动上电
-				boolean power = powerDriver(true);
+//				boolean power = powerDriver(true);
 				
 				
-				UHFReader.READER_STATE state = UHFReader.READER_STATE.CMD_FAILED_ERR;
-				if(power){
-					boolean blen=mRfidPower.PowerUp();
-			        state =  blen ? UHFReader.READER_STATE.OK_ERR : UHFReader.READER_STATE.CMD_FAILED_ERR;
-				}
-		        
-		        if(state == UHFReader.READER_STATE.OK_ERR)
-					state = initReader();//连接读写器(初始创建读写器)
-		        
+				UHFReader.READER_STATE state = initReader();
+
+
 		        available = state == UHFReader.READER_STATE.OK_ERR;
 		        Log.d(TAG, "isDeviceAvailable available: "+available);	
 		        if(available)
 		        {
-		        	HardwareDetails val = mReader.new HardwareDetails();
-		        	READER_ERR  er = mReader.GetHardwareDetails(val);//获取硬件信息
-					
-					if(er == READER_ERR.MT_OK_ERR)
-					{
+//		        	HardwareDetails val = mReader.new HardwareDetails();
+//		        	READER_ERR  er = mReader.GetHardwareDetails(val);//获取硬件信息
+//
+//					if(er == READER_ERR.MT_OK_ERR)
+//					{
 						//UHF模块型号
-						mUHFDeviceModel = val.module.toString();
-						Log.d(TAG, "Get Module_Type : "+val.module.toString());
-					}
+						mUHFDeviceModel = DEFAULT_MODULE;
+						Log.d(TAG, "Get Module_Type : "+mUHFDeviceModel);
+//					}
 					
 					if (mReader != null)
 						mReader.CloseReader();
@@ -1456,7 +1466,7 @@ public class UHFSilionService extends Service {
 		        }
 				
 		      //驱动下电
-				powerDriver(false);
+//				powerDriver(false);
 			}
 			Binder.restoreCallingIdentity(id);
 			return available;

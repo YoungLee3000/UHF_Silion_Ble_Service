@@ -20,7 +20,7 @@ import com.uhf.api.cls.Reader.READER_ERR;
 
 public class UHFSilionSettingService {
 
-	private final static String TAG = Constants.TAG_PREFIX+"UHFSilionSettingService";
+	private final static String TAG = "UHFSilionBleSetting";
 
 	private final static String SP_NAME_COMMON = "common";
 	private final static String SP_KEY_FISRT_LOADING = "fisrt_loading";
@@ -32,7 +32,7 @@ public class UHFSilionSettingService {
 	public UHFSilionSettingService(Context context, Reader reader)
 	{
 		this.mContext = context;
-		this.mReader = reader;
+//		this.mReader = reader;
 		mSettingsMap = new HashMap<String,Object>();
 	}
 	
@@ -971,7 +971,6 @@ public class UHFSilionSettingService {
 	
 	/**
 	 * 设置读写器发射功率
-	 * @param paramName 属性
 	 * @param sValue JSON数组[{"antid":1,"readPower":2600,"writePower":2700},...]
 	 * @return ({@link UHFReader.READER_STATE})
 	 */
@@ -1395,7 +1394,6 @@ public class UHFSilionSettingService {
 	
 	/**
 	 * 将"数字,数字..."的字符串转成int[]
-	 * @param sArray
 	 * @return
 	 */
 	private int[] convertToIntArray(String targetStr , String splite)
@@ -1915,7 +1913,6 @@ public class UHFSilionSettingService {
 	 * 保存配置参数
 	 * @param paramKey
 	 * @param paramName
-	 * @param value
 	 */
 	private void saveSettings(String paramKey, String paramName, String sValue)
 	{

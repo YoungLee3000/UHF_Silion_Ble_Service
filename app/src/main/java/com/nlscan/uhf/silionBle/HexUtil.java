@@ -71,6 +71,12 @@ public class HexUtil {
 		return false;
 	}
 
+
+	/**
+	 * 16进制字节转字符
+	 * @param bArray
+	 * @return
+	 */
 	public static final String bytesToHexString(byte[] bArray) {
 		if(bArray == null || bArray.length <= 0)
 			return null;
@@ -85,36 +91,43 @@ public class HexUtil {
 		return sb.toString();
 	}
 	
+
+
+
 	/**
-	 * 将16进制字符串转成二进制字节数据，目前此函数只支持长度不超过600个字符的16进制字符串的转换。
-	 * @param buf 16进制字符串(长度必须是2的倍数，因为两个16进制字符转换为一个二进制字节，分别代表一个字节的高四位和低四位):例(0x):0A02
-	 * @return 二进制字节数组
+	 * 16进制的字符串表示转成字节数组
+	 * @param hexString 16进制格式的字符串
+	 * @return 转换后的字节数组
+	 **/
+	public static byte[] toByteArray(String hexString) {
+		hexString = hexString.replaceAll(" ", "");
+		final byte[] byteArray = new byte[hexString.length() / 2];
+		int k = 0;
+		for (int i = 0; i < byteArray.length; i++) {//因为是16进制，最多只会占用4位，转换成字节需要两个16进制的字符，高位在先
+			byte high = (byte) (Character.digit(hexString.charAt(k), 16) & 0xff);
+			byte low = (byte) (Character.digit(hexString.charAt(k + 1), 16) & 0xff);
+			byteArray[i] = (byte) (high << 4 | low);
+			k += 2;
+		}
+		return byteArray;
+	}
+
+
+	/**
+	 * 16进制字符转整形数
+	 * @param hexStr
+	 * @return
 	 */
-	public static byte[] Str2Hex(String hexStr) 
-	{
-		if(TextUtils.isEmpty(hexStr))
-			return null;
-		
+	public static int hexStr2int(String hexStr){
 		try {
-			String chex = "0123456789ABCDEF";
-			int len = hexStr.length();
-			byte[] hexbuf = new byte[len/2];
-		    for (int i = 0; i < len; i += 2)
-		    {
-		      byte hnx = (byte)chex.indexOf(hexStr.toUpperCase().substring(i, i + 1));
-		      byte lnx = 0;
-		      if (hexStr.length() > i + 1) {
-		        lnx = (byte)chex.indexOf(hexStr.toUpperCase().substring(i + 1, i + 2));
-		      }
-		      hexbuf[(i / 2)] = ((byte)(hnx << 4 & 0xFF | lnx & 0xFF));
-		    }
-			
-			return hexbuf;
-			
-		} catch (Exception e) {
+			return Integer.parseInt(hexStr,16);
+		} catch (NumberFormatException e) {
 			e.printStackTrace();
 		}
-		
-		return null;
+		return 0;
 	}
+
+
+
+
 }
