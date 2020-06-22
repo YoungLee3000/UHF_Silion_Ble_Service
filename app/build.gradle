@@ -57,6 +57,13 @@ android {
         abortOnError false
     }
 
+    //自定义打包时apk名称
+    applicationVariants.all { variant ->
+        variant.outputs.all { output ->// each 改为 all
+            outputFileName = "UHF_Silion_Ble_Service.apk"
+        }
+    }
+
 }
 
 dependencies {

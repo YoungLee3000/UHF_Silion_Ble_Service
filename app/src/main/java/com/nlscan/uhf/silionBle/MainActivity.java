@@ -185,7 +185,7 @@ public class MainActivity extends Activity {
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}
-		Toast.makeText(getApplicationContext(), "Power on :"+er.toString(), Toast.LENGTH_SHORT).show();
+//		Toast.makeText(getApplicationContext(), "Power on :"+er.toString(), Toast.LENGTH_SHORT).show();
 	}
 	
 	/**
@@ -200,7 +200,7 @@ public class MainActivity extends Activity {
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}
-		Toast.makeText(getApplicationContext(), "Power off :"+er.toString(), Toast.LENGTH_SHORT).show();
+//		Toast.makeText(getApplicationContext(), "Power off :"+er.toString(), Toast.LENGTH_SHORT).show();
 	}
 	
 	/**
@@ -208,6 +208,7 @@ public class MainActivity extends Activity {
 	 */
 	private void startReading()
 	{
+		powerOn();
 		UHFReader.READER_STATE er = UHFReader.READER_STATE.CMD_FAILED_ERR;
 		try {
 			int state = mIUHFService.startTagInventory();
@@ -230,7 +231,10 @@ public class MainActivity extends Activity {
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}
+		if (er == UHFReader.READER_STATE.OK_ERR)
+			btn_start_read.setEnabled(true);
 		Toast.makeText(getApplicationContext(), "Stop reading :"+er.toString(), Toast.LENGTH_SHORT).show();
+		powerOff();
 	}
 	
 	/**
@@ -267,9 +271,11 @@ public class MainActivity extends Activity {
 				powerOff();
 				break;
 			case R.id.btn_start_read:
+				btn_start_read.setEnabled(false);
 				startReading();
 				break;
 			case R.id.btn_stop_read:
+
 				stopReading();
 				break;
 			case R.id.btn_clear:

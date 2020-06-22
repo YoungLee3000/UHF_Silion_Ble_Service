@@ -78,49 +78,32 @@ public class BleReader extends Reader {
 //        mBleInterface = null;
     }
 
+    //获取标签，不启用匹配
     @Override
     public READER_ERR GetTagData(int ant, char bank, int address, int blkcnt, byte[] data, byte[] accesspasswd, short timeout) {
-        return super.GetTagData(ant, bank, address, blkcnt, data, accesspasswd, timeout);
-    }
+//        return super.GetTagData(ant, bank, address, blkcnt, data, accesspasswd, timeout);
 
-    @Override
-    public READER_ERR WriteTagData(int ant, char bank, int address, byte[] data, int datalen, byte[] accesspasswd, short timeout) {
-        return super.WriteTagData(ant, bank, address, data, datalen, accesspasswd, timeout);
-    }
-
-    @Override
-    public READER_ERR WriteTagEpcEx(int ant, byte[] Epc, int epclen, byte[] accesspwd, short timeout) {
-        return super.WriteTagEpcEx(ant, Epc, epclen, accesspwd, timeout);
-    }
-
-    @Override
-    public READER_ERR TagInventory(int[] ants, int antcnt, short timeout, TAGINFO[] pTInfo, int[] tagcnt) {
-        return super.TagInventory(ants, antcnt, timeout, pTInfo, tagcnt);
-    }
-
-    @Override
-    public READER_ERR TagInventory_Raw(int[] ants, int antcnt, short timeout, int[] tagcnt) {
-//        return super.TagInventory_Raw(ants, antcnt, timeout, tagcnt);
-
-
-        mIvnTagList.clear();
-        mIvnCount = 0;
-
-        //发送多标签盘存命令
+        //读取单个标签
         StringBuilder command = new StringBuilder(COMMAND_HEADER);
-        String operateCode = "22";
-        String option = "00";
-        String searchFlag = "0000";
+        String operateCode = "28";
         String strTimeOut = String.format("%04X",timeout);
+        String option = "00" ;
+        String memBank = String.format("%02X",(int)bank);
+        String readAddress = String.format("%08X",address);
+        String wordCount = String.format("%02X",blkcnt);
 
-        int length = ( option.length() + searchFlag.length() +
-                        strTimeOut.length()) / 2;
+
+        int length = (  strTimeOut.length() +   option.length() + memBank.length() +
+                readAddress.length() + wordCount.length()) / 2;
         String strLength = String.format("%02X",length);
 
         command.append(strLength);
         command.append(operateCode);
-        command.append(searchFlag);
         command.append(strTimeOut);
+        command.append(option);
+        command.append(memBank);
+        command.append(readAddress);
+        command.append(wordCount);
 
         String  crcStr =     mCrcModel.getCrcStr(HexUtil.toByteArray(command.toString())) ;
         command.append(crcStr);
@@ -137,25 +120,132 @@ public class BleReader extends Reader {
             return READER_ERR.MT_CMD_FAILED_ERR;
 
 
+
         //解析返回结果,得到扫描到的标签数
-        int relLen = resultCode.length();
-        if (relLen < 22) return READER_ERR.MT_CMD_FAILED_ERR;
 
         String relStatus =  resultCode.substring(6,10) ;
         if (!relStatus.equals("0000"))
             return READER_ERR.MT_CMD_FAILED_ERR;
-        String relSearchFlag =  resultCode.substring(12,16) ;
-        if (relSearchFlag.equals("0000")){
-            tagcnt[0] = Integer.parseInt(resultCode.substring(16,18),16);
+
+        int relLen =   Integer.parseInt(resultCode.substring(2,4),16) * 2 ;
+        int dataLen = relLen - 2;
+        data =  HexUtil.toByteArray(resultCode.substring(12,12+dataLen));
+
+        return READER_ERR.MT_OK_ERR;
+
+
+    }
+
+
+    //写标签，不启用匹配
+    @Override
+    public READER_ERR WriteTagData(int ant, char bank, int address, byte[] data, int datalen, byte[] accesspasswd, short timeout) {
+
+        //读取单个标签
+        StringBuilder command = new StringBuilder(COMMAND_HEADER);
+        String operateCode = "24";
+        String strTimeOut = String.format("%04X",timeout);
+        String option = "00" ;
+        String readAddress = String.format("%08X",address);
+        String memBank = String.format("%02X",(int)bank);
+        String writeData = HexUtil.bytesToHexString(data);
+
+
+        int length = (  strTimeOut.length() +   option.length() + memBank.length() +
+                readAddress.length() + writeData.length()) / 2;
+        String strLength = String.format("%02X",length);
+
+        command.append(strLength);
+        command.append(operateCode);
+        command.append(strTimeOut);
+        command.append(option);
+        command.append(readAddress);
+        command.append(memBank);
+        command.append(writeData);
+
+        String  crcStr =     mCrcModel.getCrcStr(HexUtil.toByteArray(command.toString())) ;
+        command.append(crcStr);
+
+        String resultCode = "failed";
+
+        try {
+            resultCode = mBleInterface.sendUhfCommand(command.toString());
+        } catch (RemoteException e) {
+            e.printStackTrace();
         }
-        else{
-            tagcnt[0] = Integer.parseInt(resultCode.substring(16,24),16);
+
+        if (resultCode.equals(RESULT_FAIL))
+            return READER_ERR.MT_CMD_FAILED_ERR;
+
+        //解析返回结果
+        String relStatus =  resultCode.substring(6,10) ;
+        if (!relStatus.equals("0000"))
+            return READER_ERR.MT_CMD_FAILED_ERR;
+
+        return READER_ERR.MT_OK_ERR;
+
+
+    }
+
+    @Override
+    public READER_ERR WriteTagEpcEx(int ant, byte[] Epc, int epclen, byte[] accesspwd, short timeout) {
+//        return super.WriteTagEpcEx(ant, Epc, epclen, accesspwd, timeout);
+
+        //读取单个标签
+        StringBuilder command = new StringBuilder(COMMAND_HEADER);
+        String operateCode = "23";
+        String strTimeOut = String.format("%04X",timeout);
+        String option = "00" ;
+        String rfu = "00";
+        String writeData = HexUtil.bytesToHexString(Epc);
+
+
+        int length = (  strTimeOut.length() +   option.length() +
+                rfu.length() + writeData.length()) / 2;
+        String strLength = String.format("%02X",length);
+
+        command.append(strLength);
+        command.append(operateCode);
+        command.append(strTimeOut);
+        command.append(option);
+        command.append(rfu);
+        command.append(writeData);
+
+        String  crcStr =     mCrcModel.getCrcStr(HexUtil.toByteArray(command.toString())) ;
+        command.append(crcStr);
+
+        String resultCode = "failed";
+
+        try {
+            resultCode = mBleInterface.sendUhfCommand(command.toString());
+        } catch (RemoteException e) {
+            e.printStackTrace();
         }
 
+        if (resultCode.equals(RESULT_FAIL))
+            return READER_ERR.MT_CMD_FAILED_ERR;
+
+        //解析返回结果
+        String relStatus =  resultCode.substring(6,10) ;
+        if (!relStatus.equals("0000"))
+            return READER_ERR.MT_CMD_FAILED_ERR;
+
+        return READER_ERR.MT_OK_ERR;
 
 
-        //获取盘点到的标签信息
-        return getInvTag();
+
+
+
+    }
+
+    @Override
+    public READER_ERR TagInventory(int[] ants, int antcnt, short timeout, TAGINFO[] pTInfo, int[] tagcnt) {
+        return super.TagInventory(ants, antcnt, timeout, pTInfo, tagcnt);
+    }
+
+    @Override
+    public READER_ERR TagInventory_Raw(int[] ants, int antcnt, short timeout, int[] tagcnt) {
+        return super.TagInventory_Raw(ants, antcnt, timeout, tagcnt);
     }
 
 
@@ -188,6 +278,7 @@ public class BleReader extends Reader {
 
         command.append(strLength);
         command.append(operateCode);
+        command.append(option);
         command.append(searchFlag);
         command.append(strTimeOut);
 
@@ -202,32 +293,30 @@ public class BleReader extends Reader {
             e.printStackTrace();
         }
 
-        if (resultCode.equals(RESULT_FAIL))
-            return READER_ERR.MT_CMD_FAILED_ERR;
+//        if (resultCode.equals(RESULT_FAIL))
+//            return READER_ERR.MT_CMD_FAILED_ERR;
+//
+//
+//        //解析返回结果,得到扫描到的标签数
+//        int relLen = resultCode.length();
+//        if (relLen < 22) return READER_ERR.MT_CMD_FAILED_ERR;
+//
+//        String relStatus =  resultCode.substring(6,10) ;
+//        if (!relStatus.equals("0000"))
+//            return READER_ERR.MT_CMD_FAILED_ERR;
+//        String relSearchFlag =  resultCode.substring(12,16) ;
+//        if (relSearchFlag.equals("0000")){
+//            tagcnt[0] = Integer.parseInt(resultCode.substring(16,18),16);
+//        }
+//        else{
+//            tagcnt[0] = Integer.parseInt(resultCode.substring(16,24),16);
+//        }
 
 
-        //解析返回结果,得到扫描到的标签数
-        int relLen = resultCode.length();
-        if (relLen < 22) return READER_ERR.MT_CMD_FAILED_ERR;
-
-        String relStatus =  resultCode.substring(6,10) ;
-        if (!relStatus.equals("0000"))
-            return READER_ERR.MT_CMD_FAILED_ERR;
-        String relSearchFlag =  resultCode.substring(12,16) ;
-        if (relSearchFlag.equals("0000")){
-            tagcnt[0] = Integer.parseInt(resultCode.substring(16,18),16);
-        }
-        else{
-            tagcnt[0] = Integer.parseInt(resultCode.substring(16,24),16);
-        }
-
-
-//        tagcnt[0] = 2;
+        tagcnt[0] = 255;
         //获取盘点到的标签信息
         return getInvTag(taginfos);
     }
-
-
 
 
 
@@ -256,16 +345,17 @@ public class BleReader extends Reader {
         String resultCode = "failed";
 
         try {
-//            resultCode = mBleInterface.sendUhfCommand(command.toString());
+            mBleInterface.sendUhfCommand(command.toString());
             resultCode = mBleInterface.getUhfTagData();
         } catch (RemoteException e) {
             e.printStackTrace();
         }
 
+        Log.d(TAG,"the result code is " +resultCode);
         if (   resultCode.equals(RESULT_FAIL))
             return READER_ERR.MT_CMD_FAILED_ERR;
 
-        //String resultCode = "FF3C29000000BF000207E3110E222A00008D8F0000000000602000201522223333697CC24107C3110E222A00008D8F000000000060200011112222FF0047BBC241DC46";
+
 
         //解析获取到的标签
         int relLen = resultCode.length();
@@ -283,7 +373,7 @@ public class BleReader extends Reader {
         while (beginIndex < tagTotLen){
             TAGINFO tfs = new TAGINFO();
             tfs.ReadCnt = HexUtil.hexStr2int(tagTotalInfo.substring(beginIndex,beginIndex+2));
-            tfs.RSSI = HexUtil.hexStr2int(tagTotalInfo.substring(beginIndex+2,beginIndex+4));
+            tfs.RSSI = HexUtil.parseSignedHex(tagTotalInfo.substring(beginIndex+2,beginIndex+4)) ;
             tfs.AntennaID = (byte)HexUtil.hexStr2int(tagTotalInfo.substring(beginIndex+4,beginIndex+6));
             tfs.Frequency = HexUtil.hexStr2int(tagTotalInfo.substring(beginIndex+6,beginIndex+12));
             tfs.TimeStamp = HexUtil.hexStr2int(tagTotalInfo.substring(beginIndex+12,beginIndex+20));
@@ -307,80 +397,6 @@ public class BleReader extends Reader {
     }
 
 
-
-
-    /**
-     * 获取一轮盘点中的标签信息
-     */
-    private READER_ERR getInvTag(){
-
-
-//        //发送获取标签命令
-//        StringBuilder command = new StringBuilder(COMMAND_HEADER);
-//        String operateCode = "29";
-//        String metadataFlag = "00BF";
-//        String readOption = "00";
-//        int length = ( metadataFlag.length() + readOption.length() ) / 2;
-//        String strLength = String.format("%02X",length);
-//
-//        command.append(strLength);
-//        command.append(operateCode);
-//        command.append(metadataFlag);
-//        command.append(readOption);
-//
-//        String  crcStr = mCrcModel.getCrcStr(HexUtil.toByteArray(command.toString())) ;
-//        command.append(crcStr);
-//
-//        String resultCode = "failed";
-//
-//        try {
-//            resultCode = mBleInterface.sendUhfCommand(command.toString());
-//        } catch (RemoteException e) {
-//            e.printStackTrace();
-//        }
-//
-//        if (resultCode.equals(RESULT_FAIL))
-//            return READER_ERR.MT_CMD_FAILED_ERR;
-
-        String resultCode = "FF3C29000000BF000207E3110E222A00008D8F0000000000602000201522223333697CC24107C3110E222A00008D8F000000000060200011112222FF0047BBC241DC46";
-
-        //解析获取到的标签
-        int relLen = resultCode.length();
-        if (relLen < 24) return READER_ERR.MT_CMD_FAILED_ERR;
-        String relStatus =  resultCode.substring(6,10) ;
-        if (!relStatus.equals("0000"))
-            return READER_ERR.MT_CMD_FAILED_ERR;
-        String tagTotalInfo = resultCode.substring(18, relLen -4);
-        Log.d(TAG,"the total info is " + tagTotalInfo);
-        int tagCount = Integer.parseInt(resultCode.substring(16,18),16);
-
-        int tagTotLen = tagTotalInfo.length();
-        int beginIndex = 0;
-
-        while (beginIndex < tagTotLen){
-            TAGINFO tfs = new TAGINFO();
-            tfs.ReadCnt = HexUtil.hexStr2int(tagTotalInfo.substring(beginIndex,beginIndex+2));
-            tfs.RSSI = HexUtil.hexStr2int(tagTotalInfo.substring(beginIndex+2,beginIndex+4));
-            tfs.AntennaID = (byte)HexUtil.hexStr2int(tagTotalInfo.substring(beginIndex+4,beginIndex+6));
-            tfs.Frequency = HexUtil.hexStr2int(tagTotalInfo.substring(beginIndex+6,beginIndex+12));
-            tfs.TimeStamp = HexUtil.hexStr2int(tagTotalInfo.substring(beginIndex+12,beginIndex+20));
-            tfs.Res = HexUtil.toByteArray(tagTotalInfo.substring(beginIndex+20,beginIndex+24));
-            int epcLen = HexUtil.hexStr2int(tagTotalInfo.substring(beginIndex+28,beginIndex+32)) /8 * 2;
-            int tagLen = epcLen - 8;
-            tfs.PC = HexUtil.toByteArray(tagTotalInfo.substring(beginIndex+32,beginIndex+36));
-            tfs.EpcId = HexUtil.toByteArray(tagTotalInfo.substring(beginIndex+36,beginIndex+36+tagLen));
-            tfs.CRC = HexUtil.toByteArray(tagTotalInfo.substring(beginIndex+36+tagLen,beginIndex+36+tagLen+4));
-            mIvnTagList.add(tfs);
-            beginIndex += 32 + epcLen;
-            mIvnCount++;
-        }
-
-        Log.d(TAG,"tag list size is " + mIvnTagList.size());
-
-        return READER_ERR.MT_OK_ERR;
-
-
-    }
 
     @Override
     public READER_ERR TagInventory_BaseType(int[] ants, int antcnt, short timeout, byte[] outbuf, int[] tagcnt) {
@@ -407,7 +423,6 @@ public class BleReader extends Reader {
 
 
 
-
     }
 
     @Override
@@ -417,12 +432,128 @@ public class BleReader extends Reader {
 
     @Override
     public READER_ERR LockTag(int ant, byte lockobjects, short locktypes, byte[] accesspasswd, short timeout) {
-        return super.LockTag(ant, lockobjects, locktypes, accesspasswd, timeout);
+//        return super.LockTag(ant, lockobjects, locktypes, accesspasswd, timeout);
+
+        //锁定标签
+        StringBuilder command = new StringBuilder(COMMAND_HEADER);
+        String operateCode = "25";
+        String strTimeOut = String.format("%04X",timeout);
+        String option = "00" ;
+        String accessPass = HexUtil.bytesToHexString(accesspasswd).substring(0,8);
+        String maskBits;
+        String actionBits;
+        switch (lockobjects){
+            case 0:
+                maskBits = "0200";
+                break;
+            case 1:
+                maskBits = "0080";
+                break;
+            case 2:
+                maskBits = "0020";
+                break;
+            case 3:
+                maskBits = "0008";
+                break;
+            case 4:
+                maskBits = "0002";
+                break;
+            default:
+                maskBits = "0200";
+                break;
+        }
+
+        actionBits = maskBits;
+
+
+
+
+
+
+        int length = (  strTimeOut.length() +   option.length() +
+                accessPass.length() + maskBits.length() + actionBits.length()) / 2;
+        String strLength = String.format("%02X",length);
+
+        command.append(strLength);
+        command.append(operateCode);
+        command.append(strTimeOut);
+        command.append(option);
+        command.append(accessPass);
+        command.append(maskBits);
+        command.append(actionBits);
+
+
+        String  crcStr =     mCrcModel.getCrcStr(HexUtil.toByteArray(command.toString())) ;
+        command.append(crcStr);
+
+        String resultCode = "failed";
+
+        try {
+            resultCode = mBleInterface.sendUhfCommand(command.toString());
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+
+        if (resultCode.equals(RESULT_FAIL))
+            return READER_ERR.MT_CMD_FAILED_ERR;
+
+        //解析返回结果
+        String relStatus =  resultCode.substring(6,10) ;
+        if (!relStatus.equals("0000"))
+            return READER_ERR.MT_CMD_FAILED_ERR;
+
+        return READER_ERR.MT_OK_ERR;
+
+
     }
 
     @Override
     public READER_ERR KillTag(int ant, byte[] killpasswd, short timeout) {
-        return super.KillTag(ant, killpasswd, timeout);
+//        return super.KillTag(ant, killpasswd, timeout);
+
+        //灭活标签
+        StringBuilder command = new StringBuilder(COMMAND_HEADER);
+        String operateCode = "26";
+        String strTimeOut = String.format("%04X",timeout);
+        String option = "00" ;
+        String accessPass = HexUtil.bytesToHexString(killpasswd).substring(0,8);
+        String rfu = "00";
+
+
+        int length = (  strTimeOut.length() +   option.length() +
+                accessPass.length() + rfu.length()) / 2;
+        String strLength = String.format("%02X",length);
+
+        command.append(strLength);
+        command.append(operateCode);
+        command.append(strTimeOut);
+        command.append(option);
+        command.append(accessPass);
+        command.append(rfu);
+
+
+        String  crcStr =     mCrcModel.getCrcStr(HexUtil.toByteArray(command.toString())) ;
+        command.append(crcStr);
+
+        String resultCode = "failed";
+
+        try {
+            resultCode = mBleInterface.sendUhfCommand(command.toString());
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+
+        if (resultCode.equals(RESULT_FAIL))
+            return READER_ERR.MT_CMD_FAILED_ERR;
+
+        //解析返回结果
+        String relStatus =  resultCode.substring(6,10) ;
+        if (!relStatus.equals("0000"))
+            return READER_ERR.MT_CMD_FAILED_ERR;
+
+        return READER_ERR.MT_OK_ERR;
+
+
     }
 
     @Override
@@ -654,13 +785,34 @@ public class BleReader extends Reader {
 
     @Override
     public READER_ERR AsyncStartReading(int[] ants, int antcnt, int option) {
-        return super.AsyncStartReading(ants, antcnt, option);
+//        return super.AsyncStartReading(ants, antcnt, option);
+
+
+        //开启快速盘点命令
+//        String sendCommand = "FF13AA4D6F64756C6574656368AA48003F008003B4BB7437";
+        String sendCommand = "7EFE00023031";
+        String resultCode = "failed";
+
+        try {
+            resultCode = mBleInterface.sendUhfCommand(sendCommand);
+//            resultCode = mBleInterface.getUhfTagData();
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+
+        Log.d(TAG,"the resultcode is " + resultCode);
+//        if (resultCode.equals(RESULT_FAIL))
+//            return READER_ERR.MT_CMD_FAILED_ERR;
+
+
+        return READER_ERR.MT_OK_ERR;
     }
 
     @Override
     public READER_ERR AsyncStopReading() {
 
-        String sendCommand = "FF0EAA4D6F64756C6574656368AA49F3BB0391";
+//        String sendCommand = "FF0EAA4D6F64756C6574656368AA49F3BB0391";
+        String sendCommand = "7EFE00023030";
 
 
         String resultCode = "failed";
@@ -671,8 +823,8 @@ public class BleReader extends Reader {
             e.printStackTrace();
         }
 
-        if (   resultCode.equals(RESULT_FAIL))
-            return READER_ERR.MT_CMD_FAILED_ERR;
+//        if (   resultCode.equals(RESULT_FAIL))
+//            return READER_ERR.MT_CMD_FAILED_ERR;
 
         return READER_ERR.MT_OK_ERR;
 
@@ -693,93 +845,54 @@ public class BleReader extends Reader {
     public READER_ERR AsyncGetTagCount(int[] tagcnt, TAGINFO[] taginfos) {
 
 
-        mIvnTagList.clear();
-        mIvnCount = 0;
-
-        //开启快速盘点命令
-        String sendCommand = "FF13AA4D6F64756C6574656368AA48001700800375BB4D30";
         String resultCode = "failed";
 
         try {
-            resultCode = mBleInterface.sendUhfCommand(sendCommand);
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        }
-
-        if (resultCode.equals(RESULT_FAIL))
-            return READER_ERR.MT_CMD_FAILED_ERR;
-
-        tagcnt[0] = 2;
-        //获取盘点到的标签信息
-        return getInvTagQuick(taginfos);
-
-    }
-
-
-
-    /**
-     * 获取一轮快速盘点中的标签信息
-     */
-    private READER_ERR getInvTagQuick(TAGINFO[] taginfos){
-
-        //发送获取标签命令
-        StringBuilder command = new StringBuilder(COMMAND_HEADER);
-        String operateCode = "29";
-        String metadataFlag = "0015";
-        String readOption = "00";
-        int length = ( metadataFlag.length() + readOption.length() ) / 2;
-        String strLength = String.format("%02X",length);
-
-        command.append(strLength);
-        command.append(operateCode);
-        command.append(metadataFlag);
-        command.append(readOption);
-
-        String  crcStr = mCrcModel.getCrcStr(HexUtil.toByteArray(command.toString())) ;
-        command.append(crcStr);
-
-        String resultCode = "failed";
-
-        try {
-//            resultCode = mBleInterface.sendUhfCommand(command.toString());
             resultCode = mBleInterface.getUhfTagData();
         } catch (RemoteException e) {
             e.printStackTrace();
         }
 
-        if (   resultCode.equals(RESULT_FAIL))
+        Log.d(TAG,"the resultcode is " + resultCode);
+        if (resultCode.equals(RESULT_FAIL))
             return READER_ERR.MT_CMD_FAILED_ERR;
 
 
-        //解析获取到的标签
+        tagcnt[0] = 255;
+
+//        mIvnTagList.clear();
+//        mIvnCount = 0;
+        //解析获取到的标签,每次只获取一个标签
         int relLen = resultCode.length();
         if (relLen < 24) return READER_ERR.MT_CMD_FAILED_ERR;
         String relStatus =  resultCode.substring(6,10) ;
         if (!relStatus.equals("0000"))
             return READER_ERR.MT_CMD_FAILED_ERR;
-        String tagTotalInfo = resultCode.substring(18, relLen -4);
+        String tagTotalInfo = resultCode.substring(14, relLen -4);
         Log.d(TAG,"the total info is " + tagTotalInfo);
-        int tagCount = Integer.parseInt(resultCode.substring(16,18),16);
+//        int tagCount = Integer.parseInt(resultCode.substring(16,18),16);
 
         int tagTotLen = tagTotalInfo.length();
         int beginIndex = 0;
 
-        while (beginIndex < tagTotLen){
+//        while (beginIndex < tagTotLen){
             TAGINFO tfs = new TAGINFO();
             tfs.ReadCnt = HexUtil.hexStr2int(tagTotalInfo.substring(beginIndex,beginIndex+2));
-            tfs.RSSI = HexUtil.hexStr2int(tagTotalInfo.substring(beginIndex+2,beginIndex+4));
+            tfs.RSSI = HexUtil.parseSignedHex(tagTotalInfo.substring(beginIndex+2,beginIndex+4)) ;
             tfs.AntennaID = (byte)HexUtil.hexStr2int(tagTotalInfo.substring(beginIndex+4,beginIndex+6));
-            tfs.TimeStamp = HexUtil.hexStr2int(tagTotalInfo.substring(beginIndex+6,beginIndex+14));
-            int epcLen = HexUtil.hexStr2int(tagTotalInfo.substring(beginIndex+14,beginIndex+18)) /8 * 2;
+            tfs.Frequency = HexUtil.hexStr2int(tagTotalInfo.substring(beginIndex+6,beginIndex+12));
+            tfs.TimeStamp = HexUtil.hexStr2int(tagTotalInfo.substring(beginIndex+12,beginIndex+20));
+            tfs.Res   = HexUtil.toByteArray(tagTotalInfo.substring(beginIndex+20,beginIndex+24));
+            int epcLen = HexUtil.hexStr2int(tagTotalInfo.substring(beginIndex+24,beginIndex+26))  * 2;
             int tagLen = epcLen - 8;
-            tfs.PC = HexUtil.toByteArray(tagTotalInfo.substring(beginIndex+18,beginIndex+22));
-            tfs.EpcId = HexUtil.toByteArray(tagTotalInfo.substring(beginIndex+22,beginIndex+22+tagLen));
-            tfs.CRC = HexUtil.toByteArray(tagTotalInfo.substring(beginIndex+22+tagLen,beginIndex+22+tagLen+4));
+            tfs.PC = HexUtil.toByteArray(tagTotalInfo.substring(beginIndex+26,beginIndex+30));
+            tfs.EpcId = HexUtil.toByteArray(tagTotalInfo.substring(beginIndex+30,beginIndex+30+tagLen));
+            tfs.CRC = HexUtil.toByteArray(tagTotalInfo.substring(beginIndex+30+tagLen,beginIndex+30+tagLen+4));
             mIvnTagList.add(tfs);
-            beginIndex += 22 + epcLen;
-            taginfos[mIvnCount] = tfs;
-            mIvnCount++;
-        }
+//            beginIndex += 22 + epcLen;
+            taginfos[0] = tfs;
+//            mIvnCount++;
+//        }
 
         Log.d(TAG,"tag list size is " + mIvnTagList.size());
 
@@ -787,7 +900,6 @@ public class BleReader extends Reader {
 
 
     }
-
 
 
 

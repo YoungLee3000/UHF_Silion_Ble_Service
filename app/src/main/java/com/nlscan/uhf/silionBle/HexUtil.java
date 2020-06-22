@@ -129,5 +129,52 @@ public class HexUtil {
 
 
 
+	//解析有符号16进制字符
+	public static int parseSignedHex(String hexStr){
+		byte[] bytes = toByteArray(hexStr);
+		String binaryStr = bytes2BinaryStr(bytes);
+		return parseSignedBinary(binaryStr);
+	}
+
+
+
+	//解析有符号2进制字符
+	public static int parseSignedBinary(String binaryStr) {
+
+		return binaryStr.charAt(0) == '0' ? Integer.parseInt(binaryStr,2) :
+				-1* Integer.parseInt(binaryStr.substring(1),2);
+	}
+
+
+
+	//字节转二进制字符
+	public static String bytes2BinaryStr(byte[] bArray){
+
+		String outStr = "";
+		int pos = 0;
+		for(byte b:bArray){
+			//高四位
+			pos = (b&0xF0)>>4;
+			outStr+=binaryArray[pos];
+			//低四位
+			pos=b&0x0F;
+			outStr+=binaryArray[pos];
+		}
+		return outStr;
+
+	}
+
+
+	//二进制数组
+	private static String[] binaryArray =
+			{"0000","0001","0010","0011",
+					"0100","0101","0110","0111",
+					"1000","1001","1010","1011",
+					"1100","1101","1110","1111"};
+
+
+
+
+
 
 }

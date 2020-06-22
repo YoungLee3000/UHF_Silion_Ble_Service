@@ -116,6 +116,7 @@ public class UHFSilionService extends Service {
 	private final static String DEFAULT_MODULE = "MODULE_SLRB1200";
 	//蓝牙相关
 	private IBleInterface mBleInterface;
+	private boolean mIfQuickReading = false;
 
 
 	@Override
@@ -434,7 +435,9 @@ public class UHFSilionService extends Service {
 			boolean quickMode = isQuickMode();
 			Log.d(TAG,"if quick mode " + quickMode);
 			int[] uants = getAnts();
-			long readTimeout = mSettingsService.getLongParamValue(UHFSilionParams.INV_TIME_OUT.KEY, UHFSilionParams.INV_TIME_OUT.PARAM_INV_TIME_OUT,UHFSilionParams.INV_TIME_OUT.DEFAULT_INV_TIMEOUT);
+//			long readTimeout = mSettingsService.getLongParamValue(UHFSilionParams.INV_TIME_OUT.KEY, UHFSilionParams.INV_TIME_OUT.PARAM_INV_TIME_OUT,
+//                    UHFSilionParams.INV_TIME_OUT.DEFAULT_INV_TIMEOUT);
+			long readTimeout = 1000;
 			
 			if (quickMode) {
 				er =mReader.AsyncGetTagCount(tagcnt,tagInfos);
@@ -526,7 +529,10 @@ public class UHFSilionService extends Service {
 		}
 		
 		//进入下一扫描周期
-		long intevalTime =mSettingsService.getLongParamValue(UHFSilionParams.INV_INTERVAL.KEY, UHFSilionParams.INV_INTERVAL.PARAM_INV_INTERVAL_TIME,UHFSilionParams.INV_INTERVAL.DEFAULT_INV_INTERVAL_TIME);
+
+        long intevalTime = 10;
+//		long intevalTime =mSettingsService.getLongParamValue(UHFSilionParams.INV_INTERVAL.KEY, UHFSilionParams.INV_INTERVAL.PARAM_INV_INTERVAL_TIME,UHFSilionParams.INV_INTERVAL.DEFAULT_INV_INTERVAL_TIME);
+		Log.d(TAG,"inventory time " + intevalTime);
 		mOperHandler.sendEmptyMessageDelayed(OperateHandler.MSG_START_READING, intevalTime);
 		
 	}//end doStartReading
@@ -540,9 +546,7 @@ public class UHFSilionService extends Service {
 			
 			Log.d(TAG, "Enter doStopReading...");
 			
-			mStartReadTime = 0;
-			mForceStoped = true;
-			mOperHandler.removeMessages(OperateHandler.MSG_START_READING);
+
 			
 			READER_ERR er = null;
 			if (isQuickMode()) {
@@ -552,6 +556,12 @@ public class UHFSilionService extends Service {
 				if (er != READER_ERR.MT_OK_ERR) {
 					Log.d(TAG, "不停顿盘点停止失败 : "+er.toString());
 					return;
+				}
+				else {
+					mStartReadTime = 0;
+					mForceStoped = true;
+					mOperHandler.removeMessages(OperateHandler.MSG_START_READING);
+					mIfQuickReading = false;
 				}
 			}else{
 				er = mReader.StopReading();
@@ -586,12 +596,13 @@ public class UHFSilionService extends Service {
 	 */
 	private boolean isQuickMode()
 	{
-		Object obj = mSettingsMap.get(UHFSilionParams.INV_QUICK_MODE.KEY);
-		int iQuick = 0;
-		if(obj != null)
-			iQuick = (Integer)obj;
-		
-		return iQuick == 1;
+//		Object obj = mSettingsMap.get(UHFSilionParams.INV_QUICK_MODE.KEY);
+//		int iQuick = 0;
+//		if(obj != null)
+//			iQuick = (Integer)obj;
+//
+//		return iQuick == 1;
+        return true;
 	}
 	
 	/**
@@ -954,6 +965,7 @@ public class UHFSilionService extends Service {
 
 
 				Map<String, Object> settingsMap = mUHFMgr.getAllParams();
+				if (settingsMap == null) return;
 				int iLowerpowerEnable =settingsMap.containsKey(UHFSilionParams.LOWER_POWER.PARAM_LOWER_POWER_DM_ENABLE)? (Integer)settingsMap.get(UHFSilionParams.LOWER_POWER.PARAM_LOWER_POWER_DM_ENABLE) : 0;;
 				if(iLowerpowerEnable == 0)
 					return ;
@@ -1163,10 +1175,13 @@ public class UHFSilionService extends Service {
 					return UHFReader.READER_STATE.INVALID_READER_HANDLE.value();
 				
 				//扫描中,返回
+//                if (mIfQuickReading)
+//                    return UHFReader.READER_STATE.OK_ERR.value();
 				if(mReadingState == ReadingState.READING)
 					return UHFReader.READER_STATE.OK_ERR.value();
 				
 				//触发扫描
+				mIfQuickReading = true;
 				mForceStoped = false;
 				mBleInterface.clearUhfTagData();
 				boolean isQuickMode = isQuickMode();
@@ -1187,7 +1202,12 @@ public class UHFSilionService extends Service {
 			long id = Binder.clearCallingIdentity();
 			mOperHandler.sendEmptyMessage(OperateHandler.MSG_STOP_READING);
 			Binder.restoreCallingIdentity(id);
-			return UHFReader.READER_STATE.OK_ERR.value();
+
+			while (mIfQuickReading){}
+//			if (!mIfQuickReading)
+				return UHFReader.READER_STATE.OK_ERR.value();
+//			else
+//				return UHFReader.READER_STATE.CMD_FAILED_ERR.value();
 		}
 
 		@Override
