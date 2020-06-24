@@ -264,6 +264,7 @@ public class RegionFreActivity extends BaseActivity {
 			public void onCheckedChanged(CompoundButton arg0, boolean arg1) {
 				// TODO Auto-generated method stub
 				MyAdapter2 m2 = (MyAdapter2) elist.getAdapter();
+				if (m2 == null) return;
 				if (arg1 == true) {
 					HashMap<Integer, Boolean> isSelected = new HashMap<Integer, Boolean>();
 

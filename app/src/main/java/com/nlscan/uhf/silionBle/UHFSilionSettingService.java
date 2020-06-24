@@ -26,20 +26,20 @@ public class UHFSilionSettingService {
 	private final static String SP_KEY_FISRT_LOADING = "fisrt_loading";
 	
 	private Context mContext;
-	private Reader mReader;
+	private BleReader mReader;
 	private Map<String,Object> mSettingsMap;
 	
-	public UHFSilionSettingService(Context context, Reader reader)
+	public UHFSilionSettingService(Context context, BleReader reader)
 	{
 		this.mContext = context;
-//		this.mReader = reader;
+		this.mReader = reader;
 		mSettingsMap = new HashMap<String,Object>();
 	}
 	
 	/**
 	 * 初始化配置操作
 	 */
-	public void effectParams(Reader reader)
+	public void effectParams(BleReader reader)
 	{
 		DLog.d(TAG, "Effect params...");
 		this.mReader = reader;
@@ -428,6 +428,7 @@ public class UHFSilionSettingService {
 		
 		//加载"读写器最大输出功率"
 		intArrayDatas = (int[]) mSettingsMap.get(UHFSilionParams.RF_MAXPOWER.KEY);
+		sValue = converToString(intArrayDatas);
 		if(sValue != null)
 			setParam(UHFSilionParams.RF_MAXPOWER.KEY, UHFSilionParams.RF_MAXPOWER.PARAM_RF_MAXPOWER, sValue);
 		

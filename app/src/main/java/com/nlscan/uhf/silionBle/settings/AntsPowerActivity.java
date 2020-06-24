@@ -7,6 +7,7 @@ import org.json.JSONObject;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
@@ -286,6 +287,8 @@ public class AntsPowerActivity extends BaseActivity {
 					
 					//读写器发射功率-------------------------------------
 					int antportc  = getAntportCount();
+					Log.d("UHFSilion","the ant is  " + antportc);
+
 					JSONArray jsItemArray = new JSONArray();
 					
 					for (int i = 0; i < antportc; i++) {
@@ -296,7 +299,6 @@ public class AntsPowerActivity extends BaseActivity {
 						jsItem.put("antid", antid);
 						jsItem.put("readPower", readPower);
 						jsItem.put("writePower", writePower);
-						
 						jsItemArray.put(jsItem);
 					}
 					
@@ -421,10 +423,11 @@ public class AntsPowerActivity extends BaseActivity {
 	 */
 	private int getAntportCount()
 	{
-		Map<String,Object> settingsMap  = mUHFMgr.getAllParams();
-		Object antportObj = settingsMap.get(UHFSilionParams.READER_AVAILABLE_ANTPORTS.KEY) ;
-		int[] antportArr = (int[])antportObj;
-		int  antportc = (antportArr == null || antportArr.length == 0 ) ? 1 : antportArr[0];
-		return antportc;
+//		Map<String,Object> settingsMap  = mUHFMgr.getAllParams();
+//		Object antportObj = settingsMap.get(UHFSilionParams.READER_AVAILABLE_ANTPORTS.KEY) ;
+//		int[] antportArr = (int[])antportObj;
+//		int  antportc = (antportArr == null || antportArr.length == 0 ) ? 1 : antportArr[0];
+//		return antportc;
+		return 1;
 	}
 }

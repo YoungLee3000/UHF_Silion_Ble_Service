@@ -328,8 +328,8 @@ public class UHFSilionService extends Service {
 			
 			//执行模块参数配置
         	mSettingsService.effectParams(mReader);
-        	READER_ERR er = READER_ERR.MT_CMD_FAILED_ERR;
-        	er = mReader.ParamSet(Mtr_Param.MTR_PARAM_TAG_SEARCH_MODE, new int[] { 0 });
+        	READER_ERR er ;
+//        	er = mReader.ParamSet(Mtr_Param.MTR_PARAM_TAG_SEARCH_MODE, new int[] { 0 });
         	
 //			HardwareDetails val = mReader.new HardwareDetails();
 //			er = mReader.GetHardwareDetails(val);//获取硬件信息
@@ -426,25 +426,27 @@ public class UHFSilionService extends Service {
 				mStartReadTime = System.currentTimeMillis();
 			
 			READER_ERR er;
-			TAGINFO[] tagInfos = new TAGINFO[255];
-			String[] epcIds = null;
+			TAGINFO[] tagInfos ;
+//			String[] epcIds = null;
 			int[] tagcnt = new int[1]; //本
-			tagcnt[0] = 0;
 			
 			
 			boolean quickMode = isQuickMode();
 			Log.d(TAG,"if quick mode " + quickMode);
 			int[] uants = getAnts();
-//			long readTimeout = mSettingsService.getLongParamValue(UHFSilionParams.INV_TIME_OUT.KEY, UHFSilionParams.INV_TIME_OUT.PARAM_INV_TIME_OUT,
-//                    UHFSilionParams.INV_TIME_OUT.DEFAULT_INV_TIMEOUT);
-			long readTimeout = 1000;
+			long readTimeout = mSettingsService.getLongParamValue(UHFSilionParams.INV_TIME_OUT.KEY, UHFSilionParams.INV_TIME_OUT.PARAM_INV_TIME_OUT,
+                    UHFSilionParams.INV_TIME_OUT.DEFAULT_INV_TIMEOUT);
+//			long readTimeout = 1000;
+			Log.d(TAG,"the read time out is " + readTimeout);
 			
 			if (quickMode) {
-				er =mReader.AsyncGetTagCount(tagcnt,tagInfos);
+//				er =mReader.AsyncGetTagCount(tagcnt,tagInfos);
+				er =mReader.AsyncGetTagCount(tagcnt);
 			} else {
 				//Log.d(TAG, "Start TagInventory_Raw...");
 				//long begin = System.currentTimeMillis();
-				er = mReader.TagInventory_Raw(uants,uants.length, (short) readTimeout, tagcnt,tagInfos);
+//				er = mReader.TagInventory_Raw(uants,uants.length, (short) readTimeout, tagcnt,tagInfos);
+				er = mReader.TagInventory_Raw(uants,uants.length, (short) readTimeout, tagcnt);
 				//long end = System.currentTimeMillis();
 				//Log.d(TAG, "End TagInventory_Raw.., span time : "+(end - begin));
 			}
@@ -455,72 +457,44 @@ public class UHFSilionService extends Service {
 				
 				if (tagcnt[0] > 0) 
 				{
-//					int tagCount = tagcnt[0];
+					int tagCount = tagcnt[0];
+					Log.d(TAG,"the tag count is " + tagCount);
 //					epcIds = new String[tagCount];
-//					tagInfos = new TAGINFO[tagCount];
+					tagInfos = new TAGINFO[tagCount];
 
 					
-					//Log.d(TAG, "============================================================");
-//					for (int i = 0; i < tagCount; i++)
-//					{
-//						TAGINFO tfs = mReader.new TAGINFO();
-//
-//
-//						if (quickMode)
-//							er = mReader.AsyncGetNextTag(tfs);
-//						else
-//							er = mReader.GetNextTag(tfs);
-//
-//						// Log.d("MYINFO","get tag index:" +
-//						// String.valueOf(i)+ " er:" + er.toString());
-//						if (er == READER_ERR.MT_HARDWARE_ALERT_ERR_BY_TOO_MANY_RESET)
-//						{
-//							doStopReading();
-//							doPowerOff();
-//							break;
-//						}
-//
-//						// Log.d("MYINFO","debug gettag:"+er.toString());
-//						// Log.d("MYINFO","debug tag:"+Reader.bytes_Hexstr(tfs.EpcId));
-//						String epcstr = tfs.EpcId == null ? null :  Reader.bytes_Hexstr(tfs.EpcId);
-//						if(epcstr == null)
-//							continue;
-//
-//						if (epcstr.length() < 24)
-//							epcstr = String.format("%-24s", epcstr);
-//						if (er == READER_ERR.MT_OK_ERR)
-//						{
-//							epcIds[i] = epcstr;
-//							tagInfos[i] = tfs;
-//						}
-//
-//						//Log.d(TAG, "EpcId : "+epcstr);
-//
-//					}//end for
+					Log.d(TAG, "============================================================");
+					for (int i = 0; i < tagCount; i++)
+					{
+						TAGINFO tfs = mReader.new TAGINFO();
 
-					//Log.d(TAG, "============================================================");
+
+						if (quickMode)
+							er = mReader.AsyncGetNextTag(tfs);
+						else
+							er = mReader.GetNextTag(tfs);
+						tagInfos[i] = tfs;
+						Log.d(TAG,"the tfs is null " + (tfs == null));
+//
+					}//end for
+
+
 
 					Log.d(TAG,"tag info size " + tagInfos.length);
-					if(tagInfos != null && tagInfos.length > 0)
-					{
+//					if(tagInfos != null && tagInfos.length > 0)
+//					{
 						//成功提示
 						performPrompt();
 						//发送给客户
 						sendResult(tagInfos);
-					}
+//					}
 
 
-				}//end if(tagcnt[0] > 0)
+				}
 				
 			}else{
 
 				Log.w(TAG, "Reading error : er = "+er.toString());
-//				if (er == READER_ERR.MT_HARDWARE_ALERT_ERR_BY_TOO_MANY_RESET)
-//				{
-//					doPowerOff();
-//					Thread.sleep(500);
-//					doPowerOn(null);
-//				}
 
 			}//end if
 			
@@ -530,8 +504,8 @@ public class UHFSilionService extends Service {
 		
 		//进入下一扫描周期
 
-        long intevalTime = 10;
-//		long intevalTime =mSettingsService.getLongParamValue(UHFSilionParams.INV_INTERVAL.KEY, UHFSilionParams.INV_INTERVAL.PARAM_INV_INTERVAL_TIME,UHFSilionParams.INV_INTERVAL.DEFAULT_INV_INTERVAL_TIME);
+//        long intevalTime = 10;
+		long intevalTime =mSettingsService.getLongParamValue(UHFSilionParams.INV_INTERVAL.KEY, UHFSilionParams.INV_INTERVAL.PARAM_INV_INTERVAL_TIME,UHFSilionParams.INV_INTERVAL.DEFAULT_INV_INTERVAL_TIME);
 		Log.d(TAG,"inventory time " + intevalTime);
 		mOperHandler.sendEmptyMessageDelayed(OperateHandler.MSG_START_READING, intevalTime);
 		
@@ -564,6 +538,9 @@ public class UHFSilionService extends Service {
 					mIfQuickReading = false;
 				}
 			}else{
+				mStartReadTime = 0;
+				mForceStoped = true;
+				mOperHandler.removeMessages(OperateHandler.MSG_START_READING);
 				er = mReader.StopReading();
 				mReadingState = ReadingState.IDLE;
 			}
@@ -596,13 +573,13 @@ public class UHFSilionService extends Service {
 	 */
 	private boolean isQuickMode()
 	{
-//		Object obj = mSettingsMap.get(UHFSilionParams.INV_QUICK_MODE.KEY);
-//		int iQuick = 0;
-//		if(obj != null)
-//			iQuick = (Integer)obj;
-//
-//		return iQuick == 1;
-        return true;
+		Object obj = mSettingsMap.get(UHFSilionParams.INV_QUICK_MODE.KEY);
+		int iQuick = 0;
+		if(obj != null)
+			iQuick = (Integer)obj;
+
+		return iQuick == 1;
+//        return true;
 	}
 	
 	/**
@@ -614,9 +591,15 @@ public class UHFSilionService extends Service {
 		if(tags == null || tags.length == 0)
 			return ;
 		Log.d(TAG,"the len of tag " + tags.length);
-		TAGINFO[]  newTags = Arrays.copyOf(tags, tags.length);
+
+		int tagCount = 0;
+		for (TAGINFO taginfo : tags){
+			if (taginfo !=null) tagCount++;
+		}
+		Log.d(TAG,"the final tag count " +tagCount);
+		TAGINFO[]  newTags = Arrays.copyOf(tags, tagCount);
 		TagInfo[] nls_TagInfos = new TagInfo[newTags.length];
-		for(int i = 0 ;i< newTags.length;i++)
+		for(int i = 0 ;i< tagCount;i++)
 		{
 			TAGINFO tag = newTags[i];
 			if (tag == null) continue;
@@ -1175,8 +1158,6 @@ public class UHFSilionService extends Service {
 					return UHFReader.READER_STATE.INVALID_READER_HANDLE.value();
 				
 				//扫描中,返回
-//                if (mIfQuickReading)
-//                    return UHFReader.READER_STATE.OK_ERR.value();
 				if(mReadingState == ReadingState.READING)
 					return UHFReader.READER_STATE.OK_ERR.value();
 				
@@ -1184,6 +1165,7 @@ public class UHFSilionService extends Service {
 				mIfQuickReading = true;
 				mForceStoped = false;
 				mBleInterface.clearUhfTagData();
+				mReader.clearTagData();
 				boolean isQuickMode = isQuickMode();
 				if(isQuickMode)
 					nonStopStartReading();
@@ -1203,7 +1185,8 @@ public class UHFSilionService extends Service {
 			mOperHandler.sendEmptyMessage(OperateHandler.MSG_STOP_READING);
 			Binder.restoreCallingIdentity(id);
 
-			while (mIfQuickReading){}
+			if (isQuickMode())
+				while (mIfQuickReading){}
 //			if (!mIfQuickReading)
 				return UHFReader.READER_STATE.OK_ERR.value();
 //			else
