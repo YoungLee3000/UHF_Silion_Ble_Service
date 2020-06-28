@@ -436,19 +436,16 @@ public class UHFSilionService extends Service {
 			int[] uants = getAnts();
 			long readTimeout = mSettingsService.getLongParamValue(UHFSilionParams.INV_TIME_OUT.KEY, UHFSilionParams.INV_TIME_OUT.PARAM_INV_TIME_OUT,
                     UHFSilionParams.INV_TIME_OUT.DEFAULT_INV_TIMEOUT);
-//			long readTimeout = 1000;
+//
 			Log.d(TAG,"the read time out is " + readTimeout);
 			
 			if (quickMode) {
-//				er =mReader.AsyncGetTagCount(tagcnt,tagInfos);
+//
 				er =mReader.AsyncGetTagCount(tagcnt);
 			} else {
-				//Log.d(TAG, "Start TagInventory_Raw...");
-				//long begin = System.currentTimeMillis();
-//				er = mReader.TagInventory_Raw(uants,uants.length, (short) readTimeout, tagcnt,tagInfos);
+
 				er = mReader.TagInventory_Raw(uants,uants.length, (short) readTimeout, tagcnt);
-				//long end = System.currentTimeMillis();
-				//Log.d(TAG, "End TagInventory_Raw.., span time : "+(end - begin));
+
 			}
 			
 			if (er == READER_ERR.MT_OK_ERR) 
@@ -1167,10 +1164,19 @@ public class UHFSilionService extends Service {
 				mBleInterface.clearUhfTagData();
 				mReader.clearTagData();
 				boolean isQuickMode = isQuickMode();
+				long readTimeout = mSettingsService.getLongParamValue(UHFSilionParams.INV_TIME_OUT.KEY, UHFSilionParams.INV_TIME_OUT.PARAM_INV_TIME_OUT,
+						UHFSilionParams.INV_TIME_OUT.DEFAULT_INV_TIMEOUT);
+				long intevalTime =mSettingsService.getLongParamValue(UHFSilionParams.INV_INTERVAL.KEY,
+						UHFSilionParams.INV_INTERVAL.PARAM_INV_INTERVAL_TIME,
+						UHFSilionParams.INV_INTERVAL.DEFAULT_INV_INTERVAL_TIME);
+
 				if(isQuickMode)
 					nonStopStartReading();
-				else
+				else{
+					mReader.StartReading((short) readTimeout,(short) intevalTime);
 					mOperHandler.sendEmptyMessage(OperateHandler.MSG_START_READING);
+				}
+
 				
 				Binder.restoreCallingIdentity(id);
 				return UHFReader.READER_STATE.OK_ERR.value();
@@ -1206,6 +1212,7 @@ public class UHFSilionService extends Service {
 		@Override
 		public int writeTagData(int bank, int address, byte[] data, String hexAccesspasswd) throws RemoteException {
 			long id = Binder.clearCallingIdentity();
+			mReader.StopReading();
 			//灭屏状态
 			if( !mScreenOn )
 				return UHFReader.READER_STATE.INVALID_READER_HANDLE.value();
@@ -1225,6 +1232,7 @@ public class UHFSilionService extends Service {
 		@Override
 		public int writeTagEpcEx(byte[] epcData, String hexAccesspasswd) throws RemoteException {
 			long id = Binder.clearCallingIdentity();
+			mReader.StopReading();
 			//灭屏状态
 			if( !mScreenOn )
 				return UHFReader.READER_STATE.INVALID_READER_HANDLE.value();
@@ -1243,6 +1251,7 @@ public class UHFSilionService extends Service {
 		@Override
 		public byte[] GetTagData(int bank, int address, int blkcnt, String hexAccesspasswd) throws RemoteException {
 			long id = Binder.clearCallingIdentity();
+			mReader.StopReading();
 			//灭屏状态
 			if( !mScreenOn )
 				return null;
@@ -1261,6 +1270,7 @@ public class UHFSilionService extends Service {
 		@Override
 		public int LockTag(int lockObject, int lockType, String hexAccesspasswd) throws RemoteException {
 			long id = Binder.clearCallingIdentity();
+			mReader.StopReading();
 			//灭屏状态
 			if( !mScreenOn )
 				return UHFReader.READER_STATE.INVALID_READER_HANDLE.value();
@@ -1345,6 +1355,7 @@ public class UHFSilionService extends Service {
 		@Override
 		public int KillTag(String hexAccesspasswd) throws RemoteException {
 			long id = Binder.clearCallingIdentity();
+			mReader.StopReading();
 			//灭屏状态
 			if( !mScreenOn )
 				return UHFReader.READER_STATE.INVALID_READER_HANDLE.value();
@@ -1363,6 +1374,7 @@ public class UHFSilionService extends Service {
 		@Override
 		public int setParams(String paramKey,String paramName,String sValue) throws RemoteException {
 			long id = Binder.clearCallingIdentity();
+			mReader.StopReading();
 			//灭屏状态
 			if( !mScreenOn )
 				return UHFReader.READER_STATE.INVALID_READER_HANDLE.value();
@@ -1477,6 +1489,7 @@ public class UHFSilionService extends Service {
 
 		@Override
 		public String getParam(String paramKey, String paramName) throws RemoteException {
+			mReader.StopReading();
 			return mSettingsService.getParam(paramKey, paramName);
 		}
 		
