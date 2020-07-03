@@ -312,7 +312,7 @@ public class UHFSilionService extends Service {
 			return UHFReader.READER_STATE.valueOf(er.value());
 		}catch(Exception e){
 			Log.w(TAG, "Connect to reader faild.",e);
-		} 
+		}
 		
 		return UHFReader.READER_STATE.CMD_FAILED_ERR;
 	}
@@ -401,6 +401,7 @@ public class UHFSilionService extends Service {
 		int[] uants = getAnts();
 		boolean quickMode = isQuickMode();
 		if (quickMode) {
+		    er = mReader.StartReadingCommon();
 			er = mReader.AsyncStartReading(uants, uants.length, 0);
 			if (er != READER_ERR.MT_OK_ERR) {
 				DLog.w(TAG, "不停顿盘点启动失败 : "+er.toString());
@@ -439,14 +440,15 @@ public class UHFSilionService extends Service {
 //
 			Log.d(TAG,"the read time out is " + readTimeout);
 			
-			if (quickMode) {
+//			if (quickMode) {
+////
+//				er =mReader.AsyncGetTagCount(tagcnt);
+//			} else {
 //
-				er =mReader.AsyncGetTagCount(tagcnt);
-			} else {
-
-				er = mReader.TagInventory_Raw(uants,uants.length, (short) readTimeout, tagcnt);
-
-			}
+//				er = mReader.TagInventory_Raw(uants,uants.length, (short) readTimeout, tagcnt);
+//
+//			}
+            er = mReader.getInvTagCount(tagcnt);
 			
 			if (er == READER_ERR.MT_OK_ERR) 
 			{
@@ -1173,7 +1175,7 @@ public class UHFSilionService extends Service {
 				if(isQuickMode)
 					nonStopStartReading();
 				else{
-					mReader.StartReading((short) readTimeout,(short) intevalTime);
+					mReader.StartReadingCommon();
 					mOperHandler.sendEmptyMessage(OperateHandler.MSG_START_READING);
 				}
 
@@ -1212,7 +1214,7 @@ public class UHFSilionService extends Service {
 		@Override
 		public int writeTagData(int bank, int address, byte[] data, String hexAccesspasswd) throws RemoteException {
 			long id = Binder.clearCallingIdentity();
-			mReader.StopReading();
+//			mReader.StopReading();
 			//灭屏状态
 			if( !mScreenOn )
 				return UHFReader.READER_STATE.INVALID_READER_HANDLE.value();
@@ -1232,7 +1234,7 @@ public class UHFSilionService extends Service {
 		@Override
 		public int writeTagEpcEx(byte[] epcData, String hexAccesspasswd) throws RemoteException {
 			long id = Binder.clearCallingIdentity();
-			mReader.StopReading();
+//			mReader.StopReading();
 			//灭屏状态
 			if( !mScreenOn )
 				return UHFReader.READER_STATE.INVALID_READER_HANDLE.value();
@@ -1251,7 +1253,7 @@ public class UHFSilionService extends Service {
 		@Override
 		public byte[] GetTagData(int bank, int address, int blkcnt, String hexAccesspasswd) throws RemoteException {
 			long id = Binder.clearCallingIdentity();
-			mReader.StopReading();
+//			mReader.StopReading();
 			//灭屏状态
 			if( !mScreenOn )
 				return null;
@@ -1270,7 +1272,7 @@ public class UHFSilionService extends Service {
 		@Override
 		public int LockTag(int lockObject, int lockType, String hexAccesspasswd) throws RemoteException {
 			long id = Binder.clearCallingIdentity();
-			mReader.StopReading();
+//			mReader.StopReading();
 			//灭屏状态
 			if( !mScreenOn )
 				return UHFReader.READER_STATE.INVALID_READER_HANDLE.value();
@@ -1355,7 +1357,7 @@ public class UHFSilionService extends Service {
 		@Override
 		public int KillTag(String hexAccesspasswd) throws RemoteException {
 			long id = Binder.clearCallingIdentity();
-			mReader.StopReading();
+//			mReader.StopReading();
 			//灭屏状态
 			if( !mScreenOn )
 				return UHFReader.READER_STATE.INVALID_READER_HANDLE.value();
@@ -1374,7 +1376,7 @@ public class UHFSilionService extends Service {
 		@Override
 		public int setParams(String paramKey,String paramName,String sValue) throws RemoteException {
 			long id = Binder.clearCallingIdentity();
-			mReader.StopReading();
+//			mReader.StopReading();
 			//灭屏状态
 			if( !mScreenOn )
 				return UHFReader.READER_STATE.INVALID_READER_HANDLE.value();
@@ -1489,7 +1491,7 @@ public class UHFSilionService extends Service {
 
 		@Override
 		public String getParam(String paramKey, String paramName) throws RemoteException {
-			mReader.StopReading();
+//			mReader.StopReading();
 			return mSettingsService.getParam(paramKey, paramName);
 		}
 		

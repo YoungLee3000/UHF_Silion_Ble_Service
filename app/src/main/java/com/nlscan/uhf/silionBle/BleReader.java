@@ -290,7 +290,7 @@ public class BleReader extends Reader {
      * @param tagcnt
      * @return
      */
-    private READER_ERR getInvTagCount( int[] tagcnt){
+    public READER_ERR getInvTagCount( int[] tagcnt){
 
 
         //发送获取标签命令
@@ -326,37 +326,46 @@ public class BleReader extends Reader {
         String [] tagArray = resultCode.split(";");
         tagcnt[0] = tagArray.length;
 
-        for (int i=0; i<tagArray.length; i++){
-            //解析获取到的标签
-            int relLen = tagArray[i].length();
-            if (relLen < 24) return READER_ERR.MT_CMD_FAILED_ERR;
-            String relStatus =  tagArray[i].substring(6,10) ;
-            if (!relStatus.equals("0000"))
-                return READER_ERR.MT_CMD_FAILED_ERR;
-            String tagTotalInfo = tagArray[i].substring(18, relLen -4);
-            Log.d(TAG,"the total info is " + tagTotalInfo);
-            int tagCount = Integer.parseInt(tagArray[i].substring(16,18),16);
+        if (tagArray.length < 1 ) return READER_ERR.MT_CMD_FAILED_ERR;
 
-            int tagTotLen = tagTotalInfo.length();
-            int beginIndex = 0;
-
-            while (beginIndex < tagTotLen){
-                TAGINFO tfs = new TAGINFO();
-                tfs.ReadCnt = HexUtil.hexStr2int(tagTotalInfo.substring(beginIndex,beginIndex+2));
-                tfs.RSSI = HexUtil.parseSignedHex(tagTotalInfo.substring(beginIndex+2,beginIndex+4)) ;
-                tfs.AntennaID = 1;
-                tfs.Frequency = HexUtil.hexStr2int(tagTotalInfo.substring(beginIndex+6,beginIndex+12));
-                tfs.TimeStamp = HexUtil.hexStr2int(tagTotalInfo.substring(beginIndex+12,beginIndex+20));
-                tfs.Res = HexUtil.toByteArray(tagTotalInfo.substring(beginIndex+20,beginIndex+24));
-                int epcLen = HexUtil.hexStr2int(tagTotalInfo.substring(beginIndex+28,beginIndex+32)) /8 * 2;
-                int tagLen = epcLen - 8;
-                tfs.PC = HexUtil.toByteArray(tagTotalInfo.substring(beginIndex+32,beginIndex+36));
-                tfs.EpcId = HexUtil.toByteArray(tagTotalInfo.substring(beginIndex+36,beginIndex+36+tagLen));
-                tfs.CRC = HexUtil.toByteArray(tagTotalInfo.substring(beginIndex+36+tagLen,beginIndex+36+tagLen+4));
-                mIvnTagList.add(tfs);
-                beginIndex += 32 + epcLen;
-            }
+        if (tagArray[0].substring(4,6).equals("29")){
+            decodeCommon(tagArray);
         }
+        else if (tagArray[0].substring(4,6).equals("AA")){
+            decodeQuickTag(tagArray);
+        }
+
+//        for (int i=0; i<tagArray.length; i++){
+//            //解析获取到的标签
+//            int relLen = tagArray[i].length();
+//            if (relLen < 24) return READER_ERR.MT_CMD_FAILED_ERR;
+//            String relStatus =  tagArray[i].substring(6,10) ;
+//            if (!relStatus.equals("0000"))
+//                return READER_ERR.MT_CMD_FAILED_ERR;
+//            String tagTotalInfo = tagArray[i].substring(18, relLen -4);
+//            Log.d(TAG,"the total info is " + tagTotalInfo);
+//            int tagCount = Integer.parseInt(tagArray[i].substring(16,18),16);
+//
+//            int tagTotLen = tagTotalInfo.length();
+//            int beginIndex = 0;
+//
+//            while (beginIndex < tagTotLen){
+//                TAGINFO tfs = new TAGINFO();
+//                tfs.ReadCnt = HexUtil.hexStr2int(tagTotalInfo.substring(beginIndex,beginIndex+2));
+//                tfs.RSSI = HexUtil.parseSignedHex(tagTotalInfo.substring(beginIndex+2,beginIndex+4)) ;
+//                tfs.AntennaID = 1;
+//                tfs.Frequency = HexUtil.hexStr2int(tagTotalInfo.substring(beginIndex+6,beginIndex+12));
+//                tfs.TimeStamp = HexUtil.hexStr2int(tagTotalInfo.substring(beginIndex+12,beginIndex+20));
+//                tfs.Res = HexUtil.toByteArray(tagTotalInfo.substring(beginIndex+20,beginIndex+24));
+//                int epcLen = HexUtil.hexStr2int(tagTotalInfo.substring(beginIndex+28,beginIndex+32)) /8 * 2;
+//                int tagLen = epcLen - 8;
+//                tfs.PC = HexUtil.toByteArray(tagTotalInfo.substring(beginIndex+32,beginIndex+36));
+//                tfs.EpcId = HexUtil.toByteArray(tagTotalInfo.substring(beginIndex+36,beginIndex+36+tagLen));
+//                tfs.CRC = HexUtil.toByteArray(tagTotalInfo.substring(beginIndex+36+tagLen,beginIndex+36+tagLen+4));
+//                mIvnTagList.add(tfs);
+//                beginIndex += 32 + epcLen;
+//            }
+//        }
 
 
 
@@ -845,6 +854,31 @@ public class BleReader extends Reader {
         return READER_ERR.MT_OK_ERR;
     }
 
+
+    /**
+     * 重载开启快速盘点设置
+     * @return
+     */
+    public READER_ERR AsyncStartReading(){
+        String sendCommand = "7EFE00023031";
+        String resultCode = "failed";
+
+        try {
+            resultCode = mBleInterface.sendUhfCommand(sendCommand);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+
+        Log.d(TAG,"the resultcode is " + resultCode);
+//        if (resultCode.equals(RESULT_FAIL))
+//            return READER_ERR.MT_CMD_FAILED_ERR;
+
+
+        return READER_ERR.MT_OK_ERR;
+    }
+
+
+
     @Override
     public READER_ERR AsyncStopReading() {
 
@@ -887,6 +921,7 @@ public class BleReader extends Reader {
         int tagCount = tagArray.length;
 
 
+
         //解析获取到的标签,每次只获取一个标签
         for (int i=0; i<tagCount; i++){
 
@@ -919,6 +954,78 @@ public class BleReader extends Reader {
 
 
         return READER_ERR.MT_OK_ERR;
+    }
+
+
+    /**
+     * 解析普通模式标签
+     */
+    private void decodeCommon(String[] tagArray ){
+        for (int i=0; i<tagArray.length; i++){
+            //解析获取到的标签
+            int relLen = tagArray[i].length();
+            if (relLen < 24) return;
+            String relStatus =  tagArray[i].substring(6,10) ;
+            if (!relStatus.equals("0000"))
+                return;
+            String tagTotalInfo = tagArray[i].substring(18, relLen -4);
+            Log.d(TAG,"the total info is " + tagTotalInfo);
+            int tagCount = Integer.parseInt(tagArray[i].substring(16,18),16);
+
+            int tagTotLen = tagTotalInfo.length();
+            int beginIndex = 0;
+
+            while (beginIndex < tagTotLen){
+                TAGINFO tfs = new TAGINFO();
+                tfs.ReadCnt = HexUtil.hexStr2int(tagTotalInfo.substring(beginIndex,beginIndex+2));
+                tfs.RSSI = HexUtil.parseSignedHex(tagTotalInfo.substring(beginIndex+2,beginIndex+4)) ;
+                tfs.AntennaID = 1;
+                tfs.Frequency = HexUtil.hexStr2int(tagTotalInfo.substring(beginIndex+6,beginIndex+12));
+                tfs.TimeStamp = HexUtil.hexStr2int(tagTotalInfo.substring(beginIndex+12,beginIndex+20));
+                tfs.Res = HexUtil.toByteArray(tagTotalInfo.substring(beginIndex+20,beginIndex+24));
+                int epcLen = HexUtil.hexStr2int(tagTotalInfo.substring(beginIndex+28,beginIndex+32)) /8 * 2;
+                int tagLen = epcLen - 8;
+                tfs.PC = HexUtil.toByteArray(tagTotalInfo.substring(beginIndex+32,beginIndex+36));
+                tfs.EpcId = HexUtil.toByteArray(tagTotalInfo.substring(beginIndex+36,beginIndex+36+tagLen));
+                tfs.CRC = HexUtil.toByteArray(tagTotalInfo.substring(beginIndex+36+tagLen,beginIndex+36+tagLen+4));
+                mIvnTagList.add(tfs);
+                beginIndex += 32 + epcLen;
+            }
+        }
+    }
+
+    /**
+     * 解析快速模式标签
+     */
+    private void decodeQuickTag(String[] tagArray){
+        for (int i=0; i<tagArray.length; i++){
+
+            int relLen = tagArray[i].length();
+            if (relLen < 24) return ;
+            String relStatus =  tagArray[i].substring(6,10) ;
+            if (!relStatus.equals("0000"))
+                return ;
+            String tagTotalInfo = tagArray[i].substring(14, relLen -4);
+            Log.d(TAG,"the total info is " + tagTotalInfo);
+
+
+            int tagTotLen = tagTotalInfo.length();
+            int beginIndex = 0;
+            TAGINFO tfs = new TAGINFO();
+            tfs.ReadCnt = HexUtil.hexStr2int(tagTotalInfo.substring(beginIndex,beginIndex+2));
+            tfs.RSSI = HexUtil.parseSignedHex(tagTotalInfo.substring(beginIndex+2,beginIndex+4)) ;
+            tfs.AntennaID = 1;
+            tfs.Frequency = HexUtil.hexStr2int(tagTotalInfo.substring(beginIndex+6,beginIndex+12));
+            tfs.TimeStamp = HexUtil.hexStr2int(tagTotalInfo.substring(beginIndex+12,beginIndex+20));
+            tfs.Res   = HexUtil.toByteArray(tagTotalInfo.substring(beginIndex+20,beginIndex+24));
+            int epcLen = HexUtil.hexStr2int(tagTotalInfo.substring(beginIndex+24,beginIndex+26))  * 2;
+            int tagLen = epcLen - 8;
+            tfs.PC = HexUtil.toByteArray(tagTotalInfo.substring(beginIndex+26,beginIndex+30));
+            tfs.EpcId = HexUtil.toByteArray(tagTotalInfo.substring(beginIndex+30,beginIndex+30+tagLen));
+            tfs.CRC = HexUtil.toByteArray(tagTotalInfo.substring(beginIndex+30+tagLen,beginIndex+30+tagLen+4));
+            mIvnTagList.add(tfs);
+            Log.d(TAG,"tag list size is " + mIvnTagList.size());
+        }
     }
 
 
@@ -1085,7 +1192,7 @@ public class BleReader extends Reader {
     }
 
     /**
-     * 重载开启读卡函数（普通盘点)
+     * 设置普通盘点模式
      * @param timeout
      * @param delay
      * @return
@@ -1102,7 +1209,30 @@ public class BleReader extends Reader {
 
         try {
             resultCode = mBleInterface.sendUhfCommand(sendCommand);
-            mBleInterface.sendUhfCommand("7EFE00023131");
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+
+        Log.d(TAG,"the resultcode is " + resultCode);
+//        if (resultCode.equals(RESULT_FAIL))
+//            return READER_ERR.MT_CMD_FAILED_ERR;
+
+        return READER_ERR.MT_OK_ERR;
+
+    }
+
+
+    /**
+     * 开启盘点，无论快速或普通
+     * @return
+     */
+    public READER_ERR StartReadingCommon(){
+
+        String resultCode = "failed";
+
+        try {
+
+           resultCode = mBleInterface.sendUhfCommand("7EFE00023131");
 
         } catch (RemoteException e) {
             e.printStackTrace();
@@ -1112,10 +1242,7 @@ public class BleReader extends Reader {
 //        if (resultCode.equals(RESULT_FAIL))
 //            return READER_ERR.MT_CMD_FAILED_ERR;
 
-
         return READER_ERR.MT_OK_ERR;
-
-
     }
 
 

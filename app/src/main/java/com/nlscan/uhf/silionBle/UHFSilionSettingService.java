@@ -1312,9 +1312,20 @@ public class UHFSilionSettingService {
 		if(iValue == 0)
 		{
 			mSettingsMap.put(UHFSilionParams.INV_QUICK_MODE.KEY, iValue);
+
+			long readTimeout = getLongParamValue(UHFSilionParams.INV_TIME_OUT.KEY, UHFSilionParams.INV_TIME_OUT.PARAM_INV_TIME_OUT,
+					UHFSilionParams.INV_TIME_OUT.DEFAULT_INV_TIMEOUT);
+			long intevalTime =getLongParamValue(UHFSilionParams.INV_INTERVAL.KEY,
+					UHFSilionParams.INV_INTERVAL.PARAM_INV_INTERVAL_TIME,
+					UHFSilionParams.INV_INTERVAL.DEFAULT_INV_INTERVAL_TIME);
+
+			mReader.StartReading((short) readTimeout,(short) intevalTime);
 			return UHFReader.READER_STATE.OK_ERR;
 		}
-		
+
+
+		mReader.AsyncStartReading();
+
 		
 		int[] mp = null;
 		Object obj = mSettingsMap.get(UHFSilionParams.RF_MAXPOWER.KEY);
