@@ -302,7 +302,7 @@ public class UHFSilionService extends Service {
 	private UHFReader.READER_STATE initReader()
 	{
 		Log.d(TAG, "Start connect to device...");
-		
+
 		//初始化读写器
 		int ant = 1;
 		 READER_ERR er = READER_ERR.MT_CMD_FAILED_ERR;

@@ -13,6 +13,7 @@
     <!-- 盘点测试 -->
     <string name="tab2_layout_textView1">Tag Count in Current Round:</string>
    <string name="tab2_layout_textView2">Tag Count in All Rounds:</string>
+    <string name="tab2_layout_textView3">Times of all read：</string>
    <string name="press_again_to_exit"> Press it again to exit</string>
     <string-array name="inventory_table_header">
         <item>No.</item>

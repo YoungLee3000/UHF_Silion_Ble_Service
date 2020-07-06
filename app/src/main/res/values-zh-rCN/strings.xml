@@ -11,8 +11,9 @@
     <string name="confirm">确定</string>
 
     <!-- 盘点测试 -->
-    <string name="tab2_layout_textView1">本次读到标签个数：</string>
-   <string name="tab2_layout_textView2">共读到标签个数：</string>
+    <string name="tab2_layout_textView1">单次盘点标签个数：</string>
+   <string name="tab2_layout_textView2">标签总个数：</string>
+    <string name="tab2_layout_textView3">总次数：</string>
    <string name="press_again_to_exit"> 再按一次退出程序</string>
     <string-array name="inventory_table_header">
         <item>序号</item>

@@ -51,7 +51,8 @@ public class MainActivity extends Activity {
 	private TextView tv_once,
 										tv_state,
 										tv_tags, 
-										tv_costt;
+										tv_costt,
+										tv_all_time;
 	
 	private Context mContext;
 	private ISilionUHFService mIUHFService;
@@ -59,6 +60,7 @@ public class MainActivity extends Activity {
 	private MyAdapter Adapter;
 	
 	Map<String, TagInfo> TagsMap = new LinkedHashMap<String, TagInfo>();// 有序
+	private int gTagsTimesCount = 0;
 	private List<Map<String, ?>> ListMs = new ArrayList<Map<String, ?>>();
 	private String[] Coname = new String[] { "序号", "EPC ID", "次数", "天线", "协议", "RSSI", "频率", "附加数据" };
 	
@@ -127,7 +129,9 @@ public class MainActivity extends Activity {
 		
 		tv_once = (TextView) findViewById(R.id.textView_readoncecnt);
 		tv_tags = (TextView) findViewById(R.id.textView_readallcnt);
-		
+		tv_all_time = (TextView) findViewById(R.id.textView_readalltime);
+
+
 		for (int i = 0; i < Coname.length; i++)
 			listHeader.put(Coname[i], Coname[i]);
 		
@@ -245,6 +249,9 @@ public class MainActivity extends Activity {
 		
 		tv_once.setText(String.valueOf(0));
 		tv_tags.setText(String.valueOf(0));
+		tv_all_time.setText(String.valueOf(0));
+
+		gTagsTimesCount = 0;
 		
 		if(TagsMap != null)
 			TagsMap.clear();
@@ -344,9 +351,11 @@ public class MainActivity extends Activity {
 			case MSG_REFRESH_RESULT_LIST:
 				int curTagCount = msg.arg1;
 				int totalTagCount = msg.arg2;
+				int totalTimes = (int) msg.obj;
 				
 				tv_once.setText(String.valueOf(curTagCount));
 				tv_tags.setText(String.valueOf(totalTagCount));
+				tv_all_time.setText(String.valueOf(totalTimes));
 				Adapter.notifyDataSetChanged();
 				break;
 			}
@@ -428,8 +437,8 @@ public class MainActivity extends Activity {
 				int cll = TagsMap.size();
 				if (cll < 0)
 					cll = 0;
-				
-				Message msg = Message.obtain(mUIHandler, MSG_REFRESH_RESULT_LIST, tagInfos.length, cll);
+				gTagsTimesCount += tagInfos.length;
+				Message msg = Message.obtain(mUIHandler, MSG_REFRESH_RESULT_LIST, tagInfos.length, cll,gTagsTimesCount);
 				mUIHandler.sendMessageDelayed(msg, 50);
 			}//end if
 			
