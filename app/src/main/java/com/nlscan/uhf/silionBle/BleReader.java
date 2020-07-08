@@ -287,7 +287,7 @@ public class BleReader extends Reader {
 
 
     /**
-     * 获取多标签盘存的标签
+     * 获取返回的标签，包括快速模式与普通模式
      * @param tagcnt
      * @return
      */
@@ -390,7 +390,7 @@ public class BleReader extends Reader {
 
 
     /**
-     * 获取盘存标签
+     * 获取盘存标签，普通模式
      * @param TI
      * @return
      */
@@ -1063,14 +1063,14 @@ public class BleReader extends Reader {
             tfs.ReadCnt = HexUtil.hexStr2int(tagTotalInfo.substring(beginIndex,beginIndex+2));
             tfs.RSSI = HexUtil.parseSignedHex(tagTotalInfo.substring(beginIndex+2,beginIndex+4)) ;
             tfs.AntennaID = 1;
-            tfs.Frequency = HexUtil.hexStr2int(tagTotalInfo.substring(beginIndex+6,beginIndex+12));
-            tfs.TimeStamp = HexUtil.hexStr2int(tagTotalInfo.substring(beginIndex+12,beginIndex+20));
-            tfs.Res   = HexUtil.toByteArray(tagTotalInfo.substring(beginIndex+20,beginIndex+24));
-            int epcLen = HexUtil.hexStr2int(tagTotalInfo.substring(beginIndex+24,beginIndex+26))  * 2;
+//            tfs.Frequency = HexUtil.hexStr2int(tagTotalInfo.substring(beginIndex+6,beginIndex+12));
+//            tfs.TimeStamp = HexUtil.hexStr2int(tagTotalInfo.substring(beginIndex+12,beginIndex+20));
+//            tfs.Res   = HexUtil.toByteArray(tagTotalInfo.substring(beginIndex+20,beginIndex+24));
+            int epcLen = HexUtil.hexStr2int(tagTotalInfo.substring(beginIndex+4,beginIndex+6))  * 2;
             int tagLen = epcLen - 8;
-            tfs.PC = HexUtil.toByteArray(tagTotalInfo.substring(beginIndex+26,beginIndex+30));
-            tfs.EpcId = HexUtil.toByteArray(tagTotalInfo.substring(beginIndex+30,beginIndex+30+tagLen));
-            tfs.CRC = HexUtil.toByteArray(tagTotalInfo.substring(beginIndex+30+tagLen,beginIndex+30+tagLen+4));
+            tfs.PC = HexUtil.toByteArray(tagTotalInfo.substring(beginIndex+6,beginIndex+10));
+            tfs.EpcId = HexUtil.toByteArray(tagTotalInfo.substring(beginIndex+10,beginIndex+10+tagLen));
+            tfs.CRC = HexUtil.toByteArray(tagTotalInfo.substring(beginIndex+10+tagLen,beginIndex+10+tagLen+4));
             mIvnTagList.add(tfs);
             Log.d(TAG,"tag list size is " + mIvnTagList.size());
         }
@@ -1143,8 +1143,11 @@ public class BleReader extends Reader {
     }
 
 
-
-
+    /**
+     * 获取盘存标签，快速模式
+     * @param TI
+     * @return
+     */
     @Override
     public READER_ERR AsyncGetNextTag(TAGINFO TI) {
 
