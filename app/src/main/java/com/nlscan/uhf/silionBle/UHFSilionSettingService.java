@@ -772,6 +772,28 @@ public class UHFSilionSettingService {
 			} catch (Exception e) {
 			}
 		}
+
+
+		if(UHFSilionParams.CHARGE_VALUE.KEY.equals(paramKey))
+		{
+			try {
+
+				int[] val = new int[1];
+				val[0] = 0;
+				READER_ERR er = mReader.GetCharge( val);
+				if (er == READER_ERR.MT_OK_ERR) {
+					mSettingsMap.put(UHFSilionParams.CHARGE_VALUE.KEY, val[0]);
+					return String.valueOf(val[0]);
+				}else
+					DLog.d(TAG, "Get tempture failed : "+er.toString());
+				return null;
+			} catch (Exception e) {
+			}
+		}
+
+
+
+
 		
 		if(mSettingsMap != null)
 		{

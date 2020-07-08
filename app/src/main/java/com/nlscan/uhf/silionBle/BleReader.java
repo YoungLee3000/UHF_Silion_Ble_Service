@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.RemoteException;
 import android.util.Log;
 
+import com.nlscan.android.uhf.UHFReader;
 import com.nlscan.blecommservice.IBleInterface;
 import com.uhf.api.cls.BackReadOption;
 import com.uhf.api.cls.ErrInfo;
@@ -610,6 +611,58 @@ public class BleReader extends Reader {
         return super.PsamTransceiver(soltid, coslen, cos, cosresplen, cosresp, errcode, timeout);
     }
 
+
+    /**
+     * 获取模块电量
+     * @param val
+     * @return
+     */
+    public READER_ERR GetCharge(int[] val){
+
+        String sendCommand = "7E013030303040574C535150573B03";
+        String resultCode = "failed";
+
+        try {
+            resultCode = mBleInterface.sendUhfCommand(sendCommand);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+
+
+        if (resultCode.equals("failed") )
+            return READER_ERR.MT_CMD_FAILED_ERR;
+
+        if (!resultCode.startsWith("02013030"))
+            return READER_ERR.MT_CMD_FAILED_ERR;
+
+        String chargeVal = resultCode.substring(26);
+
+        if (chargeVal.length() == 12){
+            val[0] = 100;
+        }
+        if (chargeVal.length() == 10){
+            val[0] = Integer.parseInt(chargeVal.substring(1,2)) * 10 +
+                    Integer.parseInt(chargeVal.substring(3,4));
+        }
+        if (chargeVal.length() == 8){
+            val[0] = Integer.parseInt(chargeVal.substring(1,2));
+        }
+
+        Log.d(TAG,"the resultcode is " + resultCode);
+
+
+
+        return READER_ERR.MT_OK_ERR;
+
+
+    }
+
+    /**
+     * 获取参数值
+     * @param key
+     * @param val
+     * @return
+     */
     @Override
     public READER_ERR ParamGet(Mtr_Param key, Object val) {
 
@@ -661,12 +714,7 @@ public class BleReader extends Reader {
 
         }
 
-
-
         return READER_ERR.MT_OK_ERR;
-
-
-
 
 
     }

@@ -296,6 +296,17 @@ public class UHFSilionParams {
     	/**温度*/
 	    public final static String PARAM_TEMPTURE = "PARAM_TEMPTURE";
     }
+
+
+	/**温度*/
+	public final static class CHARGE_VALUE{
+
+		public final static String KEY = "CHARGE_VALUE";
+		/**温度*/
+		public final static String PARAM_CHARGE_VALUE = "PARAM_CHARGE_VALUE";
+	}
+
+
     
     /**
      * 低电量时,读功率设置参数
@@ -310,4 +321,9 @@ public class UHFSilionParams {
     	/**读功率设置参数*/
 	    public final static String PARAM_LOWER_POWER_READ_DBM = "PARAM_LOWER_POWER_DBM";
     }
+
+
+
+
+
 }

@@ -100,7 +100,7 @@ public class UHFSilionService extends Service {
 
 
 	/**电量监控范围**/
-	private boolean mBatteryMonitorOn = true;//是否开启电量监控
+	private boolean mBatteryMonitorOn = false;//是否开启电量监控
 	private int mBatteryWarn1 = 20;//电量警戒线1
 	private int mBatteryWarn2 = 15;//电量警戒线2
 	private int mCurCharge = -1; //当前电量
@@ -283,7 +283,7 @@ public class UHFSilionService extends Service {
 
 
         UHFReader.READER_STATE state =   initReader();
-
+//		UHFReader.READER_STATE state = UHFReader.READER_STATE.OK_ERR;
 		if(state == UHFReader.READER_STATE.OK_ERR)
 			state = doInitReaderParams();//初始化读写器参数
 		mPowerOn = (state == UHFReader.READER_STATE.OK_ERR);
@@ -402,7 +402,7 @@ public class UHFSilionService extends Service {
 		boolean quickMode = isQuickMode();
 		if (quickMode) {
 		    er = mReader.StartReadingCommon();
-			er = mReader.AsyncStartReading(uants, uants.length, 0);
+//			er = mReader.AsyncStartReading(uants, uants.length, 0);
 			if (er != READER_ERR.MT_OK_ERR) {
 				DLog.w(TAG, "不停顿盘点启动失败 : "+er.toString());
 				return;
@@ -881,7 +881,7 @@ public class UHFSilionService extends Service {
 		public void onReceive(Context context, Intent intent) {
 			String action = intent.getAction();
 			if (BROAD_BATTERY_MONITOR.equals(action)){
-				mBatteryMonitorOn = intent.getBooleanExtra(EXTRA_STRING_MONITOR,mBatteryMonitorOn);
+				mBatteryMonitorOn = intent.getBooleanExtra(EXTRA_STRING_MONITOR,false);
 				mBatteryWarn1 = intent.getIntExtra(EXTRA_STRING_WARN_ONE,mBatteryWarn1);
 				mBatteryWarn2 = intent.getIntExtra(EXTRA_STRING_WARN_TWO,mBatteryWarn2);
 			}
@@ -899,7 +899,7 @@ public class UHFSilionService extends Service {
 			
 			String action=intent.getAction();
 			//未上电状态下也要更新当前电量
-			if (Intent.ACTION_BATTERY_CHANGED.equals(action) && !mPowerOn){
+			if (Intent.ACTION_BATTERY_CHANGED.equals(action) && !mPowerOn && mBatteryMonitorOn){
 				//当前电量比
 				int level=intent.getIntExtra(BatteryManager.EXTRA_LEVEL,0);
 				//总电量单位
@@ -909,7 +909,7 @@ public class UHFSilionService extends Service {
 				mCurCharge = mCurLevel;
 			}
 
-			if(Intent.ACTION_BATTERY_CHANGED.equals(action) && mPowerOn)
+			if(Intent.ACTION_BATTERY_CHANGED.equals(action) && mPowerOn && mBatteryMonitorOn)
 			{
 				
 				long id = Binder.clearCallingIdentity();

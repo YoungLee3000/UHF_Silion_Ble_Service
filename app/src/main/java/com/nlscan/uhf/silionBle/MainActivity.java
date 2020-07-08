@@ -46,13 +46,15 @@ public class MainActivity extends Activity {
 								btn_power_off,
 								btn_start_read,
 								btn_stop_read,
-								btn_clear;
+								btn_clear,
+								btn_charge;
 	
 	private TextView tv_once,
 										tv_state,
 										tv_tags, 
 										tv_costt,
-										tv_all_time;
+										tv_all_time,
+										tv_charge;
 	
 	private Context mContext;
 	private ISilionUHFService mIUHFService;
@@ -125,11 +127,13 @@ public class MainActivity extends Activity {
 		btn_start_read = (Button)  findViewById(R.id.btn_start_read);
 		btn_stop_read =  (Button) findViewById(R.id.btn_stop_read);
 		btn_clear =  (Button) findViewById(R.id.btn_clear);
+		btn_charge = (Button) findViewById(R.id.btn_charge);
 		listView = (ListView) findViewById(R.id.listView_epclist);
 		
 		tv_once = (TextView) findViewById(R.id.textView_readoncecnt);
 		tv_tags = (TextView) findViewById(R.id.textView_readallcnt);
 		tv_all_time = (TextView) findViewById(R.id.textView_readalltime);
+		tv_charge = (TextView) findViewById(R.id.textView_charge_val);
 
 
 		for (int i = 0; i < Coname.length; i++)
@@ -264,6 +268,20 @@ public class MainActivity extends Activity {
 		Adapter.notifyDataSetChanged();
 		
 	}
+
+
+	/**
+	 * 获取电量
+	 */
+	private void getCharge(){
+		try {
+			String chargeVal = mIUHFService.getParam("CHARGE_VALUE",
+					"PARAM_CHARGE_VALUE");
+			tv_charge.setText(chargeVal + "%");
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
+	}
 	
 	private View.OnClickListener mClick = new View.OnClickListener() {
 		
@@ -288,6 +306,10 @@ public class MainActivity extends Activity {
 			case R.id.btn_clear:
 				clearData();
 				break;
+			case R.id.btn_charge:
+				getCharge();
+				break;
+
 			}
 		}
 	};
