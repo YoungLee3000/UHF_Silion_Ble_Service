@@ -1193,8 +1193,8 @@ public class UHFSilionService extends Service {
 			mOperHandler.sendEmptyMessage(OperateHandler.MSG_STOP_READING);
 			Binder.restoreCallingIdentity(id);
 
-			if (isQuickMode())
-				while (mIfQuickReading){}
+//			if (isQuickMode())
+//				while (mIfQuickReading){}
 //			if (!mIfQuickReading)
 				return UHFReader.READER_STATE.OK_ERR.value();
 //			else

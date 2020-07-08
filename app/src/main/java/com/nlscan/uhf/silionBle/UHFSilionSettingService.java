@@ -693,6 +693,12 @@ public class UHFSilionSettingService {
 			{
 				if(TextUtils.isDigitsOnly(sValue))
 				{
+
+					long intevalTime =getLongParamValue(UHFSilionParams.INV_INTERVAL.KEY,
+							UHFSilionParams.INV_INTERVAL.PARAM_INV_INTERVAL_TIME,
+							UHFSilionParams.INV_INTERVAL.DEFAULT_INV_INTERVAL_TIME);
+
+					mReader.StartReading((short) Long.parseLong(sValue),(short) intevalTime);
 					mSettingsMap.put(UHFSilionParams.INV_TIME_OUT.KEY, Long.parseLong(sValue));
 					state = UHFReader.READER_STATE.OK_ERR;
 				}
@@ -703,6 +709,11 @@ public class UHFSilionSettingService {
 			{
 				if(TextUtils.isDigitsOnly(sValue))
 				{
+					long readTimeout = getLongParamValue(UHFSilionParams.INV_TIME_OUT.KEY, UHFSilionParams.INV_TIME_OUT.PARAM_INV_TIME_OUT,
+							UHFSilionParams.INV_TIME_OUT.DEFAULT_INV_TIMEOUT);
+
+
+					mReader.StartReading((short) readTimeout,(short) Long.parseLong(sValue));
 					mSettingsMap.put(UHFSilionParams.INV_INTERVAL.KEY, Long.parseLong(sValue));
 					state = UHFReader.READER_STATE.OK_ERR;
 				}

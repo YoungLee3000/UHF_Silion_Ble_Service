@@ -325,14 +325,16 @@ public class BleReader extends Reader {
 
 
         String [] tagArray = resultCode.split(";");
-        tagcnt[0] = tagArray.length;
+
 
         if (tagArray.length < 1 ) return READER_ERR.MT_CMD_FAILED_ERR;
 
         if (tagArray[0].substring(4,6).equals("29")){
-            decodeCommon(tagArray);
+
+            decodeCommon(tagArray,tagcnt);
         }
         else if (tagArray[0].substring(4,6).equals("AA")){
+            tagcnt[0] = tagArray.length;
             decodeQuickTag(tagArray);
         }
 
@@ -1008,7 +1010,8 @@ public class BleReader extends Reader {
     /**
      * 解析普通模式标签
      */
-    private void decodeCommon(String[] tagArray ){
+    private void decodeCommon(String[] tagArray, int[] tagcnt ){
+        tagcnt[0] = 0;
         for (int i=0; i<tagArray.length; i++){
             //解析获取到的标签
             int relLen = tagArray[i].length();
@@ -1037,6 +1040,7 @@ public class BleReader extends Reader {
                 tfs.EpcId = HexUtil.toByteArray(tagTotalInfo.substring(beginIndex+36,beginIndex+36+tagLen));
                 tfs.CRC = HexUtil.toByteArray(tagTotalInfo.substring(beginIndex+36+tagLen,beginIndex+36+tagLen+4));
                 mIvnTagList.add(tfs);
+                tagcnt[0]++;
                 beginIndex += 32 + epcLen;
             }
         }
