@@ -2,6 +2,7 @@
 package com.nlscan.blecommservice;
 
 // Declare any non-default types here with import statements
+import com.nlscan.blecommservice.IUHFCallback;
 import com.nlscan.blecommservice.IBleScanCallback;
 import com.nlscan.blecommservice.IBatteryChangeListener;
 import com.nlscan.blecommservice.IScanConfigCallback;
@@ -26,4 +27,8 @@ interface IBleInterface {
 
     //is the ble avilable
     boolean isBleAccess();
+
+    //set uhf data callback
+    void setUhfCallback(IUHFCallback callback);
+
 }

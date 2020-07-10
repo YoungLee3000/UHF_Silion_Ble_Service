@@ -282,6 +282,7 @@ public class UHFSilionService extends Service {
 //			return  UHFReader.READER_STATE.HARDWARE_ALERT_ERR_BY_UNKNOWN_ERR;
 
 
+		bindBleService();
         UHFReader.READER_STATE state =   initReader();
 //		UHFReader.READER_STATE state = UHFReader.READER_STATE.OK_ERR;
 		if(state == UHFReader.READER_STATE.OK_ERR)
@@ -472,6 +473,9 @@ public class UHFSilionService extends Service {
 							er = mReader.AsyncGetNextTag(tfs);
 						else
 							er = mReader.GetNextTag(tfs);
+
+//						if (er == READER_ERR.MT_OK_ERR)
+//							performPrompt();
 						tagInfos[i] = tfs;
 						Log.d(TAG,"the tfs is null " + (tfs == null));
 //
@@ -506,7 +510,7 @@ public class UHFSilionService extends Service {
 //        long intevalTime = 10;
 		long intevalTime =mSettingsService.getLongParamValue(UHFSilionParams.INV_INTERVAL.KEY, UHFSilionParams.INV_INTERVAL.PARAM_INV_INTERVAL_TIME,UHFSilionParams.INV_INTERVAL.DEFAULT_INV_INTERVAL_TIME);
 		Log.d(TAG,"inventory time " + intevalTime);
-		mOperHandler.sendEmptyMessageDelayed(OperateHandler.MSG_START_READING, intevalTime);
+		mOperHandler.sendEmptyMessageDelayed(OperateHandler.MSG_START_READING, 0);
 		
 	}//end doStartReading
 	
