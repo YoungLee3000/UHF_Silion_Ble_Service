@@ -29,6 +29,6 @@ interface IBleInterface {
     boolean isBleAccess();
 
     //set uhf data callback
-    void setUhfCallback(IUHFCallback callback);
+    oneway void setUhfCallback(IUHFCallback callback);
 
 }

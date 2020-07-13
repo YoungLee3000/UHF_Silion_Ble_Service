@@ -117,6 +117,7 @@ public class UHFSilionService extends Service {
 	//蓝牙相关
 	private IBleInterface mBleInterface;
 	private boolean mIfQuickReading = false;
+	private BleServiceConnection mBleServiceConnection;
 
 
 	@Override
@@ -163,7 +164,8 @@ public class UHFSilionService extends Service {
 		Log.d(TAG,"begin bind ble service");
 		Intent service = new Intent("android.nlscan.intent.action.START_BLE_SERVICE");
 		service.setPackage("com.nlscan.blecommservice");
-		mContext.bindService(service,new BleServiceConnection(), Context.BIND_AUTO_CREATE);
+		mBleServiceConnection = new BleServiceConnection();
+		mContext.bindService(service,mBleServiceConnection, Context.BIND_AUTO_CREATE);
 	}
 
 
@@ -197,6 +199,7 @@ public class UHFSilionService extends Service {
 	public void onDestroy() {
 		super.onDestroy();
 		unRegisterReceiver();
+		mContext.unbindService(mBleServiceConnection);
 	}
 
 	@Override
@@ -380,7 +383,7 @@ public class UHFSilionService extends Service {
 //				Log.d(TAG, "UHF disconnect complete,state : "+blen);
 				UHFReader.READER_STATE state =   UHFReader.READER_STATE.OK_ERR ;
 				mPowerOn = false;
-
+				mContext.unbindService(mBleServiceConnection);
 				Log.d(TAG, "UHF pown off , state : "+state.toString());
 				return state;
 			} catch (Exception e) {
@@ -415,7 +418,7 @@ public class UHFSilionService extends Service {
 	private void doStartReading()
 	{
 		//Log.d(TAG, "Enter doStartReading..");
-		
+		long pre = System.currentTimeMillis();
 		if(mForceStoped)
 		{
 			Log.d(TAG, "Reading is stoped.");
@@ -504,7 +507,8 @@ public class UHFSilionService extends Service {
 		} catch (Exception e) {
 			Log.w(TAG, "Start reading failed.", e);
 		}
-		
+
+		Log.d(TAG,"the uhf parse cause " + (System.currentTimeMillis() - pre) + " ms");
 		//进入下一扫描周期
 
 //        long intevalTime = 10;

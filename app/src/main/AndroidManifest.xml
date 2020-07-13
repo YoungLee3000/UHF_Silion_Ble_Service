@@ -28,7 +28,8 @@
         android:label="@string/app_name"
         android:theme="@style/MyAppTheme" 
         android:persistent="false"
-        tools:ignore="GoogleAppIndexingWarning">
+        tools:ignore="GoogleAppIndexingWarning"
+        >
         <activity
             android:name="com.nlscan.uhf.silionBle.MainActivity"
             android:label="@string/app_name" >

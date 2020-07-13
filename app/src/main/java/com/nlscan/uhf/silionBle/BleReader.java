@@ -98,7 +98,7 @@ public class BleReader extends Reader {
 
     @Override
     public void CloseReader() {
-//        mBleInterface = null;
+        mBleInterface = null;
     }
 
     //获取标签，不启用匹配
@@ -353,12 +353,17 @@ public class BleReader extends Reader {
 
 //        String resultCode = "failed";
 
-        try {
-//            mBleInterface.sendUhfCommand(command.toString());
-//            String resultCode = mBleInterface.getUhfTagData();
-              String resultCode = getOriginData();
 
-            Log.d(TAG,"the result code is " +resultCode);
+//            mBleInterface.sendUhfCommand(command.toString());
+        String resultCode = null;
+        try {
+            resultCode = mBleInterface.getUhfTagData();
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+//              String resultCode = getOriginData();
+
+            Log.d(TAG,"the result code is " +resultCode.substring(0,6));
             if ( resultCode == null ||  "".equals(resultCode))
                 return READER_ERR.MT_CMD_FAILED_ERR;
 
@@ -378,9 +383,7 @@ public class BleReader extends Reader {
             }
 
 
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+
 
 
 
