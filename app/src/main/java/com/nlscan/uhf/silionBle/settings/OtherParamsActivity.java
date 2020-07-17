@@ -32,7 +32,9 @@ public class OtherParamsActivity extends BaseActivity {
 	private Context mContext;
 	private UHFManager mUHFMgr = UHFManager.getInstance();
 	
-	private Button button_oantuqget,button_oantuqset,button_odatauqget,button_odatauqset,button_hrssiget,button_hrssiset,button_gettempture;
+	private Button button_oantuqget,button_oantuqset,
+			button_odatauqget,button_odatauqset,button_hrssiget,
+			button_hrssiset,button_gettempture,button_getCharge;
 	private CheckBox cb_oant,cb_odata,cb_hrssi;
 
 	//电量监控
@@ -85,6 +87,7 @@ public class OtherParamsActivity extends BaseActivity {
 		button_odatauqget.performClick();
 		button_hrssiget.performClick();
 		button_gettempture.performClick();
+		button_getCharge.performClick();
 	}
 	
 	private void initView()
@@ -225,6 +228,26 @@ public class OtherParamsActivity extends BaseActivity {
 				EditText et = (EditText) findViewById(R.id.editText_tempure);
 				try {
 					String sValue = mUHFMgr.getParam(UHFSilionParams.TEMPTURE.KEY, UHFSilionParams.TEMPTURE.PARAM_TEMPTURE, null);
+					if( sValue != null && TextUtils.isDigitsOnly(sValue))
+						et.setText(sValue);
+				} catch (Exception e) {
+					Toast.makeText(mContext,	"Exception:" + e.getMessage(), Toast.LENGTH_SHORT)	.show();
+					e.printStackTrace();
+				}
+			}
+
+		});
+
+		//获取电量
+		button_getCharge = (Button) findViewById(R.id.button_charge);
+		button_getCharge.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View arg0) {
+				EditText et = (EditText) findViewById(R.id.editText_charge);
+				try {
+					String sValue = mUHFMgr.getParam(UHFSilionParams.CHARGE_VALUE.KEY,
+							UHFSilionParams.CHARGE_VALUE.PARAM_CHARGE_VALUE, null);
 					if( sValue != null && TextUtils.isDigitsOnly(sValue))
 						et.setText(sValue);
 				} catch (Exception e) {

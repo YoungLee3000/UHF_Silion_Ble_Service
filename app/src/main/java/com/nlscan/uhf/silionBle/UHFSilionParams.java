@@ -298,11 +298,11 @@ public class UHFSilionParams {
     }
 
 
-	/**温度*/
+	/**电量*/
 	public final static class CHARGE_VALUE{
 
 		public final static String KEY = "CHARGE_VALUE";
-		/**温度*/
+		/**电量*/
 		public final static String PARAM_CHARGE_VALUE = "PARAM_CHARGE_VALUE";
 	}
 

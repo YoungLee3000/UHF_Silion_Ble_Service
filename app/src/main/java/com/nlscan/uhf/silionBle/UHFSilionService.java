@@ -126,8 +126,14 @@ public class UHFSilionService extends Service {
 		
 		mContext = getApplicationContext();
 		mUHFMgr = UHFManager.getInstance();
+		mSettingsService = new UHFSilionSettingService(mContext, mReader);
+		mSettingsMap = mSettingsService.getAllSettings();
 
 		bindBleService();
+
+
+
+
 
 //		mRfidPower = new RfidPower(PT);
 		
@@ -176,9 +182,12 @@ public class UHFSilionService extends Service {
 		@Override
 		public void onServiceConnected(ComponentName name, IBinder service) {
 			mBleInterface = IBleInterface.Stub.asInterface(service);
+
 			mReader = new BleReader(mBleInterface);
-			mSettingsService = new UHFSilionSettingService(mContext, mReader);
-			mSettingsMap = mSettingsService.getAllSettings();
+			mSettingsService.setReader(mReader);
+
+//			mSettingsService = new UHFSilionSettingService(mContext, mReader);
+//			mSettingsMap = mSettingsService.getAllSettings();
 			Log.d(TAG, "onServiceConnected");
 			try {
 				Log.d(TAG,"blue is access " + mBleInterface.isBleAccess());
@@ -188,7 +197,7 @@ public class UHFSilionService extends Service {
 		}
 		@Override
 		public void onServiceDisconnected(ComponentName name) {
-			mBleInterface = null;
+//			mBleInterface = null;
 		}
 	}
 
@@ -286,6 +295,7 @@ public class UHFSilionService extends Service {
 
 
 		bindBleService();
+//		mReader.setmBleInterface(mBleInterface);
         UHFReader.READER_STATE state =   initReader();
 //		UHFReader.READER_STATE state = UHFReader.READER_STATE.OK_ERR;
 		if(state == UHFReader.READER_STATE.OK_ERR)
@@ -306,6 +316,8 @@ public class UHFSilionService extends Service {
 	private UHFReader.READER_STATE initReader()
 	{
 		Log.d(TAG, "Start connect to device...");
+
+		mReader.setmBleInterface(mBleInterface);
 
 		//初始化读写器
 		int ant = 1;
@@ -332,6 +344,7 @@ public class UHFSilionService extends Service {
 			
 			//执行模块参数配置
         	mSettingsService.effectParams(mReader);
+//        	mSettingsMap = mSettingsService.getAllSettings();
         	READER_ERR er ;
 //        	er = mReader.ParamSet(Mtr_Param.MTR_PARAM_TAG_SEARCH_MODE, new int[] { 0 });
         	

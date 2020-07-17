@@ -127,6 +127,7 @@
   <string name= "inventory_mode">Inventory mode</string>
   <string name= "iso_6b_depth">Iso180006b Depth</string>
   <string name= "tempture">Temperature</string>
+    <string name= "charge">Charge</string>
   
   <!-- 快速模式  -->
   <string name= "time_stop_per">Stop time percents</string>

@@ -35,6 +35,10 @@ public class UHFSilionSettingService {
 		this.mReader = reader;
 		mSettingsMap = new HashMap<String,Object>();
 	}
+
+	public void setReader(BleReader mReader){
+		this.mReader = mReader;
+	}
 	
 	/**
 	 * 初始化配置操作
@@ -49,6 +53,8 @@ public class UHFSilionSettingService {
 		
 		if(isFirstLoading)
 		{
+
+			Log.d(TAG,"first load");
 			//第一次加载,从UHF模块中加载配置
 			loadParamsFromUHFModule();
 			//初始化默认配置(第一次上电时使用)
@@ -60,7 +66,7 @@ public class UHFSilionSettingService {
 			//初始化保存配置数据
 			initParams();
 			//加载模块中的配置参数
-			loadParamsFromUHFModule();
+//			loadParamsFromUHFModule();
 			
 		}
 		
@@ -796,7 +802,7 @@ public class UHFSilionSettingService {
 					mSettingsMap.put(UHFSilionParams.CHARGE_VALUE.KEY, val[0]);
 					return String.valueOf(val[0]);
 				}else
-					DLog.d(TAG, "Get tempture failed : "+er.toString());
+					DLog.d(TAG, "Get charge failed : "+er.toString());
 				return null;
 			} catch (Exception e) {
 			}
@@ -1523,6 +1529,7 @@ public class UHFSilionSettingService {
 		DLog.d(TAG, "Enter load_PARAM_RF_ANTPOWER_Saved...");
 		SharedPreferences sp = mContext.getSharedPreferences(UHFSilionParams.RF_ANTPOWER.KEY, Context.MODE_PRIVATE);
 		String sValue = sp.getString(UHFSilionParams.RF_ANTPOWER.PARAM_RF_ANTPOWER, null);
+		Log.d(TAG,"load power value " + sValue);
 		mSettingsMap.put(UHFSilionParams.RF_ANTPOWER.KEY, sValue);
 		
 	}//load_PARAM_RF_ANTPOWER_Saved
@@ -1770,7 +1777,7 @@ public class UHFSilionSettingService {
 				String shtb = converToString(htb);
 				
 				//保存设置
-				//saveSettings(UHFSilionParams.FREQUENCY_HOPTABLE.KEY, UHFSilionParams.FREQUENCY_HOPTABLE.PARAM_HTB,  String.valueOf(shtb));
+				saveSettings(UHFSilionParams.FREQUENCY_HOPTABLE.KEY, UHFSilionParams.FREQUENCY_HOPTABLE.PARAM_HTB,  String.valueOf(shtb));
 				
 				mSettingsMap.put(UHFSilionParams.FREQUENCY_HOPTABLE.KEY, htb);
 				DLog.d(TAG, "hoptable : "+Arrays.toString(htb));

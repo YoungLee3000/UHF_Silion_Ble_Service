@@ -127,8 +127,9 @@
   <string name= "inventory_mode">盘存模式</string>
   <string name= "iso_6b_depth">Iso180006b调整深度</string>
   <string name= "tempture">温度</string>
-  
-  <!-- 快速模式  -->
+    <string name= "charge">电量</string>
+
+    <!-- 快速模式  -->
   <string name= "time_stop_per">停顿时间比</string>
   <string name= "tag_data_item">返回标签数据项</string>
   <string name= "time_count">次数</string>

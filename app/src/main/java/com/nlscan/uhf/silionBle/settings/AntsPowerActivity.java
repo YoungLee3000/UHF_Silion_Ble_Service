@@ -211,6 +211,11 @@ public class AntsPowerActivity extends BaseActivity {
 					
 					//加载"读写器发射功率JSONArray的字符串形式[{"antid":1,"readPower":2600,"writePower":2700},...]格式
 					Map<String,Object> settingsMap = mUHFMgr.getAllParams();
+					for(Map.Entry<String, Object> entry : settingsMap.entrySet()){
+						String mapKey = entry.getKey();
+						Log.d("antPower","set is " + mapKey+":"+entry.getValue());
+					}
+
 					String sValue = (String) settingsMap.get(UHFSilionParams.RF_ANTPOWER.KEY);
 					
 
