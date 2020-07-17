@@ -4,6 +4,7 @@ import java.util.Map;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -63,37 +64,38 @@ public class QuickModeActivity extends BaseActivity {
 		checkbox_q2enable1200 = (CheckBox) findViewById(R.id.checkbox_q2enable1200);
 		
 		int iQuickMode= getUHFIntSetting(UHFSilionParams.INV_QUICK_MODE.KEY,0);
-		int[] iGenSessions = getUHFIntArraySetting(UHFSilionParams.POTL_GEN2_SESSION.KEY);
-		iGenSessions = iGenSessions == null ? new int[]{-1}:iGenSessions;
-		boolean q1enable1200 =  ( iQuickMode == 1 && iGenSessions[0] > 0 );
-		boolean q0enable1200 =  ( iQuickMode == 1 && iGenSessions[0] ==  0 );
-		checkbox_q1enable1200.setChecked(q1enable1200);
+//		int[] iGenSessions = getUHFIntArraySetting(UHFSilionParams.POTL_GEN2_SESSION.KEY);
+//		iGenSessions = iGenSessions == null ? new int[]{-1}:iGenSessions;
+//		boolean q1enable1200 =  ( iQuickMode == 1 && iGenSessions[0] > 0 );
+		Log.d("Quick","the quick mode " + iQuickMode);
+		boolean q0enable1200 =  ( iQuickMode == 1 );
+//		checkbox_q1enable1200.setChecked(q1enable1200);
 		checkbox_q2enable1200.setChecked(q0enable1200);
 		
-		checkbox_q1enable1200.setEnabled(!q0enable1200);
-		checkbox_q2enable1200.setEnabled(!q1enable1200);
+//		checkbox_q1enable1200.setEnabled(!q0enable1200);
+//		checkbox_q2enable1200.setEnabled(!q1enable1200);
 		cb_nostop = (CheckBox) findViewById(R.id.checkBox_nostop);
 		//开启(最大功率,S1,间隔0)
 		checkbox_q1enable1200.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 			
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-				UHFReader.READER_STATE er = mUHFMgr.setParam(UHFSilionParams.INV_QUICK_MODE.KEY, UHFSilionParams.INV_QUICK_MODE.PARAM_INV_QUICK_MODE, isChecked?"1":"0");
-				if (er == UHFReader.READER_STATE.OK_ERR && isChecked) {
-					er = mUHFMgr.setParam(UHFSilionParams.POTL_GEN2_SESSION.KEY, UHFSilionParams.POTL_GEN2_SESSION.PARAM_POTL_GEN2_SESSION, "1");
-				} 
-				
-				if (er == UHFReader.READER_STATE.OK_ERR) {
-					cb_nostop.setChecked(true);
-					//Toast.makeText(mContext, R.string.setting_success, Toast.LENGTH_SHORT).show();
-					if(isChecked)
-						checkbox_q2enable1200.setEnabled(false);
-					else
-						checkbox_q2enable1200.setEnabled(true);
-				} else
-					Toast.makeText(mContext,getString(R.string.setting_fail)+" : " + er.toString(), Toast.LENGTH_SHORT).show();
-				
-				
+//				UHFReader.READER_STATE er = mUHFMgr.setParam(UHFSilionParams.INV_QUICK_MODE.KEY, UHFSilionParams.INV_QUICK_MODE.PARAM_INV_QUICK_MODE, isChecked?"1":"0");
+//				if (er == UHFReader.READER_STATE.OK_ERR && isChecked) {
+//					er = mUHFMgr.setParam(UHFSilionParams.POTL_GEN2_SESSION.KEY, UHFSilionParams.POTL_GEN2_SESSION.PARAM_POTL_GEN2_SESSION, "1");
+//				}
+//
+//				if (er == UHFReader.READER_STATE.OK_ERR) {
+//					cb_nostop.setChecked(true);
+//					//Toast.makeText(mContext, R.string.setting_success, Toast.LENGTH_SHORT).show();
+//					if(isChecked)
+//						checkbox_q2enable1200.setEnabled(false);
+//					else
+//						checkbox_q2enable1200.setEnabled(true);
+//				} else
+//					Toast.makeText(mContext,getString(R.string.setting_fail)+" : " + er.toString(), Toast.LENGTH_SHORT).show();
+//
+//
 			}
 		});
 		
@@ -104,12 +106,12 @@ public class QuickModeActivity extends BaseActivity {
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 				UHFReader.READER_STATE er = mUHFMgr.setParam(UHFSilionParams.INV_QUICK_MODE.KEY, UHFSilionParams.INV_QUICK_MODE.PARAM_INV_QUICK_MODE, isChecked?"1":"0");
-				if (er == UHFReader.READER_STATE.OK_ERR && isChecked) {
-					er = mUHFMgr.setParam(UHFSilionParams.POTL_GEN2_SESSION.KEY, UHFSilionParams.POTL_GEN2_SESSION.PARAM_POTL_GEN2_SESSION, "0");
-				} 
+//				if (er == UHFReader.READER_STATE.OK_ERR && isChecked) {
+//					er = mUHFMgr.setParam(UHFSilionParams.POTL_GEN2_SESSION.KEY, UHFSilionParams.POTL_GEN2_SESSION.PARAM_POTL_GEN2_SESSION, "0");
+//				}
 				
 				if (er == UHFReader.READER_STATE.OK_ERR) {
-					cb_nostop.setChecked(true);
+//					cb_nostop.setChecked(true);
 					//Toast.makeText(mContext, R.string.setting_success, Toast.LENGTH_SHORT).show();
 					if(isChecked)
 						checkbox_q1enable1200.setEnabled(false);

@@ -1347,10 +1347,12 @@ public class UHFSilionSettingService {
 		int iValue = 0;
 		if(sValue != null && TextUtils.isDigitsOnly(sValue))
 			iValue = Integer.parseInt(sValue);
-		
+
+
+		mSettingsMap.put(UHFSilionParams.INV_QUICK_MODE.KEY, iValue);
 		if(iValue == 0)
 		{
-			mSettingsMap.put(UHFSilionParams.INV_QUICK_MODE.KEY, iValue);
+
 
 			long readTimeout = getLongParamValue(UHFSilionParams.INV_TIME_OUT.KEY, UHFSilionParams.INV_TIME_OUT.PARAM_INV_TIME_OUT,
 					UHFSilionParams.INV_TIME_OUT.DEFAULT_INV_TIMEOUT);
@@ -1361,74 +1363,80 @@ public class UHFSilionSettingService {
 			mReader.StartReading((short) readTimeout,(short) intevalTime);
 			return UHFReader.READER_STATE.OK_ERR;
 		}
+		else{
+			mReader.AsyncStartReading();
+			return UHFReader.READER_STATE.OK_ERR;
+		}
 
 
-		mReader.AsyncStartReading();
+
+
+
 
 		
-		int[] mp = null;
-		Object obj = mSettingsMap.get(UHFSilionParams.RF_MAXPOWER.KEY);
-		if(obj != null)
-			mp = (int[])obj;
+//		int[] mp = null;
+//		Object obj = mSettingsMap.get(UHFSilionParams.RF_MAXPOWER.KEY);
+//		if(obj != null)
+//			mp = (int[])obj;
 		
-		if(mp != null && mp.length > 0)
-		{
-			int maxMP = mp[0];//最大读写功率
-			obj = mSettingsMap.get(UHFSilionParams.ANTS.PARAM_ANTS_GROUP);
-			int[] ants = new int[]{1};
-			if(obj != null)
-				ants = (int[])obj;
-			int antCount = ants.length; //天线数
-			
-			try {
-				String sJSONArray = (String) mSettingsMap.get(UHFSilionParams.RF_ANTPOWER.KEY);
-				JSONArray jsArray = new JSONArray();
-				int readPower = maxMP;//maxMP;
-				int writePower = maxMP;//maxMP;
-				if(sJSONArray != null)
-				{
-					jsArray = new JSONArray(sJSONArray);
-					int count = jsArray.length();
-					for(int i =0; i < count ;i++)
-					{
-						JSONObject jobj = jsArray.optJSONObject(i);
-						jobj.put("readPower", readPower);
-					}
-				}else{
-					for (int i = 0; i < antCount; i++) {
-						JSONObject jobj = new JSONObject();
-						int antid =  i + 1;
-						jobj.put("antid", antid);
-						jobj.put("readPower", readPower);
-						jobj.put("writePower", writePower);
-						jsArray.put(jobj);
-					}
-				}
-				
-				//设置天线为最大功率
-				String sRFPowerValue =jsArray.toString();
-				UHFReader.READER_STATE er = setParam(UHFSilionParams.RF_ANTPOWER.KEY, UHFSilionParams.RF_ANTPOWER.PARAM_RF_ANTPOWER, sRFPowerValue);
-				
-				if(er==UHFReader.READER_STATE.OK_ERR)
-				{
-					DLog.d(TAG, "set RF Power : "+maxMP);
-					//设置盘点间隔为0
-					er = setParam(UHFSilionParams.INV_INTERVAL.KEY, UHFSilionParams.INV_INTERVAL.PARAM_INV_INTERVAL_TIME, "0");
-					if(er==UHFReader.READER_STATE.OK_ERR)
-						DLog.d(TAG, "set inventory interval time : 0 ms ");
-				}
-				
-				if(er == UHFReader.READER_STATE.OK_ERR)
-					mSettingsMap.put(UHFSilionParams.INV_QUICK_MODE.KEY, iValue);
-				
-				return er;
-			} catch (Exception e) {
-				DLog.w(TAG, "set_INV_QUICK_MODE failed.",e);
-			}
-			
-		}//end if
+//		if(mp != null && mp.length > 0)
+//		{
+//			int maxMP = mp[0];//最大读写功率
+//			obj = mSettingsMap.get(UHFSilionParams.ANTS.PARAM_ANTS_GROUP);
+//			int[] ants = new int[]{1};
+//			if(obj != null)
+//				ants = (int[])obj;
+//			int antCount = ants.length; //天线数
+//
+//			try {
+//				String sJSONArray = (String) mSettingsMap.get(UHFSilionParams.RF_ANTPOWER.KEY);
+//				JSONArray jsArray = new JSONArray();
+//				int readPower = maxMP;//maxMP;
+//				int writePower = maxMP;//maxMP;
+//				if(sJSONArray != null)
+//				{
+//					jsArray = new JSONArray(sJSONArray);
+//					int count = jsArray.length();
+//					for(int i =0; i < count ;i++)
+//					{
+//						JSONObject jobj = jsArray.optJSONObject(i);
+//						jobj.put("readPower", readPower);
+//					}
+//				}else{
+//					for (int i = 0; i < antCount; i++) {
+//						JSONObject jobj = new JSONObject();
+//						int antid =  i + 1;
+//						jobj.put("antid", antid);
+//						jobj.put("readPower", readPower);
+//						jobj.put("writePower", writePower);
+//						jsArray.put(jobj);
+//					}
+//				}
+//
+//				//设置天线为最大功率
+//				String sRFPowerValue =jsArray.toString();
+//				UHFReader.READER_STATE er = setParam(UHFSilionParams.RF_ANTPOWER.KEY, UHFSilionParams.RF_ANTPOWER.PARAM_RF_ANTPOWER, sRFPowerValue);
+//
+//				if(er==UHFReader.READER_STATE.OK_ERR)
+//				{
+//					DLog.d(TAG, "set RF Power : "+maxMP);
+//					//设置盘点间隔为0
+//					er = setParam(UHFSilionParams.INV_INTERVAL.KEY, UHFSilionParams.INV_INTERVAL.PARAM_INV_INTERVAL_TIME, "0");
+//					if(er==UHFReader.READER_STATE.OK_ERR)
+//						DLog.d(TAG, "set inventory interval time : 0 ms ");
+//				}
+//
+//				if(er == UHFReader.READER_STATE.OK_ERR)
+//					mSettingsMap.put(UHFSilionParams.INV_QUICK_MODE.KEY, iValue);
+//
+//				return er;
+//			} catch (Exception e) {
+//				DLog.w(TAG, "set_INV_QUICK_MODE failed.",e);
+//			}
+//
+//		}//end if
 		
-		return UHFReader.READER_STATE.CMD_FAILED_ERR;
+
 		
 	}//end set_INV_QUICK_MODE
 	
