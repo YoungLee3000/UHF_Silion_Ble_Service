@@ -39,8 +39,8 @@ public class UHFSilionSettingsMainActivity extends BaseActivity {
 				getString(R.string.ants_power),
 				getString(R.string.region_freq),
 				getString(R.string.gen2_item),
-				getString(R.string.inventory_filter),
-				getString(R.string.addition_data),
+//				getString(R.string.inventory_filter),
+//				getString(R.string.addition_data),
 				getString(R.string.other_params),
 				getString(R.string.quick_mode)
 		};
@@ -50,8 +50,8 @@ public class UHFSilionSettingsMainActivity extends BaseActivity {
 				AntsPowerActivity.class,
 				RegionFreActivity.class,
 				Gen2Activity.class,
-				InventoryFilterActivity.class,
-				EmbedDataActivity.class,
+//				InventoryFilterActivity.class,
+//				EmbedDataActivity.class,
 				OtherParamsActivity.class,
 				QuickModeActivity.class
 		};
