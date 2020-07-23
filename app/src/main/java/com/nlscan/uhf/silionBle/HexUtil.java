@@ -142,7 +142,7 @@ public class HexUtil {
 	public static int parseSignedBinary(String binaryStr) {
 
 		return binaryStr.charAt(0) == '0' ? Integer.parseInt(binaryStr,2) :
-				-1* Integer.parseInt(binaryStr.substring(1),2);
+				-1 *  ((Integer.parseInt(binaryStr,2)  - 1) ^ 0xFF)  ;
 	}
 
 
