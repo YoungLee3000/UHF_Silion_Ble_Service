@@ -174,7 +174,20 @@ public class HexUtil {
 
 
 
-
+	/**
+	 * 一般字符串中每个字符转16进制
+	 * @param s
+	 * @return
+	 */
+	public static String stringtoHex(String s) {
+		String str = "";
+		for (int i = 0; i < s.length(); i++) {
+			int ch = (int) s.charAt(i);
+			String s4 = Integer.toHexString(ch);
+			str = str + s4;
+		}
+		return str;
+	}
 
 
 }

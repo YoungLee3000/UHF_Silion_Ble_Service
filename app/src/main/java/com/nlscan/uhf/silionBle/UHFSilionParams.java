@@ -323,7 +323,14 @@ public class UHFSilionParams {
     }
 
 
-
+	/**
+	 * 设置待机时间
+	 */
+	public final static class STANDBY_TIME{
+		public final static String KEY = "STANDBY_TIME";
+		/**待机时间*/
+		public final static String PARAM_STANDBY_TIME = "PARAM_STANDBY_TIME";
+	}
 
 
 }

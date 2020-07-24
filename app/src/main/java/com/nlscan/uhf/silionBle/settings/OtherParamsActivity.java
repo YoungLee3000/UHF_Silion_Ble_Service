@@ -37,6 +37,13 @@ public class OtherParamsActivity extends BaseActivity {
 			button_hrssiset,button_gettempture,button_getCharge;
 	private CheckBox cb_oant,cb_odata,cb_hrssi;
 
+	//待机时间
+	private Button btn_standby;
+	private Spinner sp_standby;
+	private ArrayAdapter<String> aa_standby;
+	private String [] str_standby;
+
+
 	//电量监控
 	private Button btn_battery_monitor;
 	private CheckBox cb_if_monitor;
@@ -350,6 +357,34 @@ public class OtherParamsActivity extends BaseActivity {
 			}
 		});
 
+
+
+
+		//待机时间
+		sp_standby = (Spinner) findViewById(R.id.spinner_standby);
+		btn_standby = (Button) findViewById(R.id.button_standby);
+		str_standby = getResources().getStringArray(R.array.standby_time);
+		aa_standby = new ArrayAdapter<String>(this,
+				android.R.layout.simple_spinner_item, str_standby);
+
+		aa_standby.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		sp_standby.setAdapter(aa_standby);
+
+		btn_standby.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				int stadbyTime = sp_standby.getSelectedItemPosition();
+
+				UHFReader.READER_STATE er = mUHFMgr.setParam(UHFSilionParams.STANDBY_TIME.KEY,
+						UHFSilionParams.STANDBY_TIME.PARAM_STANDBY_TIME, "" + stadbyTime);
+
+				if (er == UHFReader.READER_STATE.OK_ERR) {
+					Toast.makeText(mContext, R.string.setting_success,Toast.LENGTH_SHORT).show();
+				} else
+					Toast.makeText(mContext,getString(R.string.setting_fail) + " : "+er.toString(), Toast.LENGTH_SHORT).show();
+
+			}
+		});
 
 
 	}//end initView

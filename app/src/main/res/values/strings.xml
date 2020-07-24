@@ -128,6 +128,7 @@
   <string name= "iso_6b_depth">Iso180006b Depth</string>
   <string name= "tempture">Temperature</string>
     <string name= "charge">Charge</string>
+    <string name= "standby">Standby</string>
   
   <!-- 快速模式  -->
   <string name= "time_stop_per">Stop time percents</string>
@@ -193,6 +194,19 @@
        <item>Word write</item>
        <item>Block write</item>
     </string-array>
+
+
+    <!-- standby -->
+    <string-array name="standby_time">
+        <item>sleep after 5 min</item>
+        <item>sleep after 10 min</item>
+        <item>sleep after 20 min</item>
+        <item>sleep after 30 min</item>
+        <item>sleep after 60 min</item>
+        <item>never sleep</item>
+    </string-array>
+
+
     
     <string name ="low_power_title">Antenna Power under Low Battery</string>
     <string name ="low_power">Battery less than  (%):</string>

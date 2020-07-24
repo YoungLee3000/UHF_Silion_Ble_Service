@@ -512,7 +512,7 @@ public class UHFSilionService extends Service {
 				}
 				
 			}else{
-
+				if ( !mBleInterface.isBleAccess()) doPowerOff();
 				Log.w(TAG, "Reading error : er = "+er.toString());
 
 			}//end if
@@ -1155,10 +1155,12 @@ public class UHFSilionService extends Service {
 
 		@Override
 		public int powerOff() throws RemoteException {
+
+			Log.d(TAG,"the device power off");
 			
 			long id = Binder.clearCallingIdentity();
 			UHFReader.READER_STATE state = doPowerOff();
-//			mPowerOn = false;
+			mPowerOn = false;
 			Binder.restoreCallingIdentity(id);
 			return state.value();
 		}
@@ -1209,6 +1211,7 @@ public class UHFSilionService extends Service {
 
 		@Override
 		public int stopTagInventory() throws RemoteException {
+			Log.d(TAG,"stop the tag inventory");
 			
 			long id = Binder.clearCallingIdentity();
 			mOperHandler.sendEmptyMessage(OperateHandler.MSG_STOP_READING);

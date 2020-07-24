@@ -919,7 +919,25 @@ public class BleReader extends Reader {
     }
 
 
+    /**
+     * 设置待机时间
+     * @param value
+     * @return
+     */
+    public boolean setStandbyTime(int value){
+        if (mBleInterface == null) return false;
+        String sendCommand =  HexUtil.stringtoHex ("WLSAPO" + value);
+        String resultCode = "failed";
 
+        try {
+            resultCode = mBleInterface.sendUhfCommand(sendCommand);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+
+        return  true;
+
+    }
 
 
 

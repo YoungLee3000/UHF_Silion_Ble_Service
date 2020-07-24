@@ -206,6 +206,12 @@ public class UHFSilionSettingService {
 		//低电量(<20%)时,读功率
 		int lowpowerReadDBM = (int)getLongSavedSettings(UHFSilionParams.LOWER_POWER.KEY,UHFSilionParams.LOWER_POWER.PARAM_LOWER_POWER_READ_DBM, 2000l);
 		mSettingsMap.put(UHFSilionParams.LOWER_POWER.PARAM_LOWER_POWER_READ_DBM, lowpowerReadDBM);
+
+		//待机时间
+		int standbyTime = (int)getLongSavedSettings(UHFSilionParams.STANDBY_TIME.KEY,
+				UHFSilionParams.STANDBY_TIME.PARAM_STANDBY_TIME, 3l);
+		mSettingsMap.put(UHFSilionParams.STANDBY_TIME.PARAM_STANDBY_TIME, standbyTime);
+
 	}
 	
 	/**
@@ -395,7 +401,11 @@ public class UHFSilionSettingService {
 		setParam(UHFSilionParams.LOWER_POWER.KEY, UHFSilionParams.LOWER_POWER.PARAM_LOWER_POWER_LEVEL, "20");
 		//低电量(<20%)时,读功率
 		setParam(UHFSilionParams.LOWER_POWER.KEY, UHFSilionParams.LOWER_POWER.PARAM_LOWER_POWER_READ_DBM, "2000");
-		
+
+
+		//待机时间
+		setParam(UHFSilionParams.STANDBY_TIME.KEY, UHFSilionParams.STANDBY_TIME.PARAM_STANDBY_TIME, "3");
+
 	}//end initDefaultParams
 	
 	/**
@@ -750,6 +760,17 @@ public class UHFSilionSettingService {
 			{
 				mSettingsMap.put(UHFSilionParams.LOWER_POWER.PARAM_LOWER_POWER_READ_DBM, Integer.parseInt(sValue));
 				state = UHFReader.READER_STATE.OK_ERR;
+			}
+
+			//待机时间
+			if(subParamName.equals(UHFSilionParams.STANDBY_TIME.PARAM_STANDBY_TIME))
+			{
+
+				int standbyTime = Integer.parseInt(sValue);
+				mSettingsMap.put(UHFSilionParams.STANDBY_TIME.PARAM_STANDBY_TIME, standbyTime);
+
+				state = mReader.setStandbyTime(standbyTime) ? UHFReader.READER_STATE.OK_ERR :
+						UHFReader.READER_STATE.CMD_FAILED_ERR;
 			}
 			
 			//保存配置,且更新内存中的配置
