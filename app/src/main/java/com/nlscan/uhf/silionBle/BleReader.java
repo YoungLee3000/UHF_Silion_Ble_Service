@@ -555,7 +555,8 @@ public class BleReader extends Reader {
     public READER_ERR GetCharge(int[] val){
         if (mBleInterface == null) return READER_ERR.MT_OK_ERR;
 
-        String sendCommand = "7E013030303040574C535150573B03";
+//        String sendCommand = "7E013030303040574C535150573B03";
+        String sendCommand = "5DCC01010F000F7E013030303040574C535150573B0397B7";
         String resultCode = "failed";
 
         try {
