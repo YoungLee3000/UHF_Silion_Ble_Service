@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#FF00A9CE</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+
+    <color name="black">#000000</color>
+    <color name="white">#FFFFFF</color>
+
+    <color name="verticalTitleColor">@color/nordicMediumGray</color>
+    <color name="nordicMediumGray">#FF768692</color>
+    <color name="nordicBlueDark">#FF0090B0</color>
+    <color name="nordicLake">#FF0077C8</color>
+    <color name="actionBarColorDark">@color/nordicBlueDark</color>
+    <color name="nordicBlue">#FF00A9CE</color>
+
+    <color name="featureTitleColor">#939597</color>
+</resources>

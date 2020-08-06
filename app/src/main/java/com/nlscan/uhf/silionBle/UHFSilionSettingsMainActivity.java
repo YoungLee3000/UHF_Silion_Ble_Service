@@ -3,6 +3,7 @@ package com.nlscan.uhf.silionBle;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -18,6 +19,7 @@ import com.nlscan.uhf.silionBle.settings.InventoryParamsActivity;
 import com.nlscan.uhf.silionBle.settings.OtherParamsActivity;
 import com.nlscan.uhf.silionBle.settings.QuickModeActivity;
 import com.nlscan.uhf.silionBle.settings.RegionFreActivity;
+import com.nlscan.uhf.silionBle.upgrade.UpgradeActivity;
 
 public class UHFSilionSettingsMainActivity extends BaseActivity {
 
@@ -42,7 +44,8 @@ public class UHFSilionSettingsMainActivity extends BaseActivity {
 //				getString(R.string.inventory_filter),
 //				getString(R.string.addition_data),
 				getString(R.string.other_params),
-				getString(R.string.quick_mode)
+				getString(R.string.quick_mode),
+				getString(R.string.firmware_upgrade)
 		};
 		
 		mActivitys = new Class[]{
@@ -53,10 +56,12 @@ public class UHFSilionSettingsMainActivity extends BaseActivity {
 //				InventoryFilterActivity.class,
 //				EmbedDataActivity.class,
 				OtherParamsActivity.class,
-				QuickModeActivity.class
+				QuickModeActivity.class,
+				UpgradeActivity.class
 		};
 		initActionBar();
 		initView();
+		Log.d("setting","the size of activity is " + mActivitys.length);
 	}
 	
 	private void initActionBar() 

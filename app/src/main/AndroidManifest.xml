@@ -116,6 +116,39 @@
             android:screenOrientation="portrait"
             android:label="@string/quick_mode"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize"/>
+
+        <!--固件升级-->
+        <activity
+            android:theme="@style/AppTheme"
+            android:name=".upgrade.UpgradeActivity"
+            android:configChanges="keyboardHidden|keyboard|orientation|navigation">
+            <intent-filter>
+                <action android:name="android.intent.action.nlscan.upgradeBadge" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:theme="@style/AppTheme"
+            android:name=".upgrade.FileBrowserActivity"
+            android:configChanges="keyboardHidden|keyboard|orientation|navigation"></activity>
+        <activity
+            android:theme="@style/AppTheme"
+            android:name=".upgrade.SerialConsoleActivity"
+            android:configChanges="keyboardHidden|keyboard|orientation|navigation" />
+
+        <activity
+            android:theme="@style/AppTheme"
+            android:name=".upgrade.dfu.DfuActivity"
+            android:configChanges="keyboardHidden|keyboard|orientation|navigation" />
+
+        <service
+            android:name=".upgrade.dfu.DfuService"
+            android:exported="true"
+            android:label="@string/dfu_service_title" >
+            <intent-filter>
+                <action android:name="no.nordicsemi.android.action.DFU_UPLOAD" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </service>
          
         <service
             android:name="com.nlscan.uhf.silionBle.UHFSilionService"

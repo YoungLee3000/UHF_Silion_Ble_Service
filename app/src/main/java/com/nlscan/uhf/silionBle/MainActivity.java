@@ -33,6 +33,7 @@ import android.widget.Toast;
 import com.nlscan.android.uhf.TagInfo;
 import com.nlscan.android.uhf.UHFReader;
 import com.nlscan.uhf.silion.ISilionUHFService;
+import com.nlscan.uhf.silionBle.upgrade.Native;
 
 public class MainActivity extends Activity {
 
@@ -70,7 +71,7 @@ public class MainActivity extends Activity {
 	
 	private long exittime;
 
-	private CrcModel crcModel = new CrcModel();
+	private Native crcModel = new Native();
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);

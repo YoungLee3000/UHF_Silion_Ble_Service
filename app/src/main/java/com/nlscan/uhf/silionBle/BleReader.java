@@ -7,6 +7,7 @@ import android.util.Log;
 import com.nlscan.android.uhf.UHFReader;
 import com.nlscan.blecommservice.IBleInterface;
 import com.nlscan.blecommservice.IUHFCallback;
+import com.nlscan.uhf.silionBle.upgrade.Native;
 import com.uhf.api.cls.BackReadOption;
 import com.uhf.api.cls.ErrInfo;
 import com.uhf.api.cls.GpiInfo_ST;
@@ -26,7 +27,7 @@ public class BleReader extends Reader {
     private Context mContext;
     private static final String TAG = "UHFSilionBleService";
 
-    private CrcModel mCrcModel = new CrcModel();
+    private Native mCrcModel = new Native();
 
 
     private IBleInterface mBleInterface;
@@ -927,7 +928,8 @@ public class BleReader extends Reader {
      */
     public boolean setStandbyTime(int value){
         if (mBleInterface == null) return false;
-        String sendCommand =  HexUtil.stringtoHex ("WLSAPO" + value);
+        String sendCommand =  "5DCC01011000107E013030303040" +
+                HexUtil.stringtoHex ("WLSAPO" + value) + "3B03BB20";
         String resultCode = "failed";
 
         try {

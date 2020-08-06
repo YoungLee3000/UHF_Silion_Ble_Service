@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout style="?android:attr/buttonBarStyle"
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:orientation="vertical">
+
+	<ListView
+		android:id="@android:id/list"
+		android:layout_width="match_parent"
+		android:layout_height="0dp"
+		android:layout_weight="1"
+		android:paddingBottom="0dp"
+		android:paddingEnd="24dp"
+		android:paddingStart="24dp"
+		android:paddingTop="18dp"
+		android:scrollbarStyle="outsideOverlay"
+		tools:listitem="@layout/device_list_row"/>
+
+	<Button
+		style="@style/Widget.MaterialComponents.Button.TextButton"
+		android:id="@+id/action_cancel"
+        android:textSize="16sp"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:textColor="@color/nordicLake"
+		android:text="@string/scanner_action_scan"/>
+
+</LinearLayout>

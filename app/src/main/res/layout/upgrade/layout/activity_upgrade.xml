@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white"
+    android:orientation="vertical"
+    tools:context=".upgrade.UpgradeActivity">
+
+    <TextView
+        android:id="@+id/tv_back"
+        android:onClick="onBackClick"
+        android:text="@string/app_name"
+        android:drawableLeft="@drawable/ic_arrow_back_black_24dp"
+        android:textSize="18sp"
+        android:textColor="@android:color/white"
+        android:gravity="center_vertical"
+        android:paddingLeft="10dp"
+        android:drawablePadding="10dp"
+        android:background="@color/nordicBlue"
+        android:layout_width="match_parent"
+        android:layout_height="45dp" />
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:padding="8dp"
+        style="@android:style/Widget.Holo.ProgressBar.Horizontal"
+        android:indeterminate="true" />
+    <TextView
+        android:id="@+id/blue_state"
+        android:text="蓝牙连接状态"
+        android:textSize="18sp"
+        android:gravity="center"
+        android:layout_marginTop="5dp"
+        android:textStyle="bold"
+        android:textColor="@android:color/black"
+        android:layout_width="match_parent"
+        android:layout_height="36dp" />
+    <TextView
+        android:id="@+id/cpu_ver"
+        android:visibility="invisible"
+        android:text="CPU版本"
+        android:textSize="14sp"
+        android:paddingLeft="5dp"
+        android:gravity="center_horizontal"
+        android:textColor="@android:color/black"
+        android:layout_width="match_parent"
+        android:layout_height="22dp" />
+    <TextView
+        android:id="@+id/bt_ver"
+        android:visibility="invisible"
+        android:text="蓝牙版本"
+        android:textSize="14sp"
+        android:paddingLeft="5dp"
+        android:gravity="center_horizontal"
+        android:textColor="@android:color/black"
+        android:layout_width="match_parent"
+        android:layout_height="22dp" />
+    <Button
+        android:id="@+id/select_file"
+        android:textSize="16sp"
+        android:layout_gravity="center_horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="选择升级文件" />
+
+    <TextView
+        android:id="@+id/upgrade_file_path"
+        android:visibility="invisible"
+        android:textSize="16sp"
+        android:textColor="@android:color/black"
+        android:paddingTop="6dp"
+        android:paddingLeft="10dp"
+        android:gravity="center_horizontal"
+        android:layout_gravity="center_horizontal"
+        android:text="@string/SensorUpgradeFileText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+    <TextView
+        android:id="@+id/upgrade_file_info"
+        android:visibility="invisible"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:textColor="@android:color/black"
+        android:paddingTop="5dp"
+        android:paddingBottom="4dp"
+        android:gravity="center"
+        android:layout_gravity="center_horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+    <Button
+        android:id="@+id/upgrade"
+        android:onClick="onStartUpgrade"
+        android:visibility="gone"
+        android:padding="10dp"
+        android:textSize="16sp"
+        android:layout_gravity="center_horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="开始升级" />
+    <TextView
+        android:visibility="gone"
+        android:id="@+id/upgrade_tips"
+        android:text="@string/upgrade_tips"
+        android:gravity="center"
+        android:textColor="@android:color/black"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+</LinearLayout>

@@ -34,12 +34,12 @@ include $(CLEAR_VARS)
 LOCAL_LDLIBS := -llog
 
 LOCAL_SRC_FILES += \
-			 crc_jni.cpp
+			 EM2037Upgrade.cpp
 
 
 LOCAL_MODULE_TAGS = debug
 
-LOCAL_MODULE := crcGet
+LOCAL_MODULE := nlsEM2037upgrade
 
 
 
