@@ -23,6 +23,7 @@
 	<protected-broadcast android:name="nlscan.intent.action.uhf.ACTION_RESULT"/>
 	
     <application
+        android:name=".MyApplication"
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
@@ -60,7 +61,10 @@
                 <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
          </activity>
-        
+
+
+
+
         <!-- 盘点参数 -->
          <activity
             android:name="com.nlscan.uhf.silionBle.settings.InventoryParamsActivity"

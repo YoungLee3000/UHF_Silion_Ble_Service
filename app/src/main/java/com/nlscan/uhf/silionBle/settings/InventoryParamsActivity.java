@@ -32,7 +32,7 @@ public class InventoryParamsActivity extends BaseActivity {
 	
 	private Button button_invproset;
 	private Button button_opproget,button_opproset,button_invantsset,button_getusl,
-	button_setusl;
+	button_setusl,btn_space_get,btn_space_set;
 	private CheckBox cb_gen2,cb_6b,cb_ipx64,cb_ipx256,cb_ant1, cb_ant2, cb_ant3, cb_ant4;
 
 	private UHFManager mUHFMgr;
@@ -211,33 +211,29 @@ public class InventoryParamsActivity extends BaseActivity {
 		button_getusl = (Button) findViewById(R.id.button_invuslget);
 		button_setusl = (Button) findViewById(R.id.button_invuslset);
 		
-		//获取,盘点超时,盘点间隔
+		//获取,盘点超时
 		button_getusl.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View arg0) {
 				EditText ettime = (EditText) findViewById(R.id.editText_invtime);
-				EditText etsleep = (EditText) findViewById(R.id.editText_invsleep);
+
 				
 				long invTimeout = UHFSilionParams.INV_TIME_OUT.DEFAULT_INV_TIMEOUT;
-				long invInterval = UHFSilionParams.INV_INTERVAL.DEFAULT_INV_INTERVAL_TIME;
+
 				settingsMap = mUHFMgr.getAllParams();
 				Object objTimeout = settingsMap.get(UHFSilionParams.INV_TIME_OUT.KEY);
-				Object objInterval = settingsMap.get(UHFSilionParams.INV_INTERVAL.KEY);
-				
+
 				if(objTimeout != null )
 					invTimeout = (Long)objTimeout;
 				
-				if(objInterval != null)
-					invInterval = (Long)objInterval;
-				
 				ettime.setText(String.valueOf(invTimeout));
-				etsleep.setText(String.valueOf(invInterval));
+
 			}
 
 		});
 		
-		//设置,盘点超时,盘点间隔
+		//设置,盘点超时
 		button_setusl.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -245,22 +241,18 @@ public class InventoryParamsActivity extends BaseActivity {
 				
 				try {
 					EditText ettime = (EditText) findViewById(R.id.editText_invtime);
-					EditText etsleep = (EditText) findViewById(R.id.editText_invsleep);
+
 					long readTimeout = -1;
-					long intervalTime = -1;
+
 					String sTimeout = ettime.getText().toString();
-					String sInterval = etsleep.getText().toString();
+
 					if(sTimeout != null && TextUtils.isDigitsOnly(sTimeout))
 						readTimeout = Long.parseLong(sTimeout);
-					
-					if(sInterval != null && TextUtils.isDigitsOnly(sInterval))
-						intervalTime = Long.parseLong(sInterval);
+
 					
 					UHFReader.READER_STATE er = UHFReader.READER_STATE.CMD_FAILED_ERR ;
 					if(readTimeout > -1)
 						er = mUHFMgr.setParam(UHFSilionParams.INV_TIME_OUT.KEY, UHFSilionParams.INV_TIME_OUT.PARAM_INV_TIME_OUT, String.valueOf(readTimeout));
-					if(intervalTime > -1)
-						er = mUHFMgr.setParam(UHFSilionParams.INV_INTERVAL.KEY, UHFSilionParams.INV_INTERVAL.PARAM_INV_INTERVAL_TIME, String.valueOf(intervalTime));
 
 					if(er == UHFReader.READER_STATE.OK_ERR)
 						Toast.makeText(mContext, R.string.setting_success, Toast.LENGTH_SHORT).show();
@@ -278,6 +270,74 @@ public class InventoryParamsActivity extends BaseActivity {
 			}
 
 		});
+
+
+		btn_space_get = (Button) findViewById(R.id.button_inv_space_get);
+		btn_space_set = (Button) findViewById(R.id.button_inv_space_set);
+
+
+		//获取,盘点间隔
+		button_getusl.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View arg0) {
+
+				EditText etsleep = (EditText) findViewById(R.id.editText_invsleep);
+
+				long invInterval = UHFSilionParams.INV_INTERVAL.DEFAULT_INV_INTERVAL_TIME;
+				settingsMap = mUHFMgr.getAllParams();
+
+				Object objInterval = settingsMap.get(UHFSilionParams.INV_INTERVAL.KEY);
+
+
+				if(objInterval != null)
+					invInterval = (Long)objInterval;
+
+				etsleep.setText(String.valueOf(invInterval));
+			}
+
+		});
+
+
+		//设置,盘点间隔
+		button_setusl.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View arg0) {
+
+				try {
+
+					EditText etsleep = (EditText) findViewById(R.id.editText_invsleep);
+
+					long intervalTime = -1;
+
+					String sInterval = etsleep.getText().toString();
+
+					if(sInterval != null && TextUtils.isDigitsOnly(sInterval))
+						intervalTime = Long.parseLong(sInterval);
+
+					UHFReader.READER_STATE er = UHFReader.READER_STATE.CMD_FAILED_ERR ;
+
+					if(intervalTime > -1)
+						er = mUHFMgr.setParam(UHFSilionParams.INV_INTERVAL.KEY, UHFSilionParams.INV_INTERVAL.PARAM_INV_INTERVAL_TIME, String.valueOf(intervalTime));
+
+					if(er == UHFReader.READER_STATE.OK_ERR)
+						Toast.makeText(mContext, R.string.setting_success, Toast.LENGTH_SHORT).show();
+					else
+						Toast.makeText(mContext,getString(R.string.setting_fail)+" : " + er.toString(), Toast.LENGTH_SHORT).show();
+
+				} catch (Exception e) {
+					Toast.makeText(mContext,
+							"Exception:" + e.getMessage(), Toast.LENGTH_SHORT)
+							.show();
+					e.printStackTrace();
+					return;
+				}
+
+			}
+
+		});
+
 		
 		
 	}//initView

@@ -227,7 +227,6 @@
     <string name="dialog_go_on">继续使用</string>
     <string name="dialog_power_down">下电</string>
 
-
     <!--升级相关-->
     <string name="upgrade_tips">提示：为避免工牌升级中由于电量不足导致升级工牌失败，请检查当前工牌电量是否大于50%或处于充电中。</string>
     <string name="SensorBrowererror">存储卡为空！</string>
