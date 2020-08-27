@@ -944,6 +944,49 @@ public class BleReader extends Reader {
 
 
 
+    /**
+     * 设置待机时间
+     * @param value
+     * @return
+     */
+    public boolean setPromptMode(String value){
+        if (mBleInterface == null) return false;
+        String [] valArray = value.split(",");
+        if (valArray.length < 2 ) return false;
+
+        int mode = Integer.parseInt(valArray[0]);
+        String modeCode =  "GRVENA";
+        switch (mode){
+            case 1:
+                modeCode = "GRVENA";
+                break;
+            case 2:
+                modeCode = "GRLENA";
+                break;
+            case 3:
+                modeCode = "GRBENA";
+                break;
+        }
+
+
+        String sendCommand =  "5DCC01011000107E013030303040" +
+                HexUtil.stringtoHex (modeCode + value) + "3B03BB20";
+        String resultCode = "failed";
+
+        try {
+            resultCode = mBleInterface.sendUhfCommand(sendCommand);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+
+        return  true;
+
+    }
+
+
+
+
+
 
     /**
      * 设置为快速盘点

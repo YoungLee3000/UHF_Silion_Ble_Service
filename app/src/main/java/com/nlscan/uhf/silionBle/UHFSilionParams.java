@@ -333,4 +333,14 @@ public class UHFSilionParams {
 	}
 
 
+	/**
+	 * 设置BU10提示
+	 */
+	public final static class PROMPT_MODE{
+		public final static String KEY = "PROMPT_MODE";
+		/**待机时间*/
+		public final static String PARAM_STANDBY_TIME = "PARAM_PROMPT_MODE";
+	}
+
+
 }

@@ -129,6 +129,10 @@
   <string name= "tempture">温度</string>
     <string name= "charge">电量</string>
     <string name= "standby">待机时间</string>
+    <string name= "bu10_prompt">BU10盘点提示</string>
+    <string name= "bu10_vibration">振动</string>
+    <string name= "bu10_light">指示灯</string>
+    <string name= "bu10_sound">声音</string>
 
     <!-- 快速模式  -->
   <string name= "time_stop_per">停顿时间比</string>

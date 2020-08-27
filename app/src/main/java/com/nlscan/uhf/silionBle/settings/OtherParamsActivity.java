@@ -44,6 +44,11 @@ public class OtherParamsActivity extends BaseActivity {
 	private String [] str_standby;
 
 
+	//BU10提示
+	private Button btn_vibration,btn_light,btn_sound;
+	private CheckBox cb_vibration,cb_light,cb_sound;
+
+
 	//电量监控
 	private Button btn_battery_monitor;
 	private CheckBox cb_if_monitor;
@@ -385,6 +390,64 @@ public class OtherParamsActivity extends BaseActivity {
 
 			}
 		});
+
+
+		//BU10端提示
+		cb_vibration = (CheckBox) findViewById(R.id.cb_bu_vibration);
+		cb_light = (CheckBox) findViewById(R.id.cb_bu_light);
+		cb_sound = (CheckBox) findViewById(R.id.cb_bu_sound);
+
+		btn_vibration = (Button)findViewById(R.id.button_vibration);
+		btn_light = (Button)findViewById(R.id.button_light);
+		btn_sound = (Button) findViewById(R.id.button_sound);
+
+		btn_vibration.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+
+				UHFReader.READER_STATE er = mUHFMgr.setParam(UHFSilionParams.STANDBY_TIME.KEY,
+						UHFSilionParams.STANDBY_TIME.PARAM_STANDBY_TIME, "1," + (cb_vibration.isChecked()?"0":"1"));
+
+				if (er == UHFReader.READER_STATE.OK_ERR) {
+					Toast.makeText(mContext, R.string.setting_success,Toast.LENGTH_SHORT).show();
+				} else
+					Toast.makeText(mContext,getString(R.string.setting_fail) + " : "+er.toString(), Toast.LENGTH_SHORT).show();
+			}
+		});
+
+		btn_vibration.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+
+				UHFReader.READER_STATE er = mUHFMgr.setParam(UHFSilionParams.STANDBY_TIME.KEY,
+						UHFSilionParams.STANDBY_TIME.PARAM_STANDBY_TIME, "2," + (cb_light.isChecked()?"0":"1"));
+
+				if (er == UHFReader.READER_STATE.OK_ERR) {
+					Toast.makeText(mContext, R.string.setting_success,Toast.LENGTH_SHORT).show();
+				} else
+					Toast.makeText(mContext,getString(R.string.setting_fail) + " : "+er.toString(), Toast.LENGTH_SHORT).show();
+			}
+		});
+
+		btn_vibration.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+
+				UHFReader.READER_STATE er = mUHFMgr.setParam(UHFSilionParams.STANDBY_TIME.KEY,
+						UHFSilionParams.STANDBY_TIME.PARAM_STANDBY_TIME, "3," + (cb_sound.isChecked()?"0":"1"));
+
+				if (er == UHFReader.READER_STATE.OK_ERR) {
+					Toast.makeText(mContext, R.string.setting_success,Toast.LENGTH_SHORT).show();
+				} else
+					Toast.makeText(mContext,getString(R.string.setting_fail) + " : "+er.toString(), Toast.LENGTH_SHORT).show();
+			}
+		});
+
+
+
+
+
+
 
 
 	}//end initView

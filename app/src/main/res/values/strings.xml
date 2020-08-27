@@ -129,6 +129,10 @@
   <string name= "tempture">Temperature</string>
     <string name= "charge">Charge</string>
     <string name= "standby">Standby</string>
+    <string name= "bu10_prompt">BU10 Prompt</string>
+    <string name= "bu10_vibration">Vibration</string>
+    <string name= "bu10_light">Light</string>
+    <string name= "bu10_sound">Sound</string>
   
   <!-- 快速模式  -->
   <string name= "time_stop_per">Stop time percents</string>

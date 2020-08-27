@@ -772,6 +772,19 @@ public class UHFSilionSettingService {
 				state = mReader.setStandbyTime(standbyTime) ? UHFReader.READER_STATE.OK_ERR :
 						UHFReader.READER_STATE.CMD_FAILED_ERR;
 			}
+
+
+
+			//BU10提示
+			if(subParamName.equals(UHFSilionParams.PROMPT_MODE.KEY))
+			{
+
+
+				mSettingsMap.put(UHFSilionParams.STANDBY_TIME.PARAM_STANDBY_TIME, sValue);
+
+				state = mReader.setPromptMode(sValue) ? UHFReader.READER_STATE.OK_ERR :
+						UHFReader.READER_STATE.CMD_FAILED_ERR;
+			}
 			
 			//保存配置,且更新内存中的配置
 			if(state == UHFReader.READER_STATE.OK_ERR)
