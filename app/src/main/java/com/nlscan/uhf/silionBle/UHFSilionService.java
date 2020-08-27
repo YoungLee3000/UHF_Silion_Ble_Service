@@ -115,7 +115,7 @@ public class UHFSilionService extends Service {
 	//设备信息
 	private final static String DEFAULT_MODULE = "MODULE_SLRB1200";
 	//蓝牙相关
-	private IBleInterface mBleInterface;
+	private  IBleInterface mBleInterface;
 	private boolean mIfQuickReading = false;
 	private BleServiceConnection mBleServiceConnection;
 

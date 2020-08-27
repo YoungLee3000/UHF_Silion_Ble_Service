@@ -44,8 +44,8 @@ public class UHFSilionSettingsMainActivity extends BaseActivity {
 //				getString(R.string.inventory_filter),
 //				getString(R.string.addition_data),
 				getString(R.string.other_params),
-				getString(R.string.quick_mode),
-				getString(R.string.firmware_upgrade)
+				getString(R.string.quick_mode)
+//				getString(R.string.firmware_upgrade)
 		};
 		
 		mActivitys = new Class[]{
@@ -56,8 +56,8 @@ public class UHFSilionSettingsMainActivity extends BaseActivity {
 //				InventoryFilterActivity.class,
 //				EmbedDataActivity.class,
 				OtherParamsActivity.class,
-				QuickModeActivity.class,
-				UpgradeActivity.class
+				QuickModeActivity.class
+//				UpgradeActivity.class
 		};
 		initActionBar();
 		initView();

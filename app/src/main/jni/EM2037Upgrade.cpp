@@ -590,8 +590,8 @@ JNIEXPORT jbyteArray JNICALL Java_com_nlscan_uhf_silionBle_upgrade_Native_GetPac
 	if (nTypeIdx < 0) {
 		return NULL;
 	}
-	unsigned char lvHeadBuf[32];
-	unsigned char lvPackCmdBuf[64];
+	 char lvHeadBuf[32];
+	 char lvPackCmdBuf[64];
 	memset(lvHeadBuf, 0, sizeof(lvHeadBuf));
 
 	TuIMGPack_All *pPack_All_Info = (TuIMGPack_All *) &m_lvfilebuf[m_nFilelen -
@@ -599,37 +599,37 @@ JNIEXPORT jbyteArray JNICALL Java_com_nlscan_uhf_silionBle_upgrade_Native_GetPac
 	switch (nPackIdx) {
 		case 0:
 			//固件数据总大小：     "!DataLens:XX"   （大小为124时，发送"!DataLens:124"）
-			sprintf((char*)lvHeadBuf, "!DataLens:%d", pPack_All_Info->block[nTypeIdx].Lens);
+			sprintf(lvHeadBuf,  "!DataLens:%d", pPack_All_Info->block[nTypeIdx].Lens);
 			break;
 		case 1:
 			//每次发送的数据大小：  "!FrameSize:XX"  （一般为512，有的设备最大可设为4096）
-			sprintf((char*)lvHeadBuf, "!FrameSize:%d", c_FrameSize);
+			sprintf(lvHeadBuf, "!FrameSize:%d", c_FrameSize);
 			break;
 		case 2:
 			//发送次数：  "!Frames:XX" （等于 (DataLens + nFrameSize - 1) / nFrameSize ）
-			sprintf((char*)lvHeadBuf, "!Frames:%d",
+			sprintf(lvHeadBuf, "!Frames:%d",
 					(pPack_All_Info->block[nTypeIdx].Lens + c_FrameSize - 1) / (c_FrameSize));
 			break;
 		case 3:
 			//"!FileType:kern"
 			if (UPGRADE_TYPE_BOOT == nUpgradeType) {
-				sprintf((char*)lvHeadBuf, "!FileType:boot",1);
+				sprintf(lvHeadBuf, "!FileType:boot",1);
 			} else if (UPGRADE_TYPE_KERNEL == nUpgradeType) {
-				sprintf((char*)lvHeadBuf, "!FileType:kern",1);
+				sprintf(lvHeadBuf, "!FileType:kern",1);
 			} else if (UPGRADE_TYPE_FLASH == nUpgradeType) {
-				sprintf((char*)lvHeadBuf, "!FileType:flah:9999",1);
+				sprintf(lvHeadBuf, "!FileType:flah:9999",1);
 			} else if (UPGRADE_TYPE_APPL == nUpgradeType) {
-				sprintf((char*)lvHeadBuf, "!FileType:appl",1);
+				sprintf(lvHeadBuf, "!FileType:appl",1);
 			}
 			break;
 		case 4:
 			//">Start"
-			sprintf((char*)lvHeadBuf, ">Start",1);
+			sprintf(lvHeadBuf, ">Start",1);
 			break;
 		default:
 			return NULL;
 	}
-	int nLenRet = EM2037_Upgrade_PackCmd((char*)lvHeadBuf, strlen((char*)lvHeadBuf), (char*)lvPackCmdBuf);
+	int nLenRet = EM2037_Upgrade_PackCmd(lvHeadBuf, strlen(lvHeadBuf), lvPackCmdBuf);
 	if (nLenRet < 1) {
 		return NULL;
 	}

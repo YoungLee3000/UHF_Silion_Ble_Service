@@ -28,6 +28,7 @@ import com.nlscan.blelib.ConnectStatusChangeListener;
 import com.nlscan.blelib.IBleManager;
 import com.nlscan.uhf.silionBle.BaseActivity;
 import com.nlscan.uhf.silionBle.R;
+import com.nlscan.uhf.silionBle.UHFSilionService;
 import com.nlscan.uhf.silionBle.upgrade.dfu.DfuActivity;
 import com.nlscan.uhf.silionBle.upgrade.driver.BleSerialDriver;
 import com.nlscan.uhf.silionBle.upgrade.driver.BleSerialPort;
@@ -72,6 +73,11 @@ public class UpgradeActivity extends AppCompatActivity implements View.OnClickLi
         service.setPackage("com.nlscan.blecommservice");
         mConnection = new BleServiceConnection();
         bindService(service, mConnection, Context.BIND_AUTO_CREATE);
+
+
+
+
+
 
         mBleManager = BleInterface.getBleManager(this);
         mBleManager.addBadgeConnectStatusChangeListener(this);
@@ -137,7 +143,7 @@ public class UpgradeActivity extends AppCompatActivity implements View.OnClickLi
             getCurrentBTVersion();
 
             mPort = new BleSerialDriver(mBleInterface);
-            showUpgradeButton();
+//            showUpgradeButton();
         }
 
         @Override
