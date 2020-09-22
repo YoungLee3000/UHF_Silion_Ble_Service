@@ -590,8 +590,8 @@ JNIEXPORT jbyteArray JNICALL Java_com_nlscan_uhf_silionBle_upgrade_Native_GetPac
 	if (nTypeIdx < 0) {
 		return NULL;
 	}
-	 char lvHeadBuf[32];
-	 char lvPackCmdBuf[64];
+	unsigned char lvHeadBuf[32];
+	unsigned char lvPackCmdBuf[64];
 	memset(lvHeadBuf, 0, sizeof(lvHeadBuf));
 
 	TuIMGPack_All *pPack_All_Info = (TuIMGPack_All *) &m_lvfilebuf[m_nFilelen -
@@ -613,13 +613,13 @@ JNIEXPORT jbyteArray JNICALL Java_com_nlscan_uhf_silionBle_upgrade_Native_GetPac
 		case 3:
 			//"!FileType:kern"
 			if (UPGRADE_TYPE_BOOT == nUpgradeType) {
-				sprintf(lvHeadBuf, "!FileType:boot",1);
+				sprintf(lvHeadBuf, "%s","!FileType:boot");
 			} else if (UPGRADE_TYPE_KERNEL == nUpgradeType) {
-				sprintf(lvHeadBuf, "!FileType:kern",1);
+				sprintf(lvHeadBuf, "%s","!FileType:kern");
 			} else if (UPGRADE_TYPE_FLASH == nUpgradeType) {
-				sprintf(lvHeadBuf, "!FileType:flah:9999",1);
+				sprintf(lvHeadBuf, "%s","!FileType:flah:9999");
 			} else if (UPGRADE_TYPE_APPL == nUpgradeType) {
-				sprintf(lvHeadBuf, "!FileType:appl",1);
+				sprintf(lvHeadBuf,"%s", "!FileType:appl");
 			}
 			break;
 		case 4:

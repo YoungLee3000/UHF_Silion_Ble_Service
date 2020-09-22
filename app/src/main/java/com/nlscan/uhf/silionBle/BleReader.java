@@ -3,9 +3,11 @@ package com.nlscan.uhf.silionBle;
 import android.content.Context;
 import android.os.RemoteException;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.nlscan.android.uhf.UHFReader;
 import com.nlscan.blecommservice.IBleInterface;
+import com.nlscan.blecommservice.IScanConfigCallback;
 import com.nlscan.blecommservice.IUHFCallback;
 import com.nlscan.uhf.silionBle.upgrade.Native;
 import com.uhf.api.cls.BackReadOption;
@@ -955,29 +957,38 @@ public class BleReader extends Reader {
         if (valArray.length < 2 ) return false;
 
         int mode = Integer.parseInt(valArray[0]);
-        String modeCode =  "GRVENA";
+        String modeCode =  "@GRVENA";
         switch (mode){
             case 1:
-                modeCode = "GRVENA";
+                modeCode = "@GRVENA";
                 break;
             case 2:
-                modeCode = "GRLENA";
+                modeCode = "@GRLENA";
                 break;
             case 3:
-                modeCode = "GRBENA";
+                modeCode = "@GRBENA";
                 break;
         }
 
 
-        String sendCommand =  "5DCC01011000107E013030303040" +
-                HexUtil.stringtoHex (modeCode + value) + "3B03BB20";
+//        String sendCommand = "7E013030303040" +
+//                HexUtil.stringtoHex (modeCode + valArray[1])  + "3B03";
         String resultCode = "failed";
 
+
+//            resultCode = mBleInterface.sendUhfCommand(sendCommand);
+
+
         try {
-            resultCode = mBleInterface.sendUhfCommand(sendCommand);
+            mBleInterface.setScanConfig(new IScanConfigCallback.Stub() {
+                    @Override
+                    public void onConfigCallback(final String str) throws RemoteException {
+
+                    }}, modeCode + valArray[1]);
         } catch (RemoteException e) {
             e.printStackTrace();
         }
+
 
         return  true;
 

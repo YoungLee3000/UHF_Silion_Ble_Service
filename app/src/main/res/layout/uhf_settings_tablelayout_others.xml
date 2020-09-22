@@ -475,7 +475,8 @@
         <FrameLayout
             android:layout_width="wrap_content"
             android:layout_height="30dp"
-            android:layout_weight="1" >
+            android:layout_weight="1"
+            android:visibility="visible">
 
             <View
                 android:id="@+id/View12"
@@ -498,7 +499,8 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1">
+            android:layout_weight="1"
+            android:visibility="visible">
 
             <CheckBox
                 android:id="@+id/cb_bu_vibration"
@@ -521,7 +523,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:layout_marginTop="20dp">
+            android:layout_marginTop="20dp"
+            android:visibility="visible">
 
             <CheckBox
                 android:id="@+id/cb_bu_light"
@@ -544,7 +547,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:layout_marginTop="20dp">
+            android:layout_marginTop="20dp"
+            android:visibility="visible">
 
             <CheckBox
                 android:id="@+id/cb_bu_sound"

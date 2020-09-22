@@ -776,13 +776,38 @@ public class UHFSilionSettingService {
 
 
 			//BU10提示
-			if(subParamName.equals(UHFSilionParams.PROMPT_MODE.KEY))
+			if(subParamName.equals(UHFSilionParams.PROMPT_MODE.PARAM_VIBRATION))
 			{
 
 
-				mSettingsMap.put(UHFSilionParams.STANDBY_TIME.PARAM_STANDBY_TIME, sValue);
+				mSettingsMap.put(UHFSilionParams.PROMPT_MODE.PARAM_VIBRATION, Integer.parseInt(sValue));
 
-				state = mReader.setPromptMode(sValue) ? UHFReader.READER_STATE.OK_ERR :
+				state = mReader.setPromptMode("1," +  sValue) ? UHFReader.READER_STATE.OK_ERR :
+						UHFReader.READER_STATE.CMD_FAILED_ERR;
+			}
+
+
+
+			//BU10提示
+			if(subParamName.equals(UHFSilionParams.PROMPT_MODE.PARAM_LIGHT))
+			{
+
+
+				mSettingsMap.put(UHFSilionParams.PROMPT_MODE.PARAM_LIGHT, Integer.parseInt(sValue));
+
+				state = mReader.setPromptMode("2," +  sValue) ? UHFReader.READER_STATE.OK_ERR :
+						UHFReader.READER_STATE.CMD_FAILED_ERR;
+			}
+
+
+			//BU10提示
+			if(subParamName.equals(UHFSilionParams.PROMPT_MODE.PARAM_SOUND))
+			{
+
+
+				mSettingsMap.put(UHFSilionParams.PROMPT_MODE.PARAM_SOUND, Integer.parseInt(sValue));
+
+				state = mReader.setPromptMode("3," +  sValue) ? UHFReader.READER_STATE.OK_ERR :
 						UHFReader.READER_STATE.CMD_FAILED_ERR;
 			}
 			
@@ -871,7 +896,12 @@ public class UHFSilionSettingService {
 			}//end if;
 			
 		}
-		return null;
+
+
+		if (UHFSilionParams.PROMPT_MODE.KEY.equals(paramKey))
+		    return "1";
+		else
+		    return "";
 	}//end getParam
 	
 	/**

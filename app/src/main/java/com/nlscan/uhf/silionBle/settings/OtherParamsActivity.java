@@ -375,6 +375,11 @@ public class OtherParamsActivity extends BaseActivity {
 		aa_standby.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		sp_standby.setAdapter(aa_standby);
 
+		int preStandByTime =  Integer.parseInt(mUHFMgr.getParam(UHFSilionParams.STANDBY_TIME.KEY,
+				UHFSilionParams.STANDBY_TIME.PARAM_STANDBY_TIME,"0")) ;
+
+		sp_standby.setSelection(preStandByTime);
+
 		btn_standby.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -401,12 +406,26 @@ public class OtherParamsActivity extends BaseActivity {
 		btn_light = (Button)findViewById(R.id.button_light);
 		btn_sound = (Button) findViewById(R.id.button_sound);
 
+
+		int vib_val = Integer.parseInt(mUHFMgr.getParam(UHFSilionParams.PROMPT_MODE.KEY,
+				UHFSilionParams.PROMPT_MODE.PARAM_VIBRATION,"0"));
+		cb_vibration.setChecked(vib_val == 0);
+
+		int light_val = Integer.parseInt(mUHFMgr.getParam(UHFSilionParams.PROMPT_MODE.KEY,
+				UHFSilionParams.PROMPT_MODE.PARAM_LIGHT,"0"));
+		cb_light.setChecked(light_val == 0);
+
+		int sound_val = Integer.parseInt(mUHFMgr.getParam(UHFSilionParams.PROMPT_MODE.KEY,
+				UHFSilionParams.PROMPT_MODE.PARAM_SOUND,"0"));
+		cb_sound.setChecked(sound_val == 0);
+
+
 		btn_vibration.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 
-				UHFReader.READER_STATE er = mUHFMgr.setParam(UHFSilionParams.STANDBY_TIME.KEY,
-						UHFSilionParams.STANDBY_TIME.PARAM_STANDBY_TIME, "1," + (cb_vibration.isChecked()?"0":"1"));
+				UHFReader.READER_STATE er = mUHFMgr.setParam(UHFSilionParams.PROMPT_MODE.KEY,
+						UHFSilionParams.PROMPT_MODE.PARAM_VIBRATION,  cb_vibration.isChecked()?"1":"0");
 
 				if (er == UHFReader.READER_STATE.OK_ERR) {
 					Toast.makeText(mContext, R.string.setting_success,Toast.LENGTH_SHORT).show();
@@ -415,12 +434,12 @@ public class OtherParamsActivity extends BaseActivity {
 			}
 		});
 
-		btn_vibration.setOnClickListener(new OnClickListener() {
+		btn_light.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 
-				UHFReader.READER_STATE er = mUHFMgr.setParam(UHFSilionParams.STANDBY_TIME.KEY,
-						UHFSilionParams.STANDBY_TIME.PARAM_STANDBY_TIME, "2," + (cb_light.isChecked()?"0":"1"));
+				UHFReader.READER_STATE er = mUHFMgr.setParam(UHFSilionParams.PROMPT_MODE.KEY,
+						UHFSilionParams.PROMPT_MODE.PARAM_LIGHT,  cb_light.isChecked()?"1":"0");
 
 				if (er == UHFReader.READER_STATE.OK_ERR) {
 					Toast.makeText(mContext, R.string.setting_success,Toast.LENGTH_SHORT).show();
@@ -429,12 +448,12 @@ public class OtherParamsActivity extends BaseActivity {
 			}
 		});
 
-		btn_vibration.setOnClickListener(new OnClickListener() {
+		btn_sound.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 
-				UHFReader.READER_STATE er = mUHFMgr.setParam(UHFSilionParams.STANDBY_TIME.KEY,
-						UHFSilionParams.STANDBY_TIME.PARAM_STANDBY_TIME, "3," + (cb_sound.isChecked()?"0":"1"));
+				UHFReader.READER_STATE er = mUHFMgr.setParam(UHFSilionParams.PROMPT_MODE.KEY,
+						UHFSilionParams.PROMPT_MODE.PARAM_SOUND,  cb_sound.isChecked()?"1":"0");
 
 				if (er == UHFReader.READER_STATE.OK_ERR) {
 					Toast.makeText(mContext, R.string.setting_success,Toast.LENGTH_SHORT).show();
