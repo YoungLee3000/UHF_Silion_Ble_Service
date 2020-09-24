@@ -245,7 +245,8 @@ public class RegionFreActivity extends BaseActivity {
 					int[] vls = CollectionTointArray(lit);
 					int[] htb = vls;
 					String sValue = converToString(htb);
-					UHFReader.READER_STATE er = mUHFMgr.setParam(UHFSilionParams.FREQUENCY_HOPTABLE.KEY, UHFSilionParams.FREQUENCY_HOPTABLE.PARAM_HTB, sValue);
+					UHFReader.READER_STATE er = mUHFMgr.setParam(UHFSilionParams.FREQUENCY_HOPTABLE.KEY,
+							UHFSilionParams.FREQUENCY_HOPTABLE.PARAM_HTB, sValue);
 					if (er == UHFReader.READER_STATE.OK_ERR) {
 						Toast.makeText(mContext, R.string.setting_success,Toast.LENGTH_SHORT).show();
 					} else

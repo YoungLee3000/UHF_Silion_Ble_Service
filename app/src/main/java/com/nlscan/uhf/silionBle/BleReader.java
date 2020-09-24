@@ -796,6 +796,12 @@ public class BleReader extends Reader {
         String zoneCode = "";
         //---频率区---
 
+
+        //---频点项---
+        StringBuilder frequencyList = new StringBuilder();
+        String frequencyStr = "";
+        //---频点项---
+
         int [] intArray;
         int intVal;
 
@@ -821,6 +827,9 @@ public class BleReader extends Reader {
                     value = String.format("%02X", intArray[0]);
                 }
                 break;
+
+
+
             case 19://设置Target
 
                 operateCode = "9B";
@@ -883,13 +892,31 @@ public class BleReader extends Reader {
 
 
                 break;
+
+
+            case 16://设置频点
+                HoptableData_ST hoptableDat = (HoptableData_ST ) val;
+                operateCode = "95";
+
+                for (int i=0; i<hoptableDat.lenhtb; i++){
+                    String hoptHex =   String.format("%08X",hoptableDat.htb[i]) ;
+                    frequencyList.append(hoptHex);
+                }
+                frequencyStr = frequencyList.toString();
+
+
+                break;
+
+
+
             default:
                 return READER_ERR.MT_OK_ERR;
 
         }
 
         int length = ( protocolValue.length() + parameter.length() + option.length() + value.length()
-                      + antNum.length() + readPower.length() + writePower.length() + zoneCode.length()  ) / 2;
+                      + antNum.length() + readPower.length() + writePower.length() + zoneCode.length() +
+                        frequencyStr.length()) / 2;
 
 
         String strLength = String.format("%02X",length);
@@ -904,6 +931,7 @@ public class BleReader extends Reader {
         command.append(readPower);
         command.append(writePower);
         command.append(zoneCode);
+        command.append(frequencyStr);
 
         String  crcStr = mCrcModel.getCrcStr(HexUtil.toByteArray(command.toString())) ;
         command.append(crcStr);

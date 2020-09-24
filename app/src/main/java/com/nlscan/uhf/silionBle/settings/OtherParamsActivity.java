@@ -375,8 +375,14 @@ public class OtherParamsActivity extends BaseActivity {
 		aa_standby.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		sp_standby.setAdapter(aa_standby);
 
-		int preStandByTime =  Integer.parseInt(mUHFMgr.getParam(UHFSilionParams.STANDBY_TIME.KEY,
-				UHFSilionParams.STANDBY_TIME.PARAM_STANDBY_TIME,"0")) ;
+		int preStandByTime = 0;
+
+		try {
+			preStandByTime =  Integer.parseInt(mUHFMgr.getParam(UHFSilionParams.STANDBY_TIME.KEY,
+					UHFSilionParams.STANDBY_TIME.PARAM_STANDBY_TIME,"0")) ;
+		} catch (NumberFormatException e) {
+			e.printStackTrace();
+		}
 
 		sp_standby.setSelection(preStandByTime);
 

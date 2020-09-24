@@ -12,7 +12,8 @@
         <!-- 盘点协议 -->
         <FrameLayout
             android:layout_width="wrap_content"
-            android:layout_height="30dp" >
+            android:layout_height="30dp"
+            android:visibility="gone">
 
             <View
                 android:id="@+id/View02"
@@ -31,7 +32,8 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" >
+            android:layout_height="wrap_content"
+            android:visibility="gone">
 
             <CheckBox
                 android:id="@+id/checkBox_invgen2"
@@ -73,7 +75,8 @@
         <!-- 设置 -->
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" >
+            android:layout_height="wrap_content"
+            android:visibility="gone">
 
             <Button
                 android:id="@+id/button_invproset"
@@ -87,7 +90,8 @@
         <!-- 操作协议 -->
         <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" >
+            android:layout_height="wrap_content"
+            android:visibility="gone">
 
             <View
                 android:id="@+id/View04"
@@ -107,7 +111,8 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" >
+            android:layout_height="wrap_content"
+            android:visibility="gone">
 
             <RadioGroup
                 android:id="@+id/radioGroup_pror"
@@ -155,7 +160,8 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" >
+            android:layout_height="wrap_content"
+            android:visibility="gone">
 
             <Button
                 android:id="@+id/button_opproget"

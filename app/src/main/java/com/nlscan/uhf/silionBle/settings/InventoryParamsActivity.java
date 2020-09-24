@@ -277,7 +277,7 @@ public class InventoryParamsActivity extends BaseActivity {
 
 
 		//获取,盘点间隔
-		button_getusl.setOnClickListener(new OnClickListener() {
+		btn_space_get.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View arg0) {
@@ -300,7 +300,7 @@ public class InventoryParamsActivity extends BaseActivity {
 
 
 		//设置,盘点间隔
-		button_setusl.setOnClickListener(new OnClickListener() {
+		btn_space_set.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View arg0) {

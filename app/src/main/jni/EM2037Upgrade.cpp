@@ -590,8 +590,8 @@ JNIEXPORT jbyteArray JNICALL Java_com_nlscan_uhf_silionBle_upgrade_Native_GetPac
 	if (nTypeIdx < 0) {
 		return NULL;
 	}
-	unsigned char lvHeadBuf[32];
-	unsigned char lvPackCmdBuf[64];
+	 char lvHeadBuf[32];
+	 char lvPackCmdBuf[64];
 	memset(lvHeadBuf, 0, sizeof(lvHeadBuf));
 
 	TuIMGPack_All *pPack_All_Info = (TuIMGPack_All *) &m_lvfilebuf[m_nFilelen -
@@ -624,7 +624,7 @@ JNIEXPORT jbyteArray JNICALL Java_com_nlscan_uhf_silionBle_upgrade_Native_GetPac
 			break;
 		case 4:
 			//">Start"
-			sprintf(lvHeadBuf, ">Start",1);
+			sprintf(lvHeadBuf,"%s", ">Start");
 			break;
 		default:
 			return NULL;
