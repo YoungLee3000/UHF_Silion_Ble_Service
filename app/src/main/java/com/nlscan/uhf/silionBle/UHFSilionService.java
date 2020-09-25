@@ -432,12 +432,12 @@ public class UHFSilionService extends Service {
 	{
 		//Log.d(TAG, "Enter doStartReading..");
 		long pre = System.currentTimeMillis();
-		if(mForceStoped)
-		{
-			Log.d(TAG, "Reading is stoped.");
-			mReadingState = ReadingState.IDLE;
-			return ;
-		}
+//		if(mForceStoped)
+//		{
+//			Log.d(TAG, "Reading is stoped.");
+//			mReadingState = ReadingState.IDLE;
+//			return ;
+//		}
 		
 		try {
 			if(mStartReadTime == 0)
@@ -554,13 +554,13 @@ public class UHFSilionService extends Service {
 				else {
 					mStartReadTime = 0;
 					mForceStoped = true;
-					mOperHandler.removeMessages(OperateHandler.MSG_START_READING);
+//					mOperHandler.removeMessages(OperateHandler.MSG_START_READING);
 					mIfQuickReading = false;
 				}
 			}else{
 				mStartReadTime = 0;
 				mForceStoped = true;
-				mOperHandler.removeMessages(OperateHandler.MSG_START_READING);
+//				mOperHandler.removeMessages(OperateHandler.MSG_START_READING);
 				er = mReader.StopReading();
 				mReadingState = ReadingState.IDLE;
 			}
@@ -1128,6 +1128,10 @@ public class UHFSilionService extends Service {
 		{
 			
 			synchronized (this) {
+
+				mOperHandler.removeMessages(OperateHandler.MSG_START_READING);
+
+				mOperHandler.sendEmptyMessage(OperateHandler.MSG_START_READING);
 				
 				long id = Binder.clearCallingIdentity();
 				
@@ -1157,6 +1161,8 @@ public class UHFSilionService extends Service {
 		public int powerOff() throws RemoteException {
 
 			Log.d(TAG,"the device power off");
+			mOperHandler.removeMessages(OperateHandler.MSG_START_READING);
+
 			
 			long id = Binder.clearCallingIdentity();
 			UHFReader.READER_STATE state = doPowerOff();
@@ -1180,8 +1186,8 @@ public class UHFSilionService extends Service {
 					return UHFReader.READER_STATE.INVALID_READER_HANDLE.value();
 				
 				//扫描中,返回
-				if(mReadingState == ReadingState.READING)
-					return UHFReader.READER_STATE.OK_ERR.value();
+//				if(mReadingState == ReadingState.READING)
+//					return UHFReader.READER_STATE.OK_ERR.value();
 				
 				//触发扫描
 				mIfQuickReading = true;
@@ -1195,16 +1201,21 @@ public class UHFSilionService extends Service {
 						UHFSilionParams.INV_INTERVAL.PARAM_INV_INTERVAL_TIME,
 						UHFSilionParams.INV_INTERVAL.DEFAULT_INV_INTERVAL_TIME);
 
-				if(isQuickMode)
-					nonStopStartReading();
-				else{
-					mReader.StartReadingCommon();
-					mOperHandler.sendEmptyMessage(OperateHandler.MSG_START_READING);
-				}
+
+				mOperHandler.removeMessages(OperateHandler.MSG_START_READING);
+
+				mOperHandler.sendEmptyMessage(OperateHandler.MSG_START_READING);
+
+//				if(isQuickMode)
+//					nonStopStartReading();
+//				else{
+//					mReader.StartReadingCommon();
+//
+//				}
 
 				
 				Binder.restoreCallingIdentity(id);
-				return UHFReader.READER_STATE.OK_ERR.value();
+				return mReader.StartReadingCommon().value();
 			}
 			
 		}

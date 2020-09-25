@@ -894,18 +894,18 @@ public class BleReader extends Reader {
                 break;
 
 
-            case 16://设置频点
-                HoptableData_ST hoptableDat = (HoptableData_ST ) val;
-                operateCode = "95";
-
-                for (int i=0; i<hoptableDat.lenhtb; i++){
-                    String hoptHex =   String.format("%08X",hoptableDat.htb[i]) ;
-                    frequencyList.append(hoptHex);
-                }
-                frequencyStr = frequencyList.toString();
-
-
-                break;
+//            case 16://设置频点
+//                HoptableData_ST hoptableDat = (HoptableData_ST ) val;
+//                operateCode = "95";
+//
+//                for (int i=0; i<hoptableDat.lenhtb; i++){
+//                    String hoptHex =   String.format("%08X",hoptableDat.htb[i]) ;
+//                    frequencyList.append(hoptHex);
+//                }
+//                frequencyStr = frequencyList.toString();
+//
+//
+//                break;
 
 
 
