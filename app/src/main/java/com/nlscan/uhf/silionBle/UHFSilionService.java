@@ -450,12 +450,12 @@ public class UHFSilionService extends Service {
 			
 			
 			boolean quickMode = isQuickMode();
-			Log.d(TAG,"if quick mode " + quickMode);
+//			Log.d(TAG,"if quick mode " + quickMode);
 			int[] uants = getAnts();
 			long readTimeout = mSettingsService.getLongParamValue(UHFSilionParams.INV_TIME_OUT.KEY, UHFSilionParams.INV_TIME_OUT.PARAM_INV_TIME_OUT,
                     UHFSilionParams.INV_TIME_OUT.DEFAULT_INV_TIMEOUT);
 //
-			Log.d(TAG,"the read time out is " + readTimeout);
+//			Log.d(TAG,"the read time out is " + readTimeout);
 			
 //			if (quickMode) {
 ////
@@ -521,12 +521,12 @@ public class UHFSilionService extends Service {
 			Log.w(TAG, "Start reading failed.", e);
 		}
 
-		Log.d(TAG,"the uhf parse cause " + (System.currentTimeMillis() - pre) + " ms");
+//		Log.d(TAG,"the uhf parse cause " + (System.currentTimeMillis() - pre) + " ms");
 		//进入下一扫描周期
 
 //        long intevalTime = 10;
 		long intevalTime =mSettingsService.getLongParamValue(UHFSilionParams.INV_INTERVAL.KEY, UHFSilionParams.INV_INTERVAL.PARAM_INV_INTERVAL_TIME,UHFSilionParams.INV_INTERVAL.DEFAULT_INV_INTERVAL_TIME);
-		Log.d(TAG,"inventory time " + intevalTime);
+//		Log.d(TAG,"inventory time " + intevalTime);
 		mOperHandler.sendEmptyMessageDelayed(OperateHandler.MSG_START_READING, 0);
 		
 	}//end doStartReading
@@ -624,7 +624,7 @@ public class UHFSilionService extends Service {
 			TAGINFO tag = newTags[i];
 			if (tag == null) continue;
 			try {
-				tag.protocol = tag.protocol == null? Reader.SL_TagProtocol.SL_TAG_PROTOCOL_NONE:tag.protocol;
+				tag.protocol = Reader.SL_TagProtocol.SL_TAG_PROTOCOL_GEN2;
 				TagInfo.SL_TagProtocol nls_TagProtocol = TagInfo.SL_TagProtocol.valueOf(tag.protocol.value());
 				
 				TagInfo nls_Tag = new TagInfo(
@@ -1315,70 +1315,71 @@ public class UHFSilionService extends Service {
 			if( !mPowerOn )
 				return UHFReader.READER_STATE.INVALID_READER_HANDLE.value();
 			
-	      int targetLlockObj =0;
-	      if((lockObject & UHFReader.Lock_Obj.LOCK_OBJECT_ACCESS_PASSWD.value() ) > 0 )
-	    	  targetLlockObj |= Reader.Lock_Obj.LOCK_OBJECT_ACCESS_PASSWD.value();
-	      if((lockObject & UHFReader.Lock_Obj.LOCK_OBJECT_KILL_PASSWORD.value() ) > 0 )
-	    	  targetLlockObj |= Reader.Lock_Obj.LOCK_OBJECT_KILL_PASSWORD.value();
-	      if((lockObject & UHFReader.Lock_Obj.LOCK_OBJECT_BANK1.value() ) > 0 )
-	    	  targetLlockObj |= Reader.Lock_Obj.LOCK_OBJECT_BANK1.value();
-	      if((lockObject & UHFReader.Lock_Obj.LOCK_OBJECT_BANK2.value() ) > 0 )
-	    	  targetLlockObj |= Reader.Lock_Obj.LOCK_OBJECT_BANK2.value();
-	      if((lockObject & UHFReader.Lock_Obj.LOCK_OBJECT_BANK3.value() ) > 0 )
-	    	  targetLlockObj |= Reader.Lock_Obj.LOCK_OBJECT_BANK3.value();
+	      int targetLlockObj =lockObject;
+//	      if((lockObject & UHFReader.Lock_Obj.LOCK_OBJECT_ACCESS_PASSWD.value() ) > 0 )
+//	    	  targetLlockObj |= Reader.Lock_Obj.LOCK_OBJECT_ACCESS_PASSWD.value();
+//	      if((lockObject & UHFReader.Lock_Obj.LOCK_OBJECT_KILL_PASSWORD.value() ) > 0 )
+//	    	  targetLlockObj |= Reader.Lock_Obj.LOCK_OBJECT_KILL_PASSWORD.value();
+//	      if((lockObject & UHFReader.Lock_Obj.LOCK_OBJECT_BANK1.value() ) > 0 )
+//	    	  targetLlockObj |= Reader.Lock_Obj.LOCK_OBJECT_BANK1.value();
+//	      if((lockObject & UHFReader.Lock_Obj.LOCK_OBJECT_BANK2.value() ) > 0 )
+//	    	  targetLlockObj |= Reader.Lock_Obj.LOCK_OBJECT_BANK2.value();
+//	      if((lockObject & UHFReader.Lock_Obj.LOCK_OBJECT_BANK3.value() ) > 0 )
+//	    	  targetLlockObj |= Reader.Lock_Obj.LOCK_OBJECT_BANK3.value();
 	      
-	      	int tartgetLockType = 0;
-	      	if( (lockType & UHFReader.Lock_Type.LOCK.value()) > 0) //暂时锁定
-	      	{
-	      		if((lockObject & UHFReader.Lock_Obj.LOCK_OBJECT_ACCESS_PASSWD.value() ) > 0 )
-	      			tartgetLockType |= Reader.Lock_Type.ACCESS_PASSWD_LOCK.value();
-	      		
-	      		 if((lockObject & UHFReader.Lock_Obj.LOCK_OBJECT_KILL_PASSWORD.value() ) > 0 )
-	      			tartgetLockType |= Reader.Lock_Type.KILL_PASSWORD_LOCK.value();
-	      		 
-	      		 if((lockObject & UHFReader.Lock_Obj.LOCK_OBJECT_BANK1.value() ) > 0 )
-	      			tartgetLockType |= Reader.Lock_Type.BANK1_LOCK.value();
-	      		 
-	      		 if((lockObject & UHFReader.Lock_Obj.LOCK_OBJECT_BANK2.value() ) > 0 )
-		      			tartgetLockType |= Reader.Lock_Type.BANK2_LOCK.value();
-	      		 
-	      		 if((lockObject & UHFReader.Lock_Obj.LOCK_OBJECT_BANK3.value() ) > 0 )
-		      			tartgetLockType |= Reader.Lock_Type.BANK3_LOCK.value();
-	      		 
-	      	}else if( (lockType & UHFReader.Lock_Type.UNLOCK.value()) > 0){//解锁
-	      		
-	      		if((lockObject & UHFReader.Lock_Obj.LOCK_OBJECT_ACCESS_PASSWD.value() ) > 0 )
-	      			tartgetLockType |= Reader.Lock_Type.ACCESS_PASSWD_UNLOCK.value();
-	      		
-	      		 if((lockObject & UHFReader.Lock_Obj.LOCK_OBJECT_KILL_PASSWORD.value() ) > 0 )
-	      			tartgetLockType |= Reader.Lock_Type.KILL_PASSWORD_UNLOCK.value();
-	      		 
-	      		 if((lockObject & UHFReader.Lock_Obj.LOCK_OBJECT_BANK1.value() ) > 0 )
-	      			tartgetLockType |= Reader.Lock_Type.BANK1_UNLOCK.value();
-	      		 
-	      		 if((lockObject & UHFReader.Lock_Obj.LOCK_OBJECT_BANK2.value() ) > 0 )
-		      			tartgetLockType |= Reader.Lock_Type.BANK2_UNLOCK.value();
-	      		 
-	      		 if((lockObject & UHFReader.Lock_Obj.LOCK_OBJECT_BANK3.value() ) > 0 )
-		      			tartgetLockType |= Reader.Lock_Type.BANK3_UNLOCK.value();
-	      		 
-	      	}else if( (lockType & UHFReader.Lock_Type.PERM_LOCK.value()) > 0){//永久锁定(锁定之后必须使用密码才可以操作)
-	      		
-	      		if((lockObject & UHFReader.Lock_Obj.LOCK_OBJECT_ACCESS_PASSWD.value() ) > 0 )
-	      			tartgetLockType |= Reader.Lock_Type.ACCESS_PASSWD_PERM_LOCK.value();
-	      		
-	      		 if((lockObject & UHFReader.Lock_Obj.LOCK_OBJECT_KILL_PASSWORD.value() ) > 0 )
-	      			tartgetLockType |= Reader.Lock_Type.KILL_PASSWORD_PERM_LOCK.value();
-	      		 
-	      		 if((lockObject & UHFReader.Lock_Obj.LOCK_OBJECT_BANK1.value() ) > 0 )
-	      			tartgetLockType |= Reader.Lock_Type.BANK1_PERM_LOCK.value();
-	      		 
-	      		 if((lockObject & UHFReader.Lock_Obj.LOCK_OBJECT_BANK2.value() ) > 0 )
-		      			tartgetLockType |= Reader.Lock_Type.BANK2_PERM_LOCK.value();
-	      		 
-	      		 if((lockObject & UHFReader.Lock_Obj.LOCK_OBJECT_BANK3.value() ) > 0 )
-		      			tartgetLockType |= Reader.Lock_Type.BANK3_PERM_LOCK.value();
-	      	}
+
+	      	int tartgetLockType = lockType;
+//	      	if( (lockType & UHFReader.Lock_Type.LOCK.value()) > 0) //暂时锁定
+//	      	{
+//	      		if((lockObject & UHFReader.Lock_Obj.LOCK_OBJECT_ACCESS_PASSWD.value() ) > 0 )
+//	      			tartgetLockType |= Reader.Lock_Type.ACCESS_PASSWD_LOCK.value();
+//
+//	      		 if((lockObject & UHFReader.Lock_Obj.LOCK_OBJECT_KILL_PASSWORD.value() ) > 0 )
+//	      			tartgetLockType |= Reader.Lock_Type.KILL_PASSWORD_LOCK.value();
+//
+//	      		 if((lockObject & UHFReader.Lock_Obj.LOCK_OBJECT_BANK1.value() ) > 0 )
+//	      			tartgetLockType |= Reader.Lock_Type.BANK1_LOCK.value();
+//
+//	      		 if((lockObject & UHFReader.Lock_Obj.LOCK_OBJECT_BANK2.value() ) > 0 )
+//		      			tartgetLockType |= Reader.Lock_Type.BANK2_LOCK.value();
+//
+//	      		 if((lockObject & UHFReader.Lock_Obj.LOCK_OBJECT_BANK3.value() ) > 0 )
+//		      			tartgetLockType |= Reader.Lock_Type.BANK3_LOCK.value();
+//
+//	      	}else if( (lockType & UHFReader.Lock_Type.UNLOCK.value()) > 0){//解锁
+//
+//	      		if((lockObject & UHFReader.Lock_Obj.LOCK_OBJECT_ACCESS_PASSWD.value() ) > 0 )
+//	      			tartgetLockType |= Reader.Lock_Type.ACCESS_PASSWD_UNLOCK.value();
+//
+//	      		 if((lockObject & UHFReader.Lock_Obj.LOCK_OBJECT_KILL_PASSWORD.value() ) > 0 )
+//	      			tartgetLockType |= Reader.Lock_Type.KILL_PASSWORD_UNLOCK.value();
+//
+//	      		 if((lockObject & UHFReader.Lock_Obj.LOCK_OBJECT_BANK1.value() ) > 0 )
+//	      			tartgetLockType |= Reader.Lock_Type.BANK1_UNLOCK.value();
+//
+//	      		 if((lockObject & UHFReader.Lock_Obj.LOCK_OBJECT_BANK2.value() ) > 0 )
+//		      			tartgetLockType |= Reader.Lock_Type.BANK2_UNLOCK.value();
+//
+//	      		 if((lockObject & UHFReader.Lock_Obj.LOCK_OBJECT_BANK3.value() ) > 0 )
+//		      			tartgetLockType |= Reader.Lock_Type.BANK3_UNLOCK.value();
+//
+//	      	}else if( (lockType & UHFReader.Lock_Type.PERM_LOCK.value()) > 0){//永久锁定(锁定之后必须使用密码才可以操作)
+//
+//	      		if((lockObject & UHFReader.Lock_Obj.LOCK_OBJECT_ACCESS_PASSWD.value() ) > 0 )
+//	      			tartgetLockType |= Reader.Lock_Type.ACCESS_PASSWD_PERM_LOCK.value();
+//
+//	      		 if((lockObject & UHFReader.Lock_Obj.LOCK_OBJECT_KILL_PASSWORD.value() ) > 0 )
+//	      			tartgetLockType |= Reader.Lock_Type.KILL_PASSWORD_PERM_LOCK.value();
+//
+//	      		 if((lockObject & UHFReader.Lock_Obj.LOCK_OBJECT_BANK1.value() ) > 0 )
+//	      			tartgetLockType |= Reader.Lock_Type.BANK1_PERM_LOCK.value();
+//
+//	      		 if((lockObject & UHFReader.Lock_Obj.LOCK_OBJECT_BANK2.value() ) > 0 )
+//		      			tartgetLockType |= Reader.Lock_Type.BANK2_PERM_LOCK.value();
+//
+//	      		 if((lockObject & UHFReader.Lock_Obj.LOCK_OBJECT_BANK3.value() ) > 0 )
+//		      			tartgetLockType |= Reader.Lock_Type.BANK3_PERM_LOCK.value();
+//	      	}
 	      	
 	      	int ant = getOperateAnt();
 	      	byte[] pwdb = null;

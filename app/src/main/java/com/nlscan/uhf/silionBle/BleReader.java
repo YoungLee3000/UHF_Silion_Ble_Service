@@ -53,6 +53,11 @@ public class BleReader extends Reader {
 
 
 
+    //过滤器
+    private TagFilter_ST m_tagFilter_st = new TagFilter_ST();
+
+
+
 
     private IUHFCallback.Stub mUhfCallback = new IUHFCallback.Stub() {
         @Override
@@ -133,14 +138,44 @@ public class BleReader extends Reader {
         StringBuilder command = new StringBuilder(COMMAND_HEADER);
         String operateCode = "28";
         String strTimeOut = String.format("%04X",timeout);
-        String option = "00" ;
+        String option =   String.format("%02X",m_tagFilter_st.bank);
         String memBank = String.format("%02X",(int)bank);
         String readAddress = String.format("%08X",address);
         String wordCount = String.format("%02X",blkcnt);
 
+        String originPass =  HexUtil.bytesToHexString(accesspasswd);
+        String accessPass = "";
+        if (originPass.length() >= 8){
+            accessPass = originPass.substring(0,8);
+        }
+        else{
+
+            accessPass = originPass;
+            for (int i=0; i< 8 - originPass.length(); i++){
+                accessPass = "0" + accessPass;
+            }
+
+        }
+
+
+
+        String selectAddress =  "";
+        String selectLength = "";
+        String selectData = "";
+        if (m_tagFilter_st.isInvert == 0){
+            selectAddress  =  String.format("%08X",m_tagFilter_st.startaddr);
+            selectLength = String.format("%02X",m_tagFilter_st.flen);
+            selectData = HexUtil.bytesToHexString(m_tagFilter_st.fdata);
+        }
+        else{
+            option = "00";
+            accessPass = "";
+        }
+
 
         int length = (  strTimeOut.length() +   option.length() + memBank.length() +
-                readAddress.length() + wordCount.length()) / 2;
+                readAddress.length() + wordCount.length()  + accessPass.length()
+                + selectAddress.length() + selectLength.length() + selectData.length()) / 2;
         String strLength = String.format("%02X",length);
 
         command.append(strLength);
@@ -150,6 +185,10 @@ public class BleReader extends Reader {
         command.append(memBank);
         command.append(readAddress);
         command.append(wordCount);
+        command.append(accessPass);
+        command.append(selectAddress);
+        command.append(selectLength);
+        command.append(selectData);
 
         String  crcStr =     mCrcModel.getCrcStr(HexUtil.toByteArray(command.toString())) ;
         command.append(crcStr);
@@ -195,14 +234,48 @@ public class BleReader extends Reader {
         StringBuilder command = new StringBuilder(COMMAND_HEADER);
         String operateCode = "24";
         String strTimeOut = String.format("%04X",timeout);
-        String option = "00" ;
+        String option =   String.format("%02X",m_tagFilter_st.bank);
         String readAddress = String.format("%08X",address);
         String memBank = String.format("%02X",(int)bank);
         String writeData = HexUtil.bytesToHexString(data);
 
+        String originPass =  HexUtil.bytesToHexString(accesspasswd);
+        String accessPass = "";
+        if (originPass.length() >= 8){
+            accessPass = originPass.substring(0,8);
+        }
+        else{
 
-        int length = (  strTimeOut.length() +   option.length() + memBank.length() +
-                readAddress.length() + writeData.length()) / 2;
+            accessPass = originPass;
+            for (int i=0; i< 8 - originPass.length(); i++){
+                accessPass = "0" + accessPass;
+            }
+
+
+        }
+
+
+
+        String selectAddress =  "";
+        String selectLength = "";
+        String selectData = "";
+        if (m_tagFilter_st.isInvert == 0){
+            selectAddress  =  String.format("%08X",m_tagFilter_st.startaddr);
+            selectLength = String.format("%02X",m_tagFilter_st.flen);
+            selectData = HexUtil.bytesToHexString(m_tagFilter_st.fdata);
+        }
+        else{
+            option = "00";
+            accessPass = "";
+        }
+
+
+
+        int length = (  strTimeOut.length() +   option.length() +
+                readAddress.length() + memBank.length()
+                + accessPass.length() + selectAddress.length()
+                + selectLength.length() + selectData.length()
+                + writeData.length()   ) / 2;
         String strLength = String.format("%02X",length);
 
         command.append(strLength);
@@ -211,6 +284,10 @@ public class BleReader extends Reader {
         command.append(option);
         command.append(readAddress);
         command.append(memBank);
+        command.append(accessPass);
+        command.append(selectAddress);
+        command.append(selectLength);
+        command.append(selectData);
         command.append(writeData);
 
         String  crcStr =     mCrcModel.getCrcStr(HexUtil.toByteArray(command.toString())) ;
@@ -246,13 +323,61 @@ public class BleReader extends Reader {
         StringBuilder command = new StringBuilder(COMMAND_HEADER);
         String operateCode = "23";
         String strTimeOut = String.format("%04X",timeout);
-        String option = "00" ;
+        String option = "04" ;
         String rfu = "00";
         String writeData = HexUtil.bytesToHexString(Epc);
 
 
+
+
+        String originPass =  HexUtil.bytesToHexString(accesspwd);
+        String accessPass = "";
+        if (originPass.length() >= 8){
+            accessPass = originPass.substring(0,8);
+        }
+        else{
+            if (originPass.length() == 0){
+                option = "00";
+            }
+            else {
+                accessPass = originPass;
+                for (int i=0; i< 8 - originPass.length(); i++){
+                    accessPass = "0" + accessPass;
+                }
+            }
+
+        }
+
+
+
+        String selectAddress =  "";
+        String selectLength = "";
+        String selectData = "";
+        if (m_tagFilter_st.isInvert == 0){
+            selectAddress  =  String.format("%08X",m_tagFilter_st.startaddr);
+            selectLength = String.format("%02X",m_tagFilter_st.flen);
+            selectData = HexUtil.bytesToHexString(m_tagFilter_st.fdata);
+            rfu = "";
+        }
+        else{
+            if (originPass.length() > 0){
+                option = "05";
+            }
+        }
+
+
+
+
+
+
         int length = (  strTimeOut.length() +   option.length() +
-                rfu.length() + writeData.length()) / 2;
+                rfu.length()
+
+                + accessPass.length()
+                + selectAddress.length()
+                + selectLength.length()
+                + selectData.length()
+                + writeData.length()) / 2;
         String strLength = String.format("%02X",length);
 
         command.append(strLength);
@@ -260,6 +385,10 @@ public class BleReader extends Reader {
         command.append(strTimeOut);
         command.append(option);
         command.append(rfu);
+        command.append(accessPass);
+        command.append(selectAddress);
+        command.append(selectLength);
+        command.append(selectData);
         command.append(writeData);
 
         String  crcStr =     mCrcModel.getCrcStr(HexUtil.toByteArray(command.toString())) ;
@@ -431,16 +560,28 @@ public class BleReader extends Reader {
         StringBuilder command = new StringBuilder(COMMAND_HEADER);
         String operateCode = "25";
         String strTimeOut = String.format("%04X",timeout);
-        String option = "00" ;
-        String accessPass = HexUtil.bytesToHexString(accesspasswd).substring(0,8);
+        String option =   String.format("%02X",m_tagFilter_st.bank);
+        String originPass = HexUtil.bytesToHexString(accesspasswd);
+        String accessPass = originPass;
+
+        if (originPass.length() >= 8){
+            accessPass = originPass.substring(0,8);
+        }
+        else{
+            for (int i=0; i< 8 - originPass.length(); i++){
+                accessPass = "0" + accessPass;
+            }
+        }
+
+
         String maskBits;
         String actionBits;
         switch (lockobjects){
             case 0:
-                maskBits = "0200";
+                maskBits = "0080";
                 break;
             case 1:
-                maskBits = "0080";
+                maskBits = "0200";
                 break;
             case 2:
                 maskBits = "0020";
@@ -452,19 +593,40 @@ public class BleReader extends Reader {
                 maskBits = "0002";
                 break;
             default:
-                maskBits = "0200";
+                maskBits = "0020";
                 break;
         }
 
-        actionBits = maskBits;
+        if (locktypes == 0){
+            actionBits = "0000";
+        }
+        else{
+            actionBits = maskBits;
+        }
 
+
+
+        if(m_tagFilter_st.flen > 254){
+            return  READER_ERR.MT_CMD_FAILED_ERR;
+        }
+
+        String strAddress =  String.format("%08X",m_tagFilter_st.startaddr);
+        String selectLength = String.format("%02X",m_tagFilter_st.flen);
+        String selectData = HexUtil.bytesToHexString(m_tagFilter_st.fdata);
+
+        if (m_tagFilter_st.isInvert != 0){
+            strAddress = "";
+            selectLength = "";
+            selectData = "";
+        }
 
 
 
 
 
         int length = (  strTimeOut.length() +   option.length() +
-                accessPass.length() + maskBits.length() + actionBits.length()) / 2;
+                accessPass.length() + maskBits.length() + actionBits.length()  + strAddress.length()
+                + selectLength.length() + selectData.length()) / 2;
         String strLength = String.format("%02X",length);
 
         command.append(strLength);
@@ -474,10 +636,16 @@ public class BleReader extends Reader {
         command.append(accessPass);
         command.append(maskBits);
         command.append(actionBits);
+        command.append(strAddress);
+        command.append(selectLength);
+        command.append(selectData);
 
 
         String  crcStr =     mCrcModel.getCrcStr(HexUtil.toByteArray(command.toString())) ;
         command.append(crcStr);
+
+
+        Log.d(TAG,"the command is " + command.toString());
 
         String resultCode = "failed";
 
@@ -486,6 +654,8 @@ public class BleReader extends Reader {
         } catch (RemoteException e) {
             e.printStackTrace();
         }
+
+        Log.d(TAG,"the result code is " + resultCode);
 
         if (resultCode.equals(RESULT_FAIL))
             return READER_ERR.MT_CMD_FAILED_ERR;
@@ -508,13 +678,52 @@ public class BleReader extends Reader {
         StringBuilder command = new StringBuilder(COMMAND_HEADER);
         String operateCode = "26";
         String strTimeOut = String.format("%04X",timeout);
-        String option = "00" ;
-        String accessPass = HexUtil.bytesToHexString(killpasswd).substring(0,8);
+        String option = m_tagFilter_st.bank == 4 ? String.format("%02X",1) :
+                String.format("%02X",m_tagFilter_st.bank)  ;
+
         String rfu = "00";
 
 
+
+        String originPass =  HexUtil.bytesToHexString(killpasswd);
+        String accessPass = "";
+        if (originPass.length() >= 8){
+            accessPass = originPass.substring(0,8);
+        }
+        else{
+
+            accessPass = originPass;
+            for (int i=0; i< 8 - originPass.length(); i++){
+                accessPass = "0" + accessPass;
+            }
+
+
+        }
+
+
+
+        String selectAddress =  "";
+        String selectLength = "";
+        String selectData = "";
+        if (m_tagFilter_st.isInvert == 0){
+            selectAddress  =  String.format("%08X",m_tagFilter_st.startaddr);
+            selectLength = String.format("%02X",m_tagFilter_st.flen);
+            selectData = HexUtil.bytesToHexString(m_tagFilter_st.fdata);
+        }
+        else{
+            option = "00";
+        }
+
+
+
+
+
         int length = (  strTimeOut.length() +   option.length() +
-                accessPass.length() + rfu.length()) / 2;
+                accessPass.length() + rfu.length()  +
+                selectAddress.length()+
+                selectLength.length() +
+                selectData.length()
+                ) / 2;
         String strLength = String.format("%02X",length);
 
         command.append(strLength);
@@ -523,6 +732,9 @@ public class BleReader extends Reader {
         command.append(option);
         command.append(accessPass);
         command.append(rfu);
+        command.append(selectAddress);
+        command.append(selectLength);
+        command.append(selectData);
 
 
         String  crcStr =     mCrcModel.getCrcStr(HexUtil.toByteArray(command.toString())) ;
@@ -908,6 +1120,21 @@ public class BleReader extends Reader {
 //                break;
 
 
+
+            case 7:
+                if (val == null){
+                    m_tagFilter_st.isInvert = 1;
+                    return READER_ERR.MT_OK_ERR;
+                }
+                TagFilter_ST tagFilter_st = (TagFilter_ST) val;
+                m_tagFilter_st.bank = tagFilter_st.bank;
+                if (tagFilter_st.bank == 1) m_tagFilter_st.bank = 4;
+                m_tagFilter_st.fdata = tagFilter_st.fdata;
+                m_tagFilter_st.startaddr = tagFilter_st.startaddr;
+                m_tagFilter_st.flen = tagFilter_st.flen;
+                m_tagFilter_st.isInvert = tagFilter_st.isInvert;
+
+                return READER_ERR.MT_OK_ERR;
 
             default:
                 return READER_ERR.MT_OK_ERR;

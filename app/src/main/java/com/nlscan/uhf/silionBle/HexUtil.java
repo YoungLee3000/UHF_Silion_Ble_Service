@@ -79,7 +79,7 @@ public class HexUtil {
 	 */
 	public static final String bytesToHexString(byte[] bArray) {
 		if(bArray == null || bArray.length <= 0)
-			return null;
+			return "";
 		StringBuffer sb = new StringBuffer(bArray.length);
 		String sTemp;
 		for (int i = 0; i < bArray.length; i++) {

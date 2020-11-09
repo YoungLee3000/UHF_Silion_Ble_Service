@@ -130,10 +130,10 @@ public class TagReadLockActivity extends BaseActivity {
 				 
 				 String sValue = jsFilter.toString();
 				 UHFReader.READER_STATE er = mUHFMgr.setParam(UHFSilionParams.TAG_FILTER.KEY, UHFSilionParams.TAG_FILTER.PARAM_TAG_FILTER, sValue);
-				 if(er == UHFReader.READER_STATE.OK_ERR)
-					 Toast.makeText(TagReadLockActivity.this, R.string.success,Toast.LENGTH_SHORT).show();
-				 else
-					 Toast.makeText(TagReadLockActivity.this, R.string.failed,Toast.LENGTH_SHORT).show();
+//				 if(er == UHFReader.READER_STATE.OK_ERR)
+//					 Toast.makeText(TagReadLockActivity.this, R.string.success,Toast.LENGTH_SHORT).show();
+//				 else
+//					 Toast.makeText(TagReadLockActivity.this, R.string.failed,Toast.LENGTH_SHORT).show();
 				 
 			} catch (Exception e) {
 			}
@@ -453,60 +453,60 @@ public class TagReadLockActivity extends BaseActivity {
 							UHFReader.Lock_Type ltyp=null;
 							int lbank=spinner_lockbank.getSelectedItemPosition();
 							int ltype=spinner_locktype.getSelectedItemPosition();
-							if(lbank==0)
-							{
-								lobj=UHFReader.Lock_Obj.LOCK_OBJECT_ACCESS_PASSWD;
-								if(ltype==0)
-									ltyp=UHFReader.Lock_Type.UNLOCK;//解锁定
-								else if(ltype==1)
-									ltyp=Lock_Type.LOCK; //暂时锁定
-								else if(ltype==2)
-									ltyp=Lock_Type.PERM_LOCK;//永久锁定
-									 
-							}
-							else if(lbank==1)
-							{
-								lobj=Lock_Obj.LOCK_OBJECT_KILL_PASSWORD;
-								if(ltype==0)
-									ltyp=Lock_Type.UNLOCK;
-								else if(ltype==1)
-									ltyp=Lock_Type.LOCK;
-								else if(ltype==2)
-									ltyp=Lock_Type.PERM_LOCK;
-							}
-							else if(lbank==2)
-							{
-								lobj=Lock_Obj.LOCK_OBJECT_BANK1; //EPC分区
-								if(ltype==0)
-									ltyp=Lock_Type.UNLOCK;
-								else if(ltype==1)
-									ltyp=Lock_Type.LOCK;
-								else if(ltype==2)
-									ltyp=Lock_Type.PERM_LOCK;
-							}
-							else if(lbank==3)
-							{
-								lobj=Lock_Obj.LOCK_OBJECT_BANK2;//TID分区
-								if(ltype==0)
-									ltyp=Lock_Type.UNLOCK;
-								else if(ltype==1)
-									ltyp=Lock_Type.LOCK;
-								else if(ltype==2)
-									ltyp=Lock_Type.PERM_LOCK;
-							}
-							else if(lbank==4)
-							{
-								lobj=Lock_Obj.LOCK_OBJECT_BANK3;//USER分区
-								if(ltype==0)
-									ltyp=Lock_Type.UNLOCK;
-								else if(ltype==1)
-									ltyp=Lock_Type.LOCK;
-								else if(ltype==2)
-									ltyp=Lock_Type.PERM_LOCK;
-							}
+//							if(lbank==0)
+//							{
+//								lobj=UHFReader.Lock_Obj.LOCK_OBJECT_ACCESS_PASSWD;
+//								if(ltype==0)
+//									ltyp=UHFReader.Lock_Type.UNLOCK;//解锁定
+//								else if(ltype==1)
+//									ltyp=Lock_Type.LOCK; //暂时锁定
+//								else if(ltype==2)
+//									ltyp=Lock_Type.PERM_LOCK;//永久锁定
+//
+//							}
+//							else if(lbank==1)
+//							{
+//								lobj=Lock_Obj.LOCK_OBJECT_KILL_PASSWORD;
+//								if(ltype==0)
+//									ltyp=Lock_Type.UNLOCK;
+//								else if(ltype==1)
+//									ltyp=Lock_Type.LOCK;
+//								else if(ltype==2)
+//									ltyp=Lock_Type.PERM_LOCK;
+//							}
+//							else if(lbank==2)
+//							{
+//								lobj=Lock_Obj.LOCK_OBJECT_BANK1; //EPC分区
+//								if(ltype==0)
+//									ltyp=Lock_Type.UNLOCK;
+//								else if(ltype==1)
+//									ltyp=Lock_Type.LOCK;
+//								else if(ltype==2)
+//									ltyp=Lock_Type.PERM_LOCK;
+//							}
+//							else if(lbank==3)
+//							{
+//								lobj=Lock_Obj.LOCK_OBJECT_BANK2;//TID分区
+//								if(ltype==0)
+//									ltyp=Lock_Type.UNLOCK;
+//								else if(ltype==1)
+//									ltyp=Lock_Type.LOCK;
+//								else if(ltype==2)
+//									ltyp=Lock_Type.PERM_LOCK;
+//							}
+//							else if(lbank==4)
+//							{
+//								lobj=Lock_Obj.LOCK_OBJECT_BANK3;//USER分区
+//								if(ltype==0)
+//									ltyp=Lock_Type.UNLOCK;
+//								else if(ltype==1)
+//									ltyp=Lock_Type.LOCK;
+//								else if(ltype==2)
+//									ltyp=Lock_Type.PERM_LOCK;
+//							}
 							
 							UHFReader.READER_STATE er = UHFReader.READER_STATE.OK_ERR;
-							er = mUHFMgr.LockTag(lobj.value(), ltyp.value(), sHexPasswd);
+							er = mUHFMgr.LockTag(lbank, ltype, sHexPasswd);
 							
 							if( er == UHFReader.READER_STATE.OK_ERR)
 							 {
