@@ -13,6 +13,7 @@ public class Constants {
 	
 	/**读码结果发送的广播action*/
 	public final static String ACTION_UHF_RESULT_SEND = "nlscan.intent.action.uhf.ACTION_RESULT";
+	public final static String ACTION_IMU_RESULT_SEND = "nlscan.intent.action.imu.ACTION_RESULT";
 	
 	/**读码结果发送的广播Extra*/
 	public final static String EXTRA_TAG_INFO = "tag_info";

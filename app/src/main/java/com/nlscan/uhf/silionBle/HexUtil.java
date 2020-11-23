@@ -130,19 +130,19 @@ public class HexUtil {
 
 
 	//解析有符号16进制字符
-	public static int parseSignedHex(String hexStr){
+	public static int parseSignedHex(String hexStr, int reverse){
 		byte[] bytes = toByteArray(hexStr);
 		String binaryStr = bytes2BinaryStr(bytes);
-		return parseSignedBinary(binaryStr);
+		return parseSignedBinary(binaryStr,reverse);
 	}
 
 
 
 	//解析有符号2进制字符
-	public static int parseSignedBinary(String binaryStr) {
+	public static int parseSignedBinary(String binaryStr,int reverse) {
 
 		return binaryStr.charAt(0) == '0' ? Integer.parseInt(binaryStr,2) :
-				-1 *  ((Integer.parseInt(binaryStr,2)  - 1) ^ 0xFF)  ;
+				-1 *  ((Integer.parseInt(binaryStr,2)  - 1) ^ reverse)  ;
 	}
 
 

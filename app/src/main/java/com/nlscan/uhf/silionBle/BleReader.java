@@ -22,6 +22,8 @@ import com.uhf.api.cls.Reader;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class BleReader extends Reader {
 
@@ -39,6 +41,7 @@ public class BleReader extends Reader {
     //存储标签信息的全局变量
     private LinkedList<TAGINFO> mIvnTagList = new LinkedList<>();
     private LinkedList<String> mBlueDataList = new LinkedList<>();
+    private LinkedList<String> mImuDataList = new LinkedList<>();
     private int mIvnCount = 0;
     private static int MAX_TAG = 10;
 
@@ -444,6 +447,37 @@ public class BleReader extends Reader {
     }
 
 
+    private static final int MAX_IMU = 5;
+    public String getImuData(){
+        if (mImuDataList.size() > 0 ){
+            StringBuilder sb = new StringBuilder("");
+            for(int i=0; i<MAX_IMU; i++){
+                if (mImuDataList.size() ==0 ) break;
+                String imuData = mImuDataList.poll();
+                if (imuData.length() < 24) continue;
+
+
+                String parseImu = "";
+                for (int j=0; j<=20; j=j+4){
+                    parseImu += HexUtil.parseSignedHex(imuData.substring(j,j+4),0XFFFF);
+                    parseImu += ",";
+                }
+                Log.d(TAG,"the parse imu is " + parseImu);
+                if (parseImu.length() > 1){
+                    sb.append(parseImu.substring(0,parseImu.length()-1));
+                    if(i != MAX_IMU-1 )sb.append("|");
+                }
+
+            }
+            return sb.toString();
+
+        }
+        else {
+            return null;
+        }
+    }
+
+
     /**
      * 获取返回的标签，包括快速模式与普通模式
      * @param tagcnt
@@ -492,14 +526,22 @@ public class BleReader extends Reader {
 
             if (tagArray.length < 1 ) return READER_ERR.MT_CMD_FAILED_ERR;
 
-            if (tagArray[0].substring(4,6).equals("29")){
+            for (int i=0; i<tagArray.length; i++){
+                if (tagArray[i].substring(4,6).equals("29")){
 
-                decodeCommon(tagArray,tagcnt);
+                    decodeCommon(tagArray[i],tagcnt);
+                }
+                else if (tagArray[i].substring(4,6).equals("AA")){
+                    decodeQuickTag(tagArray[i],tagcnt);
+                }
+                else{
+                    mImuDataList.add(tagArray[i]);
+                }
             }
-            else if (tagArray[0].substring(4,6).equals("AA")){
-                tagcnt[0] = tagArray.length;
-                decodeQuickTag(tagArray);
-            }
+
+
+
+
 
 
 
@@ -961,7 +1003,7 @@ public class BleReader extends Reader {
                 if (!resultCode.substring(6,10).equals("0000"))
                     return READER_ERR.MT_CMD_FAILED_ERR;
 
-                int temperature = HexUtil.parseSignedHex(resultCode.substring(10,12));
+                int temperature = HexUtil.parseSignedHex(resultCode.substring(10,12),0Xff);
                 ((int[])val)[0] = temperature;
 
 
@@ -1260,8 +1302,14 @@ public class BleReader extends Reader {
      */
     public READER_ERR AsyncStartReading(){
         if (mBleInterface == null) return READER_ERR.MT_OK_ERR;
-        String sendCommand = "7EFE00023031";
         String resultCode = "failed";
+
+        String cmd1 = "FF13AA4D6F64756C6574656368AA48000300800378BBDBEC";
+        String cmd2 = "FF0EAA4D6F64756C6574656368AA49F3BB0391";
+        String cmd1Len = String.format("%02X",cmd1.length()/2);
+        String cmd2Len = String.format("%02X",cmd2.length()/2);
+        String sendCommand = "303100" + cmd1Len + cmd1 + cmd2Len + cmd2;
+        sendCommand = "7EFE" + String.format("%04X",sendCommand.length()/2)  +  sendCommand ;
 
         try {
             resultCode = mBleInterface.sendUhfCommand(sendCommand);
@@ -1311,29 +1359,28 @@ public class BleReader extends Reader {
     /**
      * 解析普通模式标签
      */
-    private void decodeCommon(String[] tagArray, int[] tagcnt ){
-        tagcnt[0] = 0;
-        for (int i=0; i<tagArray.length; i++){
+    private void decodeCommon(String tagArray, int[] tagcnt ){
+//        for (int i=0; i<tagArray.length; i++){
             //解析获取到的标签
-            int relLen = tagArray[i].length();
+            int relLen = tagArray.length();
 //            if (relLen < 24) return;
-            String relStatus =  tagArray[i].substring(6,10) ;
+            String relStatus =  tagArray.substring(6,10) ;
             if (!relStatus.equals("0000"))
-                continue;
-            String tagTotalInfo = tagArray[i].substring(18, relLen -4);
+                return;
+            String tagTotalInfo = tagArray.substring(18, relLen -4);
             Log.d(TAG,"the total info is " + tagTotalInfo);
             if (tagTotalInfo == null || tagTotalInfo.length() <= 4){
                 tagcnt[0]++;
                 mIvnTagList.add(new TAGINFO());
-                continue;
+                return;
             }
 
-            int tagCount = Integer.parseInt(tagArray[i].substring(16,18),16);
+            int tagCount = Integer.parseInt(tagArray.substring(16,18),16);
 
             if (tagCount == 0){
                 tagcnt[0]++;
                 mIvnTagList.add(new TAGINFO());
-                continue;
+                return;
             }
 
             int tagTotLen = tagTotalInfo.length();
@@ -1342,7 +1389,7 @@ public class BleReader extends Reader {
             while (beginIndex < tagTotLen){
                 TAGINFO tfs = new TAGINFO();
                 tfs.ReadCnt = HexUtil.hexStr2int(tagTotalInfo.substring(beginIndex,beginIndex+2));
-                tfs.RSSI = HexUtil.parseSignedHex(tagTotalInfo.substring(beginIndex+2,beginIndex+4)) ;
+                tfs.RSSI = HexUtil.parseSignedHex(tagTotalInfo.substring(beginIndex+2,beginIndex+4),0xFF) ;
                 tfs.AntennaID = 1;
                 tfs.Frequency = HexUtil.hexStr2int(tagTotalInfo.substring(beginIndex+6,beginIndex+12));
                 tfs.TimeStamp = HexUtil.hexStr2int(tagTotalInfo.substring(beginIndex+12,beginIndex+20));
@@ -1356,24 +1403,24 @@ public class BleReader extends Reader {
                 tagcnt[0]++;
                 beginIndex += 32 + epcLen;
             }
-        }
+//        }
     }
 
     /**
      * 解析快速模式标签
      */
-    private void decodeQuickTag(String[] tagArray){
-        for (int i=0; i<tagArray.length; i++){
+    private void decodeQuickTag(String tagArray, int[] tagcnt){
+//        for (int i=0; i<tagArray.length; i++){
 
-            int relLen = tagArray[i].length();
+            int relLen = tagArray.length();
 //            if (relLen < 24) return ;
-            String relStatus =  tagArray[i].substring(6,10) ;
+            String relStatus =  tagArray.substring(6,10) ;
             if (!relStatus.equals("0000"))
-                continue ;
-            String tagTotalInfo = tagArray[i].substring(14, relLen -4);
+                return;
+            String tagTotalInfo = tagArray.substring(14, relLen -4);
             if (tagTotalInfo == null || tagTotalInfo.length() <= 4){
                 mIvnTagList.add(new TAGINFO());
-                continue;
+                return;
             }
             Log.d(TAG,"the total info is " + tagTotalInfo);
 
@@ -1382,7 +1429,7 @@ public class BleReader extends Reader {
             int beginIndex = 0;
             TAGINFO tfs = new TAGINFO();
             tfs.ReadCnt = HexUtil.hexStr2int(tagTotalInfo.substring(beginIndex,beginIndex+2));
-            tfs.RSSI = HexUtil.parseSignedHex(tagTotalInfo.substring(beginIndex+2,beginIndex+4)) ;
+            tfs.RSSI = HexUtil.parseSignedHex(tagTotalInfo.substring(beginIndex+2,beginIndex+4),0XFF) ;
             tfs.AntennaID = 1;
 //            tfs.Frequency = HexUtil.hexStr2int(tagTotalInfo.substring(beginIndex+6,beginIndex+12));
 //            tfs.TimeStamp = HexUtil.hexStr2int(tagTotalInfo.substring(beginIndex+12,beginIndex+20));
@@ -1394,7 +1441,8 @@ public class BleReader extends Reader {
             tfs.CRC = HexUtil.toByteArray(tagTotalInfo.substring(beginIndex+10+tagLen,beginIndex+10+tagLen+4));
             mIvnTagList.add(tfs);
             Log.d(TAG,"tag list size is " + mIvnTagList.size());
-        }
+            tagcnt[0]++;
+//        }
     }
 
 
@@ -1446,11 +1494,17 @@ public class BleReader extends Reader {
 
 
         if (mBleInterface == null) return READER_ERR.MT_OK_ERR;
-        String sendCommand = "7EFE00063032";
+
         String strTimeOut = String.format("%04X",timeout);
         String strDelay = String.format("%04X",delay);
-        sendCommand = sendCommand + strTimeOut + strDelay;
         String resultCode = "failed";
+        String cmd1 = "FF05220000000032088D";
+        String cmd2 = "FF032900BF004B22";
+        String cmd1Len = String.format("%02X",cmd1.length()/2);
+        String cmd2Len = String.format("%02X",cmd2.length()/2);
+        String sendCommand = "303200"  + strDelay +  cmd1Len + cmd1 + cmd2Len + cmd2;
+        sendCommand = "7EFE" + String.format("%04X",sendCommand.length()/2) + sendCommand ;
+
 
         try {
             resultCode = mBleInterface.sendUhfCommand(sendCommand);
@@ -1484,6 +1538,20 @@ public class BleReader extends Reader {
             e.printStackTrace();
         }
 
+        //开启IMU数据
+        new Timer().schedule(new TimerTask() {
+            @Override
+            public void run() {
+                try {
+
+                    mBleInterface.sendUhfCommand("7EFD00020130");
+
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+            }
+        },500);
+
         Log.d(TAG,"the resultcode is " + resultCode);
 //        if (resultCode.equals(RESULT_FAIL))
 //            return READER_ERR.MT_CMD_FAILED_ERR;
@@ -1510,6 +1578,23 @@ public class BleReader extends Reader {
         } catch (RemoteException e) {
             e.printStackTrace();
         }
+
+
+        //关闭IMU数据
+        new Timer().schedule(new TimerTask() {
+            @Override
+            public void run() {
+                try {
+
+                    mBleInterface.sendUhfCommand("7EFD00020131");
+
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+            }
+        },500);
+
+
 
         Log.d(TAG,"the resultcode is " + resultCode);
 

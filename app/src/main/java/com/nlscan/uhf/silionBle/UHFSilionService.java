@@ -52,6 +52,7 @@ public class UHFSilionService extends Service {
 
 
 	private final static String TAG = "UHFSilionBleService";
+	private final static String EXTRA_IMU = "extra_imu_data";
 
 	
 	private Context mContext;
@@ -331,6 +332,7 @@ public class UHFSilionService extends Service {
 		}
 		
 		return UHFReader.READER_STATE.CMD_FAILED_ERR;
+//		return UHFReader.READER_STATE.OK_ERR;
 	}
 	
 	/**
@@ -451,9 +453,9 @@ public class UHFSilionService extends Service {
 			
 			boolean quickMode = isQuickMode();
 //			Log.d(TAG,"if quick mode " + quickMode);
-			int[] uants = getAnts();
-			long readTimeout = mSettingsService.getLongParamValue(UHFSilionParams.INV_TIME_OUT.KEY, UHFSilionParams.INV_TIME_OUT.PARAM_INV_TIME_OUT,
-                    UHFSilionParams.INV_TIME_OUT.DEFAULT_INV_TIMEOUT);
+//			int[] uants = getAnts();
+//			long readTimeout = mSettingsService.getLongParamValue(UHFSilionParams.INV_TIME_OUT.KEY, UHFSilionParams.INV_TIME_OUT.PARAM_INV_TIME_OUT,
+//                    UHFSilionParams.INV_TIME_OUT.DEFAULT_INV_TIMEOUT);
 //
 //			Log.d(TAG,"the read time out is " + readTimeout);
 			
@@ -513,13 +515,24 @@ public class UHFSilionService extends Service {
 				
 			}else{
 				if ( !mBleInterface.isBleAccess()) doPowerOff();
-				Log.w(TAG, "Reading error : er = "+er.toString());
+//				Log.w(TAG, "Reading error : er = "+er.toString());
 
 			}//end if
+
+
+
 			
 		} catch (Exception e) {
 			Log.w(TAG, "Start reading failed.", e);
 		}
+
+
+
+
+		String imuRel = mReader.getImuData();
+
+		sendIMURel(imuRel);
+
 
 //		Log.d(TAG,"the uhf parse cause " + (System.currentTimeMillis() - pre) + " ms");
 		//进入下一扫描周期
@@ -530,6 +543,18 @@ public class UHFSilionService extends Service {
 		mOperHandler.sendEmptyMessageDelayed(OperateHandler.MSG_START_READING, 0);
 		
 	}//end doStartReading
+
+
+
+	private void sendIMURel(String imuData)
+	{
+		if(imuData != null && !"".equals(imuData))
+		{
+			Intent sendIntent  = new Intent(Constants.ACTION_IMU_RESULT_SEND);
+			sendIntent.putExtra(EXTRA_IMU, imuData);
+			sendBroadcast(sendIntent);
+		}
+	}
 	
 	/**
 	 * 停止盘点
@@ -545,7 +570,7 @@ public class UHFSilionService extends Service {
 			READER_ERR er = null;
 			if (isQuickMode()) {
 				Log.d(TAG, "stop---");
-				er = mReader.AsyncStopReading();
+				er = mReader.StopReading();
 				mReadingState = ReadingState.IDLE;
 				if (er != READER_ERR.MT_OK_ERR) {
 					Log.d(TAG, "不停顿盘点停止失败 : "+er.toString());
@@ -1147,6 +1172,16 @@ public class UHFSilionService extends Service {
 				//UHF模块上电
 				doPowerRetryCount = 0;
 				UHFReader.READER_STATE state =  doPowerOn(null);
+
+
+				if (state.value() == UHFReader.READER_STATE.OK_ERR.value()){
+					if (isQuickMode()){
+						mReader.StartReading(50,50);
+					}
+					else {
+						mReader.AsyncStartReading();
+					}
+				}
 				
 				Binder.restoreCallingIdentity(id);
 
