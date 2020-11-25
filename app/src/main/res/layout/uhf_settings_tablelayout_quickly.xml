@@ -213,7 +213,8 @@
             android:text="@string/start_quick_mode_s1" />
         
         <!-- 开启(最大功率,S0,间隔0) -->
-        <CheckBox 
+        <CheckBox
+            android:layout_marginLeft="50dp"
             android:id="@+id/checkbox_q2enable1200"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

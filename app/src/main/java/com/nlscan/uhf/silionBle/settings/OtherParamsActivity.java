@@ -415,15 +415,15 @@ public class OtherParamsActivity extends BaseActivity {
 
 		int vib_val = Integer.parseInt(mUHFMgr.getParam(UHFSilionParams.PROMPT_MODE.KEY,
 				UHFSilionParams.PROMPT_MODE.PARAM_VIBRATION,"0"));
-		cb_vibration.setChecked(vib_val == 0);
+		cb_vibration.setChecked(vib_val != 0);
 
 		int light_val = Integer.parseInt(mUHFMgr.getParam(UHFSilionParams.PROMPT_MODE.KEY,
 				UHFSilionParams.PROMPT_MODE.PARAM_LIGHT,"0"));
-		cb_light.setChecked(light_val == 0);
+		cb_light.setChecked(light_val != 0);
 
 		int sound_val = Integer.parseInt(mUHFMgr.getParam(UHFSilionParams.PROMPT_MODE.KEY,
 				UHFSilionParams.PROMPT_MODE.PARAM_SOUND,"0"));
-		cb_sound.setChecked(sound_val == 0);
+		cb_sound.setChecked(sound_val != 0);
 
 
 		btn_vibration.setOnClickListener(new OnClickListener() {
