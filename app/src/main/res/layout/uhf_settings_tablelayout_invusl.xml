@@ -181,6 +181,7 @@
 
         <!-- 天线 -->
         <FrameLayout
+            android:visibility="gone"
             android:layout_width="wrap_content"
             android:layout_height="30dp" >
 
@@ -200,6 +201,7 @@
         </FrameLayout>
 
         <LinearLayout
+            android:visibility="gone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" >
 
@@ -238,6 +240,7 @@
         </LinearLayout>
 
         <LinearLayout
+            android:visibility="gone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" >
 

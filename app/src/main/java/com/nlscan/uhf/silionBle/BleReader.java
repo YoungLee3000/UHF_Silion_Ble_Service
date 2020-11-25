@@ -459,7 +459,15 @@ public class BleReader extends Reader {
 
                 String parseImu = "";
                 for (int j=0; j<=20; j=j+4){
-                    parseImu += HexUtil.parseSignedHex(imuData.substring(j,j+4),0XFFFF);
+                    if (j <=8 ){
+                        double acce = HexUtil.parseSignedHex(imuData.substring(j,j+4),0XFFFF) * 1.0 / 32767.0 * 16.0 * 9.8;
+                        parseImu += String.format("%.8f",acce);
+                    }
+                    else{
+                        double angule = HexUtil.parseSignedHex(imuData.substring(j,j+4),0XFFFF) * 1.0 / 32767.0 * 2000.0;
+                        parseImu += String.format("%.8f",angule);
+                    }
+
                     parseImu += ",";
                 }
                 Log.d(TAG,"the parse imu is " + parseImu);
@@ -1291,6 +1299,23 @@ public class BleReader extends Reader {
 
     }
 
+    /**
+     * 发送查找设备的指令
+     */
+    public void findDevice(){
+
+        String modeCode = "7E013030303040424545504F4E323030304631303030543230563B03";
+
+        try {
+             mBleInterface.sendUhfCommand(modeCode);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+
+
+
+    }
+
 
 
 
@@ -1498,7 +1523,9 @@ public class BleReader extends Reader {
         String strTimeOut = String.format("%04X",timeout);
         String strDelay = String.format("%04X",delay);
         String resultCode = "failed";
-        String cmd1 = "FF05220000000032088D";
+        String cmd1 = "FF0522000000"  +  strTimeOut;
+        cmd1 += mCrcModel.getCrcStr(HexUtil.toByteArray(cmd1));
+
         String cmd2 = "FF032900BF004B22";
         String cmd1Len = String.format("%02X",cmd1.length()/2);
         String cmd2Len = String.format("%02X",cmd2.length()/2);

@@ -61,6 +61,7 @@
 
         <!-- 天线唯一性 -->
         <FrameLayout
+            android:visibility="gone"
             android:layout_width="wrap_content"
             android:layout_height="30dp" >
 
@@ -79,6 +80,7 @@
                 android:textSize="18sp" />
         </FrameLayout>
         <LinearLayout
+            android:visibility="gone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" >
 
@@ -107,6 +109,7 @@
 
         <!-- 附加数据唯一性 -->
         <FrameLayout
+            android:visibility="gone"
             android:layout_width="wrap_content"
             android:layout_height="30dp" >
 
@@ -126,6 +129,7 @@
         </FrameLayout>
 
         <LinearLayout
+            android:visibility="gone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" >
 
@@ -249,6 +253,7 @@
 
         <!-- 记录最高RSSI -->
         <FrameLayout
+            android:visibility="gone"
             android:layout_width="wrap_content"
             android:layout_height="30dp" >
 
@@ -268,6 +273,7 @@
         </FrameLayout>
 
         <LinearLayout
+            android:visibility="gone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" >
 
@@ -431,6 +437,7 @@
 
         <!-- 待机时间 -->
         <FrameLayout
+            android:visibility="gone"
             android:layout_width="wrap_content"
             android:layout_height="30dp"
             android:layout_weight="1" >
@@ -451,6 +458,7 @@
         </FrameLayout>
 
         <LinearLayout
+            android:visibility="gone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1" >

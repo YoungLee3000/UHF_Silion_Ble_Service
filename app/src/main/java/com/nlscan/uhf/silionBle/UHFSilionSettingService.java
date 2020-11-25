@@ -810,6 +810,15 @@ public class UHFSilionSettingService {
 				state = mReader.setPromptMode("3," +  sValue) ? UHFReader.READER_STATE.OK_ERR :
 						UHFReader.READER_STATE.CMD_FAILED_ERR;
 			}
+
+			if(subParamName.equals(UHFSilionParams.FIND_DEVICE.PARAM_FIND_DEVICE))
+			{
+
+				mReader.findDevice();
+				state = UHFReader.READER_STATE.OK_ERR;
+			}
+
+
 			
 			//保存配置,且更新内存中的配置
 			if(state == UHFReader.READER_STATE.OK_ERR)
