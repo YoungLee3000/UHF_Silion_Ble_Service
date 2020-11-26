@@ -1174,9 +1174,16 @@ public class UHFSilionService extends Service {
 				UHFReader.READER_STATE state =  doPowerOn(null);
 
 
+
+				long readTimeout = mSettingsService.getLongParamValue(UHFSilionParams.INV_TIME_OUT.KEY, UHFSilionParams.INV_TIME_OUT.PARAM_INV_TIME_OUT,
+						UHFSilionParams.INV_TIME_OUT.DEFAULT_INV_TIMEOUT);
+				long intevalTime =mSettingsService.getLongParamValue(UHFSilionParams.INV_INTERVAL.KEY,
+						UHFSilionParams.INV_INTERVAL.PARAM_INV_INTERVAL_TIME,
+						UHFSilionParams.INV_INTERVAL.DEFAULT_INV_INTERVAL_TIME);
+
 				if (state.value() == UHFReader.READER_STATE.OK_ERR.value()){
-					if (isQuickMode()){
-						mReader.StartReading(50,50);
+					if (!isQuickMode()){
+						mReader.StartReading((int)readTimeout,(int) intevalTime);
 					}
 					else {
 						mReader.AsyncStartReading();
@@ -1229,12 +1236,7 @@ public class UHFSilionService extends Service {
 				mForceStoped = false;
 				mBleInterface.clearUhfTagData();
 				mReader.clearTagData();
-				boolean isQuickMode = isQuickMode();
-				long readTimeout = mSettingsService.getLongParamValue(UHFSilionParams.INV_TIME_OUT.KEY, UHFSilionParams.INV_TIME_OUT.PARAM_INV_TIME_OUT,
-						UHFSilionParams.INV_TIME_OUT.DEFAULT_INV_TIMEOUT);
-				long intevalTime =mSettingsService.getLongParamValue(UHFSilionParams.INV_INTERVAL.KEY,
-						UHFSilionParams.INV_INTERVAL.PARAM_INV_INTERVAL_TIME,
-						UHFSilionParams.INV_INTERVAL.DEFAULT_INV_INTERVAL_TIME);
+
 
 
 				mOperHandler.removeMessages(OperateHandler.MSG_START_READING);
