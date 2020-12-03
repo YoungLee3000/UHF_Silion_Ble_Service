@@ -514,7 +514,7 @@ public class UHFSilionService extends Service {
 				}
 				
 			}else{
-				if ( !mBleInterface.isBleAccess()) doPowerOff();
+//				if ( !mBleInterface.isBleAccess()) doPowerOff();
 //				Log.w(TAG, "Reading error : er = "+er.toString());
 
 			}//end if
