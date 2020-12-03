@@ -48,6 +48,10 @@ public class OtherParamsActivity extends BaseActivity {
 	private Button btn_vibration,btn_light,btn_sound;
 	private CheckBox cb_vibration,cb_light,cb_sound;
 
+	//手表提示
+    private Button btn_nw_vibration,btn_nw_sound;
+    private CheckBox cb_nw_vibration,cb_nw_sound;
+
 
 	//电量监控
 	private Button btn_battery_monitor;
@@ -471,6 +475,29 @@ public class OtherParamsActivity extends BaseActivity {
 
 
 
+		//手表端提示
+        btn_nw_vibration = (Button) findViewById(R.id.button_nw_vibration);
+        btn_nw_sound = (Button) findViewById(R.id.button_nw_sound);
+        cb_nw_sound = (CheckBox)findViewById(R.id.cb_nw_sound);
+        cb_nw_vibration = (CheckBox)findViewById(R.id.cb_nw_vibration);
+
+        cb_nw_sound.setEnabled(mUHFMgr.isPromptSoundEnable());
+        cb_nw_vibration.setEnabled(mUHFMgr.isPromptVibrateEnable());
+        btn_nw_sound.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mUHFMgr.setPromptSoundEnable(cb_nw_sound.isChecked());
+                Toast.makeText(mContext, R.string.setting_success,Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        btn_nw_vibration.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mUHFMgr.setPromptVibrateEnable(cb_nw_vibration.isChecked());
+                Toast.makeText(mContext, R.string.setting_success,Toast.LENGTH_SHORT).show();
+            }
+        });
 
 
 

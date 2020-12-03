@@ -1520,6 +1520,12 @@ public class BleReader extends Reader {
 
         if (mBleInterface == null) return READER_ERR.MT_OK_ERR;
 
+        if (timeout > 100 ) timeout = 100;
+        if(timeout  < 20 ) timeout = 20;
+
+        if (delay > 100 ) delay = 100;
+        if(delay  < 0 ) delay = 0;
+
         String strTimeOut = String.format("%04X",timeout);
         String strDelay = String.format("%04X",delay);
         String resultCode = "failed";

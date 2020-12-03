@@ -714,7 +714,7 @@ public class UHFSilionSettingService {
 							UHFSilionParams.INV_INTERVAL.PARAM_INV_INTERVAL_TIME,
 							UHFSilionParams.INV_INTERVAL.DEFAULT_INV_INTERVAL_TIME);
 
-					mReader.StartReading((short) Long.parseLong(sValue),(short) intevalTime);
+					mReader.StartReading((int) Long.parseLong(sValue),(int) intevalTime);
 					mSettingsMap.put(UHFSilionParams.INV_TIME_OUT.KEY, Long.parseLong(sValue));
 					state = UHFReader.READER_STATE.OK_ERR;
 				}
@@ -729,7 +729,7 @@ public class UHFSilionSettingService {
 							UHFSilionParams.INV_TIME_OUT.DEFAULT_INV_TIMEOUT);
 
 
-					mReader.StartReading((short) readTimeout,(short) Long.parseLong(sValue));
+					mReader.StartReading((int) readTimeout,(int) Long.parseLong(sValue));
 					mSettingsMap.put(UHFSilionParams.INV_INTERVAL.KEY, Long.parseLong(sValue));
 					state = UHFReader.READER_STATE.OK_ERR;
 				}
@@ -1433,7 +1433,7 @@ public class UHFSilionSettingService {
 					UHFSilionParams.INV_INTERVAL.PARAM_INV_INTERVAL_TIME,
 					UHFSilionParams.INV_INTERVAL.DEFAULT_INV_INTERVAL_TIME);
 
-			mReader.StartReading((short) readTimeout,(short) intevalTime);
+			mReader.StartReading((int) readTimeout,(int) intevalTime);
 			return UHFReader.READER_STATE.OK_ERR;
 		}
 		else{

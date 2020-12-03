@@ -349,7 +349,7 @@ public class UHFSilionParams {
 
 
 	/**
-	 * 设置BU10提示
+	 * 设置设备查找
 	 */
 	public final static class FIND_DEVICE{
 		public final static String KEY = "FIND_DEVICE";

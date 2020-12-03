@@ -76,6 +76,7 @@ public class InventoryParamsActivity extends BaseActivity {
 	private void updateViewData()
 	{
 		button_getusl.performClick();
+		btn_space_get.performClick();
 		button_opproget.performClick();
 	}
 	

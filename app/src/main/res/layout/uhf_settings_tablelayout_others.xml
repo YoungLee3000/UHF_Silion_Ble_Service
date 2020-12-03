@@ -583,6 +583,82 @@
 
 
 
+        <!-- 手表提示 -->
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:layout_weight="1"
+            android:visibility="visible">
+
+            <View
+                android:id="@+id/View14"
+                android:layout_width="wrap_content"
+                android:layout_height="30dp"
+                android:background="#BFEFFF" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="安卓端盘点提示"
+                android:textColor="#ff1493"
+                android:textSize="18sp" />
+        </FrameLayout>
+
+
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:visibility="visible">
+
+            <CheckBox
+                android:layout_marginLeft="50dp"
+                android:id="@+id/cb_nw_vibration"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/bu10_vibration"
+                android:layout_weight="4"/>
+
+            <Button
+                android:id="@+id/button_nw_vibration"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:text="@string/setting" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginTop="20dp"
+            android:visibility="visible">
+
+            <CheckBox
+                android:layout_marginLeft="50dp"
+                android:id="@+id/cb_nw_sound"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/bu10_sound"
+                android:layout_weight="4"/>
+
+            <Button
+                android:id="@+id/button_nw_sound"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:text="@string/setting" />
+        </LinearLayout>
+
+        <!-- 手表提示 -->
+
+
+
+
+
+
 
         <!-- 电量监听 -->
         <FrameLayout
