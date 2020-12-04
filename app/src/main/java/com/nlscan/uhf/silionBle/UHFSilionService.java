@@ -4,6 +4,9 @@ import java.io.FileWriter;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Stack;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -169,6 +172,17 @@ public class UHFSilionService extends Service {
 	 */
 	private void bindBleService(){
 		Log.d(TAG,"begin bind ble service");
+
+		boolean ifConnect = false;
+		try {
+			if (mBleInterface!=null)
+				ifConnect = mBleInterface.isBleAccess();
+			Log.d(TAG,"blue is access 222 " + ifConnect);
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
+		if (ifConnect) return;
+
 		Intent service = new Intent("android.nlscan.intent.action.START_BLE_SERVICE");
 		service.setPackage("com.nlscan.blecommservice");
 		mBleServiceConnection = new BleServiceConnection();
@@ -190,15 +204,11 @@ public class UHFSilionService extends Service {
 //			mSettingsService = new UHFSilionSettingService(mContext, mReader);
 //			mSettingsMap = mSettingsService.getAllSettings();
 			Log.d(TAG, "onServiceConnected");
-			try {
-				Log.d(TAG,"blue is access " + mBleInterface.isBleAccess());
-			} catch (RemoteException e) {
-				e.printStackTrace();
-			}
+
 		}
 		@Override
 		public void onServiceDisconnected(ComponentName name) {
-//			mBleInterface = null;
+			mBleInterface = null;
 		}
 	}
 
@@ -208,6 +218,7 @@ public class UHFSilionService extends Service {
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
+		mBleInterface = null;
 		unRegisterReceiver();
 		mContext.unbindService(mBleServiceConnection);
 	}
@@ -272,19 +283,19 @@ public class UHFSilionService extends Service {
 	private UHFReader.READER_STATE doPowerOn(UHFReader.READER_STATE lastState)
 	{
 
-		if (!mPowerAllow){
-			new Thread(){
-				@Override
-				public  void run(){
-					Looper.prepare();
-					showBatteryDialog3();
-					Looper.loop();
-				}
-			}.start();
-
-			Log.d("BatteryMonitor","not allow power on");
-			return UHFReader.READER_STATE.CMD_FAILED_ERR;
-		}
+//		if (!mPowerAllow){
+//			new Thread(){
+//				@Override
+//				public  void run(){
+//					Looper.prepare();
+//					showBatteryDialog3();
+//					Looper.loop();
+//				}
+//			}.start();
+//
+//			Log.d("BatteryMonitor","not allow power on");
+//			return UHFReader.READER_STATE.CMD_FAILED_ERR;
+//		}
 
 		if(doPowerRetryCount == 0)
 			sendUHFState(UHFManager.UHF_STATE_POWER_ONING);
@@ -295,9 +306,19 @@ public class UHFSilionService extends Service {
 //			return  UHFReader.READER_STATE.HARDWARE_ALERT_ERR_BY_UNKNOWN_ERR;
 
 
-		bindBleService();
+
 //		mReader.setmBleInterface(mBleInterface);
-        UHFReader.READER_STATE state =   initReader();
+
+		try {
+			if (mBleInterface == null || !mBleInterface.isBleAccess()){
+				bindBleService();
+				return UHFReader.READER_STATE.CMD_FAILED_ERR;
+			}
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
+
+		UHFReader.READER_STATE state =   initReader();
 //		UHFReader.READER_STATE state = UHFReader.READER_STATE.OK_ERR;
 		if(state == UHFReader.READER_STATE.OK_ERR)
 			state = doInitReaderParams();//初始化读写器参数
@@ -318,7 +339,15 @@ public class UHFSilionService extends Service {
 	{
 		Log.d(TAG, "Start connect to device...");
 
-		mReader.setmBleInterface(mBleInterface);
+		try {
+			if (mBleInterface == null || !mBleInterface.isBleAccess()){
+				bindBleService();
+				return UHFReader.READER_STATE.CMD_FAILED_ERR;
+			}
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
+
 
 		//初始化读写器
 		int ant = 1;
@@ -326,9 +355,32 @@ public class UHFSilionService extends Service {
 		try{
 			er=mReader.InitReader_Notype(mUHFModuleInfo.serial_path, ant);
 			Log.d(TAG, "Connect to device state : "+er+","+(er == READER_ERR.MT_OK_ERR));
-			return UHFReader.READER_STATE.valueOf(er.value());
+
+
+			if (er == READER_ERR.MT_CMD_FAILED_ERR){
+
+				Thread.sleep(2000);
+
+				READER_ERR er2 = mReader.InitReader_Notype(mUHFModuleInfo.serial_path, ant);
+				Log.d(TAG, "the second Connect to device state : "+er2+","+(er2 == READER_ERR.MT_OK_ERR));
+
+				if (er2 == READER_ERR.MT_CMD_FAILED_ERR){
+					if (mBleServiceConnection !=null)
+						mContext.unbindService(mBleServiceConnection);
+					bindBleService();
+				}
+				else {
+					return UHFReader.READER_STATE.valueOf(er2.value());
+				}
+
+
+			}
+			else{
+				return UHFReader.READER_STATE.valueOf(er.value());
+			}
 		}catch(Exception e){
 			Log.w(TAG, "Connect to reader faild.",e);
+
 		}
 		
 		return UHFReader.READER_STATE.CMD_FAILED_ERR;
@@ -381,7 +433,16 @@ public class UHFSilionService extends Service {
 	{
 		if(!mPowerOn)
 			return UHFReader.READER_STATE.OK_ERR;
-		
+
+		if (mBleInterface == null) return UHFReader.READER_STATE.CMD_FAILED_ERR;
+
+		try {
+			if (mBleInterface !=null && !mBleInterface.isBleAccess())
+				return UHFReader.READER_STATE.CMD_FAILED_ERR;
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
+
 		//停止盘点
 		doStopReading();
 		
@@ -396,9 +457,10 @@ public class UHFSilionService extends Service {
 				//驱动下电
 //				powerDriver(false);
 //				Log.d(TAG, "UHF disconnect complete,state : "+blen);
-				UHFReader.READER_STATE state =   UHFReader.READER_STATE.OK_ERR ;
+				UHFReader.READER_STATE state =   mReader.doPowerOff() ;
 				mPowerOn = false;
-				mContext.unbindService(mBleServiceConnection);
+
+//				mContext.unbindService(mBleServiceConnection);
 				Log.d(TAG, "UHF pown off , state : "+state.toString());
 				return state;
 			} catch (Exception e) {
@@ -828,6 +890,7 @@ public class UHFSilionService extends Service {
 
 		public final static int MSG_START_READING = 0X01;
 		public final static int MSG_STOP_READING = 0X02;
+		public final static int MSG_BIND_SERVICE = 0X03;
 		
 		public OperateHandler(Looper looper) {
 			super(looper);
@@ -1234,7 +1297,8 @@ public class UHFSilionService extends Service {
 				//触发扫描
 				mIfQuickReading = true;
 				mForceStoped = false;
-				mBleInterface.clearUhfTagData();
+				if (mBleInterface!=null)
+					mBleInterface.clearUhfTagData();
 				mReader.clearTagData();
 
 

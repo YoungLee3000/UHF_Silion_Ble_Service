@@ -481,8 +481,8 @@ public class OtherParamsActivity extends BaseActivity {
         cb_nw_sound = (CheckBox)findViewById(R.id.cb_nw_sound);
         cb_nw_vibration = (CheckBox)findViewById(R.id.cb_nw_vibration);
 
-        cb_nw_sound.setEnabled(mUHFMgr.isPromptSoundEnable());
-        cb_nw_vibration.setEnabled(mUHFMgr.isPromptVibrateEnable());
+        cb_nw_sound.setChecked(mUHFMgr.isPromptSoundEnable());
+        cb_nw_vibration.setChecked(mUHFMgr.isPromptVibrateEnable());
         btn_nw_sound.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {

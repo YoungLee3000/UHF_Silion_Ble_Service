@@ -129,7 +129,7 @@ public class BleReader extends Reader {
 
     @Override
     public void CloseReader() {
-        mBleInterface = null;
+//        mBleInterface = null;
     }
 
     //获取标签，不启用匹配
@@ -1550,6 +1550,29 @@ public class BleReader extends Reader {
 //            return READER_ERR.MT_CMD_FAILED_ERR;
 
         return READER_ERR.MT_OK_ERR;
+
+    }
+
+    /**
+     * 切换到bootload
+     * @return
+     */
+    public UHFReader.READER_STATE doPowerOff(){
+        String cmd = "FF00FC0130"  ;
+
+        String resultCode = "failed";
+
+        try {
+            resultCode = mBleInterface.sendUhfCommand(cmd);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+
+        Log.d(TAG,"the resultcode is " + resultCode);
+//        if (resultCode.equals(RESULT_FAIL))
+//            return UHFReader.READER_STATE.CMD_FAILED_ERR;
+
+        return UHFReader.READER_STATE.OK_ERR;
 
     }
 
