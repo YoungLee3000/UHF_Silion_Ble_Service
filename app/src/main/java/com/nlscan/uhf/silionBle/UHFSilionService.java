@@ -14,6 +14,7 @@ import org.json.JSONObject;
 
 import android.app.AlertDialog;
 import android.app.Service;
+import android.bluetooth.BluetoothAdapter;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -122,6 +123,7 @@ public class UHFSilionService extends Service {
 	private  IBleInterface mBleInterface;
 	private boolean mIfQuickReading = false;
 	private BleServiceConnection mBleServiceConnection;
+	BluetoothAdapter mBluetooth;
 
 
 	@Override
@@ -132,6 +134,7 @@ public class UHFSilionService extends Service {
 		mUHFMgr = UHFManager.getInstance();
 		mSettingsService = new UHFSilionSettingService(mContext, mReader);
 		mSettingsMap = mSettingsService.getAllSettings();
+		mBluetooth =  BluetoothAdapter.getDefaultAdapter();
 
 		bindBleService();
 
@@ -181,7 +184,7 @@ public class UHFSilionService extends Service {
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}
-		if (ifConnect) return;
+//		if (ifConnect) return;
 
 		Intent service = new Intent("android.nlscan.intent.action.START_BLE_SERVICE");
 		service.setPackage("com.nlscan.blecommservice");
@@ -190,6 +193,7 @@ public class UHFSilionService extends Service {
 	}
 
 
+	private boolean mConnectState = false;
 	/**
 	 * 绑定服务状态
 	 */
@@ -204,11 +208,13 @@ public class UHFSilionService extends Service {
 //			mSettingsService = new UHFSilionSettingService(mContext, mReader);
 //			mSettingsMap = mSettingsService.getAllSettings();
 			Log.d(TAG, "onServiceConnected");
+			mConnectState = true;
 
 		}
 		@Override
 		public void onServiceDisconnected(ComponentName name) {
 			mBleInterface = null;
+			mConnectState = false;
 		}
 	}
 
@@ -297,8 +303,8 @@ public class UHFSilionService extends Service {
 //			return UHFReader.READER_STATE.CMD_FAILED_ERR;
 //		}
 
-		if(doPowerRetryCount == 0)
-			sendUHFState(UHFManager.UHF_STATE_POWER_ONING);
+//		if(doPowerRetryCount == 0)
+//			sendUHFState(UHFManager.UHF_STATE_POWER_ONING);
 		
 		//驱动上电
 //		boolean powOn = powerDriver(true);
@@ -309,14 +315,14 @@ public class UHFSilionService extends Service {
 
 //		mReader.setmBleInterface(mBleInterface);
 
-		try {
-			if (mBleInterface == null || !mBleInterface.isBleAccess()){
-				bindBleService();
-				return UHFReader.READER_STATE.CMD_FAILED_ERR;
-			}
-		} catch (RemoteException e) {
-			e.printStackTrace();
-		}
+//		try {
+//			if (mBleInterface == null || !mBleInterface.isBleAccess()){
+//				bindBleService();
+//				return UHFReader.READER_STATE.CMD_FAILED_ERR;
+//			}
+//		} catch (RemoteException e) {
+//			e.printStackTrace();
+//		}
 
 		UHFReader.READER_STATE state =   initReader();
 //		UHFReader.READER_STATE state = UHFReader.READER_STATE.OK_ERR;
@@ -327,7 +333,7 @@ public class UHFSilionService extends Service {
 //			powerDriver(false);//驱动下电
 //		}
 
-		sendUHFState(mPowerOn?UHFManager.UHF_STATE_POWER_ON : UHFManager.UHF_STATE_POWER_OFF);
+//		sendUHFState(mPowerOn?UHFManager.UHF_STATE_POWER_ON : UHFManager.UHF_STATE_POWER_OFF);
         return state;
 	}
 	
@@ -339,14 +345,19 @@ public class UHFSilionService extends Service {
 	{
 		Log.d(TAG, "Start connect to device...");
 
+		if (mBleInterface == null ){
+			bindBleService();
+			return UHFReader.READER_STATE.CMD_FAILED_ERR;
+		}
+
+		boolean ifAccess = false;
 		try {
-			if (mBleInterface == null || !mBleInterface.isBleAccess()){
-				bindBleService();
-				return UHFReader.READER_STATE.CMD_FAILED_ERR;
-			}
+			ifAccess = mBleInterface.isBleAccess();
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}
+
+		if (!ifAccess) return UHFReader.READER_STATE.CMD_FAILED_ERR;
 
 
 		//初始化读写器
@@ -357,27 +368,31 @@ public class UHFSilionService extends Service {
 			Log.d(TAG, "Connect to device state : "+er+","+(er == READER_ERR.MT_OK_ERR));
 
 
-			if (er == READER_ERR.MT_CMD_FAILED_ERR){
+//			if (er == READER_ERR.MT_CMD_FAILED_ERR){
 
-				Thread.sleep(2000);
+//				Thread.sleep(2000);
+//
+//				READER_ERR er2 = mReader.InitReader_Notype(mUHFModuleInfo.serial_path, ant);
+//				Log.d(TAG, "the second Connect to device state : "+er2+","+(er2 == READER_ERR.MT_OK_ERR));
+//
+//				if (er2 == READER_ERR.MT_CMD_FAILED_ERR){
+//					try {
+//						if (mBleServiceConnection !=null)
+//							mContext.unbindService(mBleServiceConnection);
+//					} catch (Exception e) {
+//						e.printStackTrace();
+//					}
+//					bindBleService();
+//				}
+//				else {
+//					return UHFReader.READER_STATE.valueOf(er2.value());
+//				}
 
-				READER_ERR er2 = mReader.InitReader_Notype(mUHFModuleInfo.serial_path, ant);
-				Log.d(TAG, "the second Connect to device state : "+er2+","+(er2 == READER_ERR.MT_OK_ERR));
-
-				if (er2 == READER_ERR.MT_CMD_FAILED_ERR){
-					if (mBleServiceConnection !=null)
-						mContext.unbindService(mBleServiceConnection);
-					bindBleService();
-				}
-				else {
-					return UHFReader.READER_STATE.valueOf(er2.value());
-				}
-
-
-			}
-			else{
+//
+//			}
+//			else{
 				return UHFReader.READER_STATE.valueOf(er.value());
-			}
+//			}
 		}catch(Exception e){
 			Log.w(TAG, "Connect to reader faild.",e);
 
@@ -1205,6 +1220,22 @@ public class UHFSilionService extends Service {
 	}
 
 
+	private void enableBlue(int count){
+		if (mBluetooth == null){
+			mBluetooth = BluetoothAdapter.getDefaultAdapter();
+
+		}
+
+		if (mBluetooth.isEnabled() ){
+			if (count == 0)
+				mBluetooth.disable();
+		}
+		else{
+			mBluetooth.enable();
+		}
+
+	}
+
 
 	
 	//===================================================================
@@ -1234,7 +1265,35 @@ public class UHFSilionService extends Service {
 
 				//UHF模块上电
 				doPowerRetryCount = 0;
+				sendUHFState(UHFManager.UHF_STATE_POWER_ONING);
+
+				long startTime = System.currentTimeMillis();
+
 				UHFReader.READER_STATE state =  doPowerOn(null);
+
+//				int bindTry = 0;
+
+				while (System.currentTimeMillis() - startTime <= 22000){
+					Log.d(TAG,"retry power up");
+					if (state == UHFReader.READER_STATE.OK_ERR) break;
+
+//					try {
+//						Thread.sleep(2000);
+//					} catch (InterruptedException e) {
+//						e.printStackTrace();
+//					}
+
+//					if (System.currentTimeMillis() - startTime >= 12000 && bindTry <= 0){
+//						enableBlue(bindTry);
+//
+//						bindTry++;
+//
+//					}
+
+					state = doPowerOn(null);
+				}
+
+				sendUHFState(mPowerOn?UHFManager.UHF_STATE_POWER_ON : UHFManager.UHF_STATE_POWER_OFF);
 
 
 
