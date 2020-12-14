@@ -328,8 +328,8 @@ public class UHFSilionSettingService {
 		setParam(UHFSilionParams.READER_IS_CHK_ANT.KEY, UHFSilionParams.READER_IS_CHK_ANT.PARAM_READER_IS_CHK_ANT, String.valueOf(checkant));
 		
 		//读写器发射功率-------------------------------------
-		int[] rpow=new int[]{2700,2000,2000,2000};
-		int[] wpow=new int[]{2000,2000,2000,2000};
+		int[] rpow=new int[]{2200,2000,2000,2000};
+		int[] wpow=new int[]{2200,2000,2000,2000};
 		int antportc = 1;
 		String sAntPowerValue = "";
 		JSONArray jsAntArray = new JSONArray();
@@ -818,6 +818,13 @@ public class UHFSilionSettingService {
 				state = UHFReader.READER_STATE.OK_ERR;
 			}
 
+            if(subParamName.equals(UHFSilionParams.RESTORE_FACTORY.PARAM_RESTORE_FACTORY))
+            {
+
+                mReader.restoreFactory();
+                state = UHFReader.READER_STATE.OK_ERR;
+            }
+
 
 			
 			//保存配置,且更新内存中的配置
@@ -1053,6 +1060,10 @@ public class UHFSilionSettingService {
 				
 				//清空:所有设置的缓存
 				mSettingsMap.clear();
+
+				SharedPreferences sp = mContext.getSharedPreferences(SP_NAME_COMMON, Context.MODE_PRIVATE);
+
+				sp.edit().putBoolean(SP_KEY_FISRT_LOADING, true).commit();
 				
 				return true;
 	}

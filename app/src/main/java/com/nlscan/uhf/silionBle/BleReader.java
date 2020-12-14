@@ -1318,6 +1318,23 @@ public class BleReader extends Reader {
 
 
 
+    public boolean  restoreFactory(){
+        try {
+            mBleInterface.setScanConfig(new IScanConfigCallback.Stub() {
+                @Override
+                public void onConfigCallback(final String str) throws RemoteException {
+
+                }}, "@BASFDF");
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+
+
+        return  true;
+    }
+
+
+
 
 
 
