@@ -447,8 +447,9 @@ public class BleReader extends Reader {
     }
 
 
-    private static final int MAX_IMU = 5;
+    private static final int MAX_IMU = 20;
     public String getImuData(){
+//        Log.d(TAG,"imu change 2");
         if (mImuDataList.size() > 0 ){
             StringBuilder sb = new StringBuilder("");
             for(int i=0; i<MAX_IMU; i++){
@@ -534,18 +535,26 @@ public class BleReader extends Reader {
 
             if (tagArray.length < 1 ) return READER_ERR.MT_CMD_FAILED_ERR;
 
-            for (int i=0; i<tagArray.length; i++){
-                if (tagArray[i].substring(4,6).equals("29")){
 
-                    decodeCommon(tagArray[i],tagcnt);
-                }
-                else if (tagArray[i].substring(4,6).equals("AA")){
-                    decodeQuickTag(tagArray[i],tagcnt);
-                }
-                else{
-                    mImuDataList.add(tagArray[i]);
+            String substr = tagArray[0].substring(4,6);
+
+            if ("29".equals(substr)){
+                for(String str: tagArray){
+                    decodeCommon(str,tagcnt);
                 }
             }
+            else if ("AA".equals(substr)){
+                for(String str: tagArray){
+                    decodeQuickTag(str,tagcnt);
+                }
+            }
+            else{
+                for(String str: tagArray){
+                    mImuDataList.add(str);
+                }
+            }
+
+
 
 
 
@@ -1316,18 +1325,49 @@ public class BleReader extends Reader {
 
     }
 
-
+    boolean ifFinish = false;
 
     public boolean  restoreFactory(){
-        try {
-            mBleInterface.setScanConfig(new IScanConfigCallback.Stub() {
-                @Override
-                public void onConfigCallback(final String str) throws RemoteException {
 
-                }}, "@BASFDF");
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        }
+
+
+        new Timer().schedule(new TimerTask() {
+            @Override
+            public void run() {
+                try {
+                    mBleInterface.setScanConfig(new IScanConfigCallback.Stub() {
+                        @Override
+                        public void onConfigCallback(final String str) throws RemoteException {
+
+                        }}, "@GRBENA0");
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+            }
+        },500);
+
+
+
+        ifFinish = false;
+        new Timer().schedule(new TimerTask() {
+            @Override
+            public void run() {
+
+                ifFinish = true;
+                Log.d(TAG, "interface service init");
+                try {
+                    mBleInterface.setScanConfig(new IScanConfigCallback.Stub() {
+                        @Override
+                        public void onConfigCallback(final String str) throws RemoteException {
+
+                        }}, "@WLSCLP");
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+            }
+        },1500);
+
+
 
 
         return  true;

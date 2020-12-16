@@ -506,6 +506,8 @@ public class UHFSilionService extends Service {
 				mOperHandler.sendEmptyMessage(OperateHandler.MSG_START_READING);
 		}
 	}
+
+	private int mReadCount = 0;
 	
 	private void doStartReading()
 	{
@@ -517,7 +519,8 @@ public class UHFSilionService extends Service {
 //			mReadingState = ReadingState.IDLE;
 //			return ;
 //		}
-		
+		mReadCount++;
+//		Log.d(TAG,"uhf change 2 ");
 		try {
 			if(mStartReadTime == 0)
 				mStartReadTime = System.currentTimeMillis();
@@ -544,7 +547,8 @@ public class UHFSilionService extends Service {
 //				er = mReader.TagInventory_Raw(uants,uants.length, (short) readTimeout, tagcnt);
 //
 //			}
-            er = mReader.getInvTagCount(tagcnt);
+
+			er = mReader.getInvTagCount(tagcnt);
 			
 			if (er == READER_ERR.MT_OK_ERR) 
 			{
@@ -590,11 +594,11 @@ public class UHFSilionService extends Service {
 
 				}
 				
-			}else{
-//				if ( !mBleInterface.isBleAccess()) doPowerOff();
-//				Log.w(TAG, "Reading error : er = "+er.toString());
-
-			}//end if
+			}//else{
+////				if ( !mBleInterface.isBleAccess()) doPowerOff();
+////				Log.w(TAG, "Reading error : er = "+er.toString());
+//
+//			}//end if
 
 
 
@@ -608,7 +612,8 @@ public class UHFSilionService extends Service {
 
 		String imuRel = mReader.getImuData();
 
-		sendIMURel(imuRel);
+        if (mReadCount % 4 == 1)
+		    sendIMURel(imuRel);
 
 
 //		Log.d(TAG,"the uhf parse cause " + (System.currentTimeMillis() - pre) + " ms");
@@ -643,7 +648,7 @@ public class UHFSilionService extends Service {
 			Log.d(TAG, "Enter doStopReading...");
 			
 
-			
+			mReadCount =0;
 			READER_ERR er = null;
 			if (isQuickMode()) {
 				Log.d(TAG, "stop---");
@@ -1579,6 +1584,9 @@ public class UHFSilionService extends Service {
 			//未上电
 			if( !mPowerOn )
 				return UHFReader.READER_STATE.INVALID_READER_HANDLE.value();
+
+			if ( UHFSilionParams.RESTORE_FACTORY.PARAM_RESTORE_FACTORY.equals(paramName))
+				doPowerOff();
 			
 			UHFReader.READER_STATE state =  mSettingsService.setParam(paramKey, paramName, sValue);
 			

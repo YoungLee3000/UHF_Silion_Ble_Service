@@ -914,8 +914,16 @@ public class UHFSilionSettingService {
 		}
 
 
-		if (UHFSilionParams.PROMPT_MODE.KEY.equals(paramKey))
-		    return "1";
+		if (UHFSilionParams.PROMPT_MODE.KEY.equals(paramKey)){
+			String rel = (String)mSettingsMap.get(paramName);
+			if (rel == null){
+				return "0";
+			}
+			else{
+				return rel;
+			}
+		}
+
 		else
 		    return "";
 	}//end getParam
