@@ -176,14 +176,14 @@ public class UHFSilionService extends Service {
 	private void bindBleService(){
 		Log.d(TAG,"begin bind ble service");
 
-		boolean ifConnect = false;
-		try {
-			if (mBleInterface!=null)
-				ifConnect = mBleInterface.isBleAccess();
-			Log.d(TAG,"blue is access 222 " + ifConnect);
-		} catch (RemoteException e) {
-			e.printStackTrace();
-		}
+//		boolean ifConnect = false;
+//		try {
+//			if (mBleInterface!=null)
+//				ifConnect = mBleInterface.isBleAccess();
+//			Log.d(TAG,"blue is access 222 " + ifConnect);
+//		} catch (RemoteException e) {
+//			e.printStackTrace();
+//		}
 //		if (ifConnect) return;
 
 		Intent service = new Intent("android.nlscan.intent.action.START_BLE_SERVICE");
@@ -209,12 +209,19 @@ public class UHFSilionService extends Service {
 //			mSettingsMap = mSettingsService.getAllSettings();
 			Log.d(TAG, "onServiceConnected");
 			mConnectState = true;
+            mSenderHandler.removeMessages(SenderHandler.MSG_CHECK_CONN_ALIVE);
 
 		}
 		@Override
 		public void onServiceDisconnected(ComponentName name) {
 			mBleInterface = null;
 			mConnectState = false;
+
+            //启动服务连接状态监控,如果断开,自动重连
+            mSenderHandler.removeMessages(SenderHandler.MSG_CHECK_CONN_ALIVE);
+            mSenderHandler.sendEmptyMessage(SenderHandler.MSG_CHECK_CONN_ALIVE);
+
+
 		}
 	}
 
@@ -903,14 +910,27 @@ public class UHFSilionService extends Service {
 		
 		return false;
 	}
-	
+
+
+	//检查蓝牙服务是否断开
+    private void checkServiceConn()
+    {
+        if(!mConnectState  || mBleInterface  == null )
+        {
+            Log.d(TAG, "Ble service reconnecting ...");
+            bindBleService();
+        }
+    }
+
+
+
 	//===================================================================
 	
 	private class OperateHandler extends Handler{
 
 		public final static int MSG_START_READING = 0X01;
 		public final static int MSG_STOP_READING = 0X02;
-		public final static int MSG_BIND_SERVICE = 0X03;
+
 		
 		public OperateHandler(Looper looper) {
 			super(looper);
@@ -936,6 +956,11 @@ public class UHFSilionService extends Service {
 		public final static int MSG_SEND_RESULT = 0X01;
 		public final static int MSG_DO_SCREEN_ON = 0X02;
 		public final static int MSG_DO_SCREEN_OFF = 0X03;
+        public final static int MSG_CHECK_CONN_ALIVE = 0X04;
+
+        //检测时间间隔(毫秒)
+        private final static int CHECK_INTERVAL_TIME_MS = 1000*2;
+
 		public SenderHandler(Looper looper) {
 			super(looper);
 		}
@@ -973,6 +998,11 @@ public class UHFSilionService extends Service {
 				}
 				doPowerOff();
 			}
+
+			if (msg.what == MSG_CHECK_CONN_ALIVE){
+                checkServiceConn();
+                sendEmptyMessageDelayed(MSG_CHECK_CONN_ALIVE, CHECK_INTERVAL_TIME_MS);
+            }
 			
 		}
 		
