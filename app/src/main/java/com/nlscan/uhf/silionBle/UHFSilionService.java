@@ -899,7 +899,9 @@ public class UHFSilionService extends Service {
 				if(suc && mOldPowerOn)
 				{
 					Thread.sleep(500);
-					er =doPowerOn(null);
+//					er =doPowerOn(null);
+					int state = powerOnThread();
+					if (state != UHFReader.READER_STATE.OK_ERR.value()) er = UHFReader.READER_STATE.CMD_FAILED_ERR;
 				}
 				Log.d(TAG, "Reset default settings complete.");
 				return er == UHFReader.READER_STATE.OK_ERR;
@@ -1275,6 +1277,65 @@ public class UHFSilionService extends Service {
 	
 	//===================================================================
 
+
+	private int powerOnThread(){
+		//UHF模块上电
+		doPowerRetryCount = 0;
+		sendUHFState(UHFManager.UHF_STATE_POWER_ONING);
+
+		long startTime = System.currentTimeMillis();
+
+		UHFReader.READER_STATE state =  doPowerOn(null);
+
+//				int bindTry = 0;
+
+		while (System.currentTimeMillis() - startTime <= 6000){
+			Log.d(TAG,"retry power up");
+			if (state == UHFReader.READER_STATE.OK_ERR) break;
+
+//					try {
+//						Thread.sleep(2000);
+//					} catch (InterruptedException e) {
+//						e.printStackTrace();
+//					}
+
+//					if (System.currentTimeMillis() - startTime >= 12000 && bindTry <= 0){
+//						enableBlue(bindTry);
+//
+//						bindTry++;
+//
+//					}
+
+			state = doPowerOn(null);
+		}
+
+		sendUHFState(mPowerOn?UHFManager.UHF_STATE_POWER_ON : UHFManager.UHF_STATE_POWER_OFF);
+
+
+
+		long readTimeout = mSettingsService.getLongParamValue(UHFSilionParams.INV_TIME_OUT.KEY, UHFSilionParams.INV_TIME_OUT.PARAM_INV_TIME_OUT,
+				UHFSilionParams.INV_TIME_OUT.DEFAULT_INV_TIMEOUT);
+		long intevalTime =mSettingsService.getLongParamValue(UHFSilionParams.INV_INTERVAL.KEY,
+				UHFSilionParams.INV_INTERVAL.PARAM_INV_INTERVAL_TIME,
+				UHFSilionParams.INV_INTERVAL.DEFAULT_INV_INTERVAL_TIME);
+
+		if (state.value() == UHFReader.READER_STATE.OK_ERR.value()){
+			if (!isQuickMode()){
+				mReader.StartReading((int)readTimeout,(int) intevalTime);
+			}
+			else {
+				mReader.AsyncStartReading();
+			}
+		}
+
+		return state.value();
+
+
+	}
+
+
+
+
 	private class MyBinder extends ISilionUHFService.Stub
 	{
 		@Override
@@ -1293,63 +1354,16 @@ public class UHFSilionService extends Service {
 				if( !mScreenOn )
 					return UHFReader.READER_STATE.INVALID_READER_HANDLE.value();
 				
-				if(mPowerOn)
-					return UHFReader.READER_STATE.OK_ERR.value();
+//				if(mPowerOn)
+//					return UHFReader.READER_STATE.OK_ERR.value();
 
 
 
-				//UHF模块上电
-				doPowerRetryCount = 0;
-				sendUHFState(UHFManager.UHF_STATE_POWER_ONING);
-
-				long startTime = System.currentTimeMillis();
-
-				UHFReader.READER_STATE state =  doPowerOn(null);
-
-//				int bindTry = 0;
-
-				while (System.currentTimeMillis() - startTime <= 22000){
-					Log.d(TAG,"retry power up");
-					if (state == UHFReader.READER_STATE.OK_ERR) break;
-
-//					try {
-//						Thread.sleep(2000);
-//					} catch (InterruptedException e) {
-//						e.printStackTrace();
-//					}
-
-//					if (System.currentTimeMillis() - startTime >= 12000 && bindTry <= 0){
-//						enableBlue(bindTry);
-//
-//						bindTry++;
-//
-//					}
-
-					state = doPowerOn(null);
-				}
-
-				sendUHFState(mPowerOn?UHFManager.UHF_STATE_POWER_ON : UHFManager.UHF_STATE_POWER_OFF);
-
-
-
-				long readTimeout = mSettingsService.getLongParamValue(UHFSilionParams.INV_TIME_OUT.KEY, UHFSilionParams.INV_TIME_OUT.PARAM_INV_TIME_OUT,
-						UHFSilionParams.INV_TIME_OUT.DEFAULT_INV_TIMEOUT);
-				long intevalTime =mSettingsService.getLongParamValue(UHFSilionParams.INV_INTERVAL.KEY,
-						UHFSilionParams.INV_INTERVAL.PARAM_INV_INTERVAL_TIME,
-						UHFSilionParams.INV_INTERVAL.DEFAULT_INV_INTERVAL_TIME);
-
-				if (state.value() == UHFReader.READER_STATE.OK_ERR.value()){
-					if (!isQuickMode()){
-						mReader.StartReading((int)readTimeout,(int) intevalTime);
-					}
-					else {
-						mReader.AsyncStartReading();
-					}
-				}
+				int stateVal = powerOnThread();
 				
 				Binder.restoreCallingIdentity(id);
 
-				return state.value();
+				return stateVal;
 			}
 			
 			
