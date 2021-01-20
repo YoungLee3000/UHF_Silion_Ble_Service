@@ -110,7 +110,7 @@ std::string strToHex(std::string str, std::string separator = "")
 extern "C" {
 
 // public native boolean Init(AssetManager mgr);
-JNIEXPORT jstring JNICALL Java_com_nlscan_uhf_silionBle_CrcModel_getCrcStr(JNIEnv *env,jobject thiz,jbyteArray buf) {
+jstring Java_com_nlscan_uhf_silionBle_upgrade_Native_getCrcStr(JNIEnv *env,jobject thiz,jbyteArray buf) {
 
     int len = env->GetArrayLength(buf);
     jbyte *copyBuf = env->GetByteArrayElements(buf, 0);

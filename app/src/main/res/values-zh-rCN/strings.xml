@@ -115,8 +115,8 @@
   <string name= "ant_3">天线3</string>
   <string name= "ant_4">天线4</string>
   <string name= "span_time">时长</string>
-  <string name= "inventory_time">盘点时间(20–100)</string>
-  <string name= "interval_time">间隔(0–100)</string>
+  <string name= "inventory_time">盘点时间(20-100)</string>
+  <string name= "interval_time">间隔(0-100)</string>
   
   <!-- other -->
    <string name= "other_params">其他参数</string>

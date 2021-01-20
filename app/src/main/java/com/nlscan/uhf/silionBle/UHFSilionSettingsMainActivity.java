@@ -19,7 +19,7 @@ import com.nlscan.uhf.silionBle.settings.InventoryParamsActivity;
 import com.nlscan.uhf.silionBle.settings.OtherParamsActivity;
 import com.nlscan.uhf.silionBle.settings.QuickModeActivity;
 import com.nlscan.uhf.silionBle.settings.RegionFreActivity;
-import com.nlscan.uhf.silionBle.upgrade.UpgradeActivity;
+
 
 public class UHFSilionSettingsMainActivity extends BaseActivity {
 

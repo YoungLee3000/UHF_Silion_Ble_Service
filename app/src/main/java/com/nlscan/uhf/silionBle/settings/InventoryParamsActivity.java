@@ -252,8 +252,15 @@ public class InventoryParamsActivity extends BaseActivity {
 
 					
 					UHFReader.READER_STATE er = UHFReader.READER_STATE.CMD_FAILED_ERR ;
-					if(readTimeout > -1)
-						er = mUHFMgr.setParam(UHFSilionParams.INV_TIME_OUT.KEY, UHFSilionParams.INV_TIME_OUT.PARAM_INV_TIME_OUT, String.valueOf(readTimeout));
+					if(readTimeout > 20 && readTimeout <= 100){
+
+						er = mUHFMgr.setParam(UHFSilionParams.INV_TIME_OUT.KEY,
+								UHFSilionParams.INV_TIME_OUT.PARAM_INV_TIME_OUT, String.valueOf(readTimeout));
+					}
+					else{
+						Toast.makeText(mContext,"设置失败,请设置正确的范围!", Toast.LENGTH_SHORT).show();
+					}
+
 
 					if(er == UHFReader.READER_STATE.OK_ERR)
 						Toast.makeText(mContext, R.string.setting_success, Toast.LENGTH_SHORT).show();
@@ -319,8 +326,17 @@ public class InventoryParamsActivity extends BaseActivity {
 
 					UHFReader.READER_STATE er = UHFReader.READER_STATE.CMD_FAILED_ERR ;
 
-					if(intervalTime > -1)
-						er = mUHFMgr.setParam(UHFSilionParams.INV_INTERVAL.KEY, UHFSilionParams.INV_INTERVAL.PARAM_INV_INTERVAL_TIME, String.valueOf(intervalTime));
+
+
+					if(intervalTime  >= 0 && intervalTime  <= 100){
+
+						er = mUHFMgr.setParam(UHFSilionParams.INV_INTERVAL.KEY,
+								UHFSilionParams.INV_INTERVAL.PARAM_INV_INTERVAL_TIME, String.valueOf(intervalTime));
+					}
+					else{
+						Toast.makeText(mContext,"设置失败,请设置正确的范围!", Toast.LENGTH_SHORT).show();
+					}
+
 
 					if(er == UHFReader.READER_STATE.OK_ERR)
 						Toast.makeText(mContext, R.string.setting_success, Toast.LENGTH_SHORT).show();
