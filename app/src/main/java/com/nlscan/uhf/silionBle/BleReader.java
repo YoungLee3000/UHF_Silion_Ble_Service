@@ -1639,7 +1639,13 @@ public class BleReader extends Reader {
      * @return
      */
     public READER_ERR StartReadingCommon(){
-        if (mBleInterface == null) return READER_ERR.MT_OK_ERR;
+        if (mBleInterface == null ) return READER_ERR.MT_CMD_FAILED_ERR;
+
+        try {
+            if (!mBleInterface.isBleAccess() ) return READER_ERR.MT_CMD_FAILED_ERR;
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
 
         String resultCode = "failed";
 

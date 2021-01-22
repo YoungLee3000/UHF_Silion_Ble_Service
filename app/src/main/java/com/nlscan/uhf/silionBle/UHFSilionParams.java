@@ -361,12 +361,24 @@ public class UHFSilionParams {
 
 
 	/**
-	 * 设置设备查找
+	 * 设置设备出厂
 	 */
 	public final static class RESTORE_FACTORY{
 		public final static String KEY = "RESTORE_FACTORY";
 
 		public final static String PARAM_RESTORE_FACTORY = "PARAM_RESTORE_FACTORY";
+
+
+	}
+
+
+	/**
+	 * 设置设备出厂
+	 */
+	public final static class GET_BLE_STATE{
+		public final static String KEY = "BLE_STATE";
+
+		public final static String PARAM_BLE_STATE = "PARAM_BLE_STATE";
 
 
 	}

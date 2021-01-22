@@ -1740,6 +1740,12 @@ public class UHFSilionService extends Service {
 		@Override
 		public String getParam(String paramKey, String paramName) throws RemoteException {
 //			mReader.StopReading();
+
+			if (UHFSilionParams.GET_BLE_STATE.KEY.equals(paramKey) &&
+				UHFSilionParams.GET_BLE_STATE.PARAM_BLE_STATE.equals(paramName)	){
+				return  "" + mBleInterface.isBleAccess()  ;
+			}
+
 			return mSettingsService.getParam(paramKey, paramName);
 		}
 		
